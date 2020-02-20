@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content">
+    <EditText
+        android:id="@+id/description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/list_item_spacing_double"
+        android:layout_marginBottom="@dimen/list_item_spacing_double"
+        android:layout_marginLeft="?attr/dialogPreferredPadding"
+        android:layout_marginStart="?attr/dialogPreferredPadding"
+        android:layout_marginRight="@dimen/list_item_spacing"
+        android:layout_marginEnd="@dimen/list_item_spacing"
+        android:inputType="text"
+        android:backgroundTint="@color/colorPrimary"
+        tools:text="Description"
+    tools:ignore="RtlHardcoded"
+    tools:targetApi="lollipop"
+    android:importantForAutofill="no" />
+</FrameLayout>

@@ -1,0 +1,2 @@
+include ':app', ':feature_auth', ':feature_main', ':mscorebase', ':repository_auth', ':repository_db', ':navigation_api', ':navigation_impl', ':scopes', ':feature_masters'
+rootProject.name='MySaloonAdmin'

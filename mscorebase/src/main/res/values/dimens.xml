@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="edit_text_inset_bottom_material">7dp</dimen>
+    <dimen name="edit_text_inset_horizontal_material">4dp</dimen>
+    <dimen name="edit_text_inset_top_material">10dp</dimen>
+
+    <dimen name="list_item_elevation">2dp</dimen>
+    <dimen name="list_item_spacing_half">8dp</dimen>
+    <dimen name="list_item_spacing">16dp</dimen>
+    <dimen name="list_item_spacing_double">32dp</dimen>
+    <dimen name="list_item_height">64dp</dimen>
+    <dimen name="list_item2_height">96dp</dimen>
+    <dimen name="list_group_item_height">96dp</dimen>
+    <dimen name="list_group_item_with_add_remove_buttons_height">108dp</dimen>
+
+</resources>
