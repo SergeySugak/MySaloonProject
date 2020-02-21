@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.app.main">
+    package="com.app.msa.main">
 
     <application>
-        <activity android:name="com.app.msa.main.MainActivity"></activity>
+        <activity android:name="com.app.msa_main.main.MainActivity" />
     </application>
 
 </manifest>

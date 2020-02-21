@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.text.TextUtils
 import android.util.Log
-import com.app.mobifix.appstate.AppStateManager
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import java.util.*

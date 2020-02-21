@@ -19,7 +19,6 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
-import androidx.multidex.BuildConfig
 import com.app.mscorebase.R
 import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenterImpl
 import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
@@ -116,7 +115,7 @@ abstract class MSActivity<C : MSActivity<C, VM>, VM : MSViewModel> :
     }
 
     override fun setTitle(title: CharSequence) {
-        if (Debug.isDebuggerConnected() || BuildConfig.DEBUG) {
+        if (Debug.isDebuggerConnected()/* || BuildConfig.DEBUG*/) {
             super.setTitle(title.toString() + "\n[" + javaClass.canonicalName + "]")
         } else {
             super.setTitle(title)
@@ -125,7 +124,7 @@ abstract class MSActivity<C : MSActivity<C, VM>, VM : MSViewModel> :
 
     override fun setTitle(titleId: Int) {
         super.setTitle(titleId)
-        if (Debug.isDebuggerConnected() || BuildConfig.DEBUG) {
+        if (Debug.isDebuggerConnected() /*|| BuildConfig.DEBUG*/) {
             super.setTitle(title.toString() + "\n[" + javaClass.canonicalName + "]")
         }
     }
@@ -175,7 +174,7 @@ abstract class MSActivity<C : MSActivity<C, VM>, VM : MSViewModel> :
         val actionBar = supportActionBar
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true)
-            if (Debug.isDebuggerConnected() || BuildConfig.DEBUG) {
+            if (Debug.isDebuggerConnected() /*|| BuildConfig.DEBUG*/) {
                 actionBar.subtitle =
                     (if (actionBar.subtitle == null) "" else actionBar.subtitle).toString() +
                             " [" + javaClass.canonicalName + "]"

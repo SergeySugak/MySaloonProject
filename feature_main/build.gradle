@@ -14,7 +14,6 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         consumerProguardFiles 'consumer-rules.pro'
-        multiDexEnabled = true
     }
     buildTypes {
         release {
@@ -52,7 +51,6 @@ dependencies {
     implementation project(path: ':app', configuration: 'default')
     implementation project(path: ':mscorebase', configuration: 'default')
     api project(path: ':scopes', configuration: 'default')
-    implementation project(path: ':feature_masters', configuration: 'default')
 
     //jetbrains
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"

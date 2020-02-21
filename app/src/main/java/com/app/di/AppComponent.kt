@@ -2,15 +2,16 @@ package com.app.di
 
 import android.content.Context
 import com.app.msa.App
-import com.app.msa.api.AuthFeatureDependencies
-import com.app.msa.api.MainFeatureDependencies
-import com.app.msa.navigation.AppNavigator
-import com.app.msa.navigation_impl.AppNavigatorImpl
+import com.app.msa_auth.api.AuthFeatureDependencies
+import com.app.msa_main.api.MainFeatureDependencies
+import com.app.msa_nav_api.navigation.AppNavigator
+import com.app.msa_nav_impl.navigation_impl.AppNavigatorImpl
 import com.app.mscorebase.di.ComponentDependencies
 import com.app.mscorebase.di.ComponentDependenciesKey
 import dagger.Binds
 import dagger.BindsInstance
 import dagger.Component
+import dagger.Module
 import dagger.multibindings.IntoMap
 import javax.inject.Singleton
 
@@ -29,14 +30,14 @@ interface AppComponent: AuthFeatureDependencies, MainFeatureDependencies {
     }
 }
 
-@dagger.Module
+@Module
 private abstract class BindingsModule {
     @Binds
     @Singleton
     abstract fun appNavigator(appNavigator: AppNavigatorImpl): AppNavigator
 }
 
-@dagger.Module
+@Module
 private abstract class ComponentDependenciesModule private constructor() {
     @Binds
     @IntoMap

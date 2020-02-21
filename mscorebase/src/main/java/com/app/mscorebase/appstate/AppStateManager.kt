@@ -1,4 +1,4 @@
-package com.app.mobifix.appstate
+package com.app.mscorebase.appstate
 
 import com.app.mscorebase.appstate.StateHolder
 import com.app.mscorebase.appstate.StateWriter

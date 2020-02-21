@@ -51,7 +51,7 @@ fun Fragment.findFragmentComponentDependenciesProvider(): ComponentDependenciesP
 
 fun AppCompatActivity.findActivityComponentDependenciesProvider(): ComponentDependenciesProvider {
     val hasDaggerProviders = when {
-        this is HasComponentDependencies -> this
+        this.parent is HasComponentDependencies -> this.parent as HasComponentDependencies
         this.application is HasComponentDependencies -> this.application as HasComponentDependencies
         else -> throw IllegalStateException("Can not find suitable dagger provider for $this")
     }

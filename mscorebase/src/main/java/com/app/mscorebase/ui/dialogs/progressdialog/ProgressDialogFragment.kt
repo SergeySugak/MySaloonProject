@@ -1,4 +1,4 @@
-package com.app.mobifix.base.dialogs.progressdialog
+package com.app.mscorebase.ui.dialogs.progressdialog
 
 import android.os.Bundle
 import android.view.LayoutInflater
