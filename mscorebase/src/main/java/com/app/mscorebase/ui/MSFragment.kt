@@ -99,8 +99,8 @@ abstract class MSFragment<VM : MSFragmentViewModel> :
             val activity = activity as MSActivity<*>
             val viewModel = activity.getViewModel()
             viewModel.apply {
-                title.value = fVM.title.value
-                subtitle.value = fVM.subtitle.value
+                _title.value = fVM.title.value
+                _subtitle.value = fVM.subtitle.value
             }
         }
     }

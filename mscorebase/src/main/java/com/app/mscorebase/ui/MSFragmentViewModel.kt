@@ -7,7 +7,7 @@ abstract class MSFragmentViewModel(appState: AppState) : MSViewModel(appState){
         title: String,
         subtitle: String?
     ) {
-        this.title.value = title
-        this.subtitle.value = subtitle
+        _title.value = title
+        _subtitle.value = subtitle
     }
 }

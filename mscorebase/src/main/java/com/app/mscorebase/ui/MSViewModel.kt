@@ -1,6 +1,7 @@
 package com.app.mscorebase.ui
 
 import android.os.Bundle
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.app.mscorebase.livedata.StatefulLiveData
@@ -11,8 +12,10 @@ import com.app.mscorebase.appstate.StateWriter
 import kotlinx.coroutines.Job
 
 abstract class MSViewModel (private val appState: AppState) : ViewModel(), StateHolder {
-    val title = MutableLiveData<String>()
-    val subtitle = MutableLiveData<String>()
+    internal val _title = MutableLiveData<String>()
+    val title: LiveData<String> = _title
+    internal val _subtitle = MutableLiveData<String>()
+    val subtitle: LiveData<String> = _subtitle
 
     protected val intNoInternetConnectionError =
         StatefulMutableLiveData<Int>()
@@ -27,7 +30,8 @@ abstract class MSViewModel (private val appState: AppState) : ViewModel(), State
     val genericError: StatefulLiveData<Throwable>
         get() = intError
 
-    var isInProgress = MutableLiveData<Boolean>()
+    protected val _isInProgress = MutableLiveData<Boolean>()
+    val isInProgress: LiveData<Boolean> = _isInProgress
 
     protected val mCompositeJob = mutableListOf<Job>()
 
@@ -35,9 +39,8 @@ abstract class MSViewModel (private val appState: AppState) : ViewModel(), State
         mCompositeJob.add(job)
     }
 
-    @Synchronized
     fun setInProgress(inProgress: Boolean) {
-        isInProgress.value = inProgress
+        _isInProgress.value = inProgress
     }
 
     protected fun disposeJobs(){

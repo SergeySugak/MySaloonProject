@@ -4,13 +4,14 @@ import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.text.TextUtils
 import android.util.Log
-import com.google.gson.GsonBuilder
+import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 
-class AppState(private val appSharedPreferences: SharedPreferences) : AppStateManager {
+class AppState(private val appSharedPreferences: SharedPreferences,
+               private val gson: Gson) : AppStateManager {
 
     private val stateManagers: MutableMap<String, StateHolder> =
         ConcurrentHashMap()
@@ -33,7 +34,6 @@ class AppState(private val appSharedPreferences: SharedPreferences) : AppStateMa
         sm: StateHolder,
         state: Map<String, String>
     ) {
-        val gson = GsonBuilder().create()
         val stateHolderManager = stateManagers[sm.id]
         if (stateHolderManager != null && state.isNotEmpty()) {
             appSharedPreferences.edit().putString(sm.id, gson.toJson(state)).commit()
@@ -45,7 +45,6 @@ class AppState(private val appSharedPreferences: SharedPreferences) : AppStateMa
         val typeOfHashMap = object :
             TypeToken<Map<String?, String?>?>() {}.type
         val json: String?
-        val gson = GsonBuilder().create()
         if (appSharedPreferences.contains(sm.id)) {
             json = appSharedPreferences.getString(sm.id, null)
             if (!TextUtils.isEmpty(json)) {

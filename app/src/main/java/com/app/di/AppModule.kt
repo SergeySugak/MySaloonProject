@@ -11,6 +11,8 @@ import com.app.msa_nav_impl.navigation_impl.AppNavigatorImpl
 import com.app.mscorebase.appstate.AppState
 import com.app.mscorebase.di.ComponentDependencies
 import com.app.mscorebase.di.ComponentDependenciesKey
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -30,8 +32,12 @@ object AppModule {
 
     @Provides
     @Singleton
-    internal fun provideAppState(sharedPrefs: SharedPreferences): AppState {
-        val appState = AppState(sharedPrefs)
+    internal fun provideGson() = GsonBuilder().create()
+
+    @Provides
+    @Singleton
+    internal fun provideAppState(sharedPrefs: SharedPreferences, gson: Gson): AppState {
+        val appState = AppState(sharedPrefs, gson)
         //Тут добавляем StateManager-ы, которые существуют все время работы приложения
         //например, appState.attachStateManager(authManager)
         return appState

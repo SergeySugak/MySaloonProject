@@ -49,39 +49,22 @@ class AuthActivity : MSActivity<AuthActivityViewModel>() {
         return ViewModelProvider(this, providerFactory).get(AuthActivityViewModel::class.java)
     }
 
-    override fun onViewModelCreated(
-        viewModel: AuthActivityViewModel,
-        savedInstanceState: Bundle?
-    ) {
+    override fun onViewModelCreated(viewModel: AuthActivityViewModel, savedInstanceState: Bundle?) {
         super.onViewModelCreated(viewModel, savedInstanceState)
 
         password.apply {
             setOnEditorActionListener { _, actionId, _ ->
                 when (actionId) {
-                    EditorInfo.IME_ACTION_DONE -> tryLogin(viewModel)
+                    EditorInfo.IME_ACTION_DONE ->
+                        viewModel.tryLogin(this@AuthActivity,
+                            username.text.toString(), password.text.toString())
                 }
                 false
             }
 
             login.setOnClickListener {
-                tryLogin(viewModel)
-            }
-        }
-    }
-
-    private fun tryLogin(viewModel: AuthActivityViewModel) {
-        if (
-            viewModel.validate(
-                username.text.toString(),
-                password.text.toString()
-            )
-        ) {
-            if (isOnline(this)) {
-                loading.visibility = View.VISIBLE
-                viewModel.login(username.text.toString(), password.text.toString())
-            }
-            else {
-                MessageDialogFragment.showError(this, Exception(getString(R.string.err_no_internet)), false)
+                viewModel.tryLogin(this@AuthActivity,
+                    username.text.toString(), password.text.toString())
             }
         }
     }
@@ -124,6 +107,13 @@ class AuthActivity : MSActivity<AuthActivityViewModel>() {
             }
         })
 
+        viewModel.isInProgress.observe(this, Observer {
+            loading.visibility = if (it) View.VISIBLE else View.GONE
+        })
+
+        viewModel.noInternetConnectionError.observe(this, Observer {
+            MessageDialogFragment.showError(this, Exception(getString(it)), false)
+        })
     }
 
     private fun showConfirmEmailMessage() {
