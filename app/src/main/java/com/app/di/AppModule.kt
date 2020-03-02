@@ -2,9 +2,19 @@ package com.app.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.app.msa.repository.auth.FirebaseDbRepository
+import com.app.msa_auth.api.AuthFeatureDependencies
+import com.app.msa_db_repo.repository.db.DbRepository
+import com.app.msa_main.api.MainFeatureDependencies
+import com.app.msa_nav_api.navigation.AppNavigator
+import com.app.msa_nav_impl.navigation_impl.AppNavigatorImpl
 import com.app.mscorebase.appstate.AppState
+import com.app.mscorebase.di.ComponentDependencies
+import com.app.mscorebase.di.ComponentDependenciesKey
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import dagger.multibindings.IntoMap
 import javax.inject.Singleton
 
 @Module
@@ -26,5 +36,28 @@ object AppModule {
         //например, appState.attachStateManager(authManager)
         return appState
     }
+}
 
+@Module
+abstract class BindingsModule {
+    @Binds
+    @Singleton
+    abstract fun appNavigator(appNavigator: AppNavigatorImpl): AppNavigator
+
+    @Binds
+    @Singleton
+    abstract fun dbRepository(repository: FirebaseDbRepository): DbRepository
+}
+
+@Module
+abstract class ComponentDependenciesModule private constructor() {
+    @Binds
+    @IntoMap
+    @ComponentDependenciesKey(AuthFeatureDependencies::class)
+    abstract fun provideAuthDependencies(component: AppComponent): ComponentDependencies
+
+    @Binds
+    @IntoMap
+    @ComponentDependenciesKey(MainFeatureDependencies::class)
+    abstract fun provideMainFeatureDependencies(component: AppComponent): ComponentDependencies
 }

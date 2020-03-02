@@ -45,12 +45,15 @@ android {
 }
 
 def dagger_version = '2.26'
-
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation project(path: ':app', configuration: 'default')
-    implementation project(path: ':mscorebase', configuration: 'default')
+    api project(path: ':mscorebase', configuration: 'default')
     api project(path: ':scopes', configuration: 'default')
+    api project(path: ':navigation_api', configuration: 'default')
+    implementation project(path: ':feature_masters', configuration: 'default')
+    implementation project(path: ':feature_services', configuration: 'default')
+    implementation project(path: ':feature_schedule', configuration: 'default')
+    implementation project(path:':repository_db', configuration:'default')
 
     //jetbrains
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -59,7 +62,6 @@ dependencies {
     implementation "com.google.dagger:dagger:$dagger_version"
 
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
-
 
     //androidx
     implementation 'androidx.appcompat:appcompat:1.1.0'
@@ -70,9 +72,15 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'
+    implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
+    implementation 'androidx.navigation:navigation-fragment:2.2.1'
+    implementation 'androidx.navigation:navigation-ui:2.2.1'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.2.1'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.2.1'
 
     //google
     implementation 'com.google.android.material:material:1.1.0'
+    compileOnly 'com.google.firebase:firebase-database:19.2.1'
 
     //tests
     testImplementation 'junit:junit:4.13'

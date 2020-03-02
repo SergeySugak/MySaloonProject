@@ -54,18 +54,17 @@ def dagger_version = '2.26'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation project(path: ':mscorebase', configuration: 'default')
+    api project(path: ':mscorebase', configuration: 'default')
     api project(path: ':navigation_api', configuration: 'default')
-    implementation project(path: ':navigation_impl', configuration: 'default')
-    implementation(project(configuration: 'default', path: ':repository_auth')) {
-        exclude group: 'com.google.firebase'
-    }
-    implementation(project(configuration: 'default', path: ':feature_auth')) {
-        exclude group: 'com.google.firebase'
-    }
-    implementation(project(configuration: 'default', path: ':feature_main')) {
-        exclude group: 'com.google.firebase'
-    }
+    implementation project(path:':repository_auth', configuration:'default')
+    implementation project(path:':repository_db', configuration:'default')
+    implementation project(path:':feature_main', configuration:'default')
+    implementation project(path:':feature_masters', configuration:'default')
+    implementation project(path:':feature_services', configuration:'default')
+    implementation project(path:':feature_schedule', configuration:'default')
+    implementation project(path:':feature_auth', configuration:'default')
+    implementation project(path:':feature_main', configuration:'default')
+    implementation project(path:':navigation_impl', configuration:'default')
 
     //jetbrains
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -86,6 +85,12 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'
 
+    implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
+    implementation 'androidx.navigation:navigation-fragment:2.2.1'
+    implementation 'androidx.navigation:navigation-ui:2.2.1'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.2.1'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.2.1'
+
     //google
     implementation 'com.google.android.material:material:1.1.0'
     implementation 'com.google.firebase:firebase-auth:19.2.0'
@@ -93,6 +98,9 @@ dependencies {
     //без этой зависимости валится при переходе к другим приложениям
     //даже не смотря на api в mscorebase WTF???
     implementation 'com.google.code.gson:gson:2.8.6'
+
+    //facebook
+    implementation 'com.facebook.fresco:fresco:2.0.0'
 
     //tests
 //    testImplementation 'junit:junit:4.13'

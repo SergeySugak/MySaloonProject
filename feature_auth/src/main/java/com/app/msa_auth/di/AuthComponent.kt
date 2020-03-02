@@ -9,10 +9,10 @@ import dagger.Component
 
 @FeatureScope
 @Component(modules = [AuthModule::class,
-    ViewModelFactoryModule::class,
-    AuthViewModelsModule::class,
-    AuthRepositoryModule::class],
-    dependencies = [AuthFeatureDependencies::class])
+                        ViewModelFactoryModule::class,
+                        AuthViewModelsModule::class,
+                        AuthRepositoryModule::class],
+                        dependencies = [AuthFeatureDependencies::class])
 interface AuthComponent {
     fun inject(authActivity: AuthActivity)
 }

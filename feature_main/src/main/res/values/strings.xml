@@ -1,1 +1,5 @@
-<resources></resources>
+<resources>
+    <string name="title_masters">Мастера</string>
+    <string name="title_services">Услуги</string>
+    <string name="title_schedule">График</string>
+</resources>

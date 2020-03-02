@@ -1,5 +1,4 @@
-package com.app.msa.repository.auth
-import com.app.mscorebase.common.Result
+package com.app.msa_db_repo.repository.db
 
 interface DbRepository {
 

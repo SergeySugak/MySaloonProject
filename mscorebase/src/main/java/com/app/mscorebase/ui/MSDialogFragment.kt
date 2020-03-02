@@ -15,7 +15,7 @@ import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenterImpl
 import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenterImpl.WhichButton
 import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
 
-abstract class MSDialogFragment<F : MSDialogFragment<F, VM>, VM : MSFragmentViewModel> :
+abstract class MSDialogFragment<VM : MSFragmentViewModel> :
     DialogFragment(), MSContext<VM>,
     ViewModelHolder<VM>,
     DialogButtonClickListener, OnBackPressedListener {
@@ -31,7 +31,6 @@ abstract class MSDialogFragment<F : MSDialogFragment<F, VM>, VM : MSFragmentView
     @get:LayoutRes
     abstract val layoutId: Int
 
-    protected abstract fun getThis(): F
     abstract fun createViewModel(savedInstanceState: Bundle?): VM
 
     override fun getViewModel(): VM {
@@ -69,7 +68,7 @@ abstract class MSDialogFragment<F : MSDialogFragment<F, VM>, VM : MSFragmentView
         onStartObservingViewModel(viewModel)
     }
 
-    protected abstract fun onBuildDialog(f: MSDialogFragment<F, VM>, savedInstanceState: Bundle?): Dialog
+    protected abstract fun onBuildDialog(f: MSDialogFragment<VM>, savedInstanceState: Bundle?): Dialog
 
     /*
     Реализация должна выглядеть как-нибудь типа
@@ -100,8 +99,8 @@ abstract class MSDialogFragment<F : MSDialogFragment<F, VM>, VM : MSFragmentView
     }
 
     fun setTitle(fVM: MSFragmentViewModel) {
-        if (activity is MSActivity<*, *>) {
-            val activity = activity as MSActivity<*, *>
+        if (activity is MSActivity<*>) {
+            val activity = activity as MSActivity<*>
             val viewModel = activity.getViewModel()
             viewModel.apply {
                 title.value = fVM.title.value

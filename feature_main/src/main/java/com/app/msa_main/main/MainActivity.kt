@@ -1,26 +1,44 @@
 package com.app.msa_main.main
 
 import android.os.Bundle
+import androidx.annotation.IdRes
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.app.feature_masters.ui.MastersFragment
+import com.app.feature_schedule.ui.ScheduleFragment
+import com.app.feature_services.ui.ServicesFragment
 import com.app.msa.main.R
 import com.app.msa_main.di.DaggerMainFeatureComponent
-import com.app.msa_main.masters.MastersFragment
+import com.app.msa_nav_api.navigation.AppNavigator
 import com.app.mscorebase.di.ComponentDependenciesProvider
 import com.app.mscorebase.di.HasComponentDependencies
 import com.app.mscorebase.di.ViewModelProviderFactory
 import com.app.mscorebase.di.findComponentDependencies
 import com.app.mscorebase.ui.MSActivity
 import com.app.mscorebase.ui.MSActivityViewModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import javax.inject.Inject
 
-class MainActivity : MSActivity<MainActivity, MSActivityViewModel>(), HasComponentDependencies {
+class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies {
+
+    //Зависимсоти, которые будут запрашивать фрагменты
+    @Inject
+    override lateinit var dependencies: ComponentDependenciesProvider
+        protected set
 
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory
         protected set
     @Inject
-    override lateinit var dependencies: ComponentDependenciesProvider
-        protected set
+    lateinit var appNavigator: AppNavigator
+    @Inject
+    lateinit var mastersFragment: MastersFragment
+    @Inject
+    lateinit var servicesFragment: ServicesFragment
+    @Inject
+    lateinit var scheduleFragment: ScheduleFragment
+    lateinit var activeFragment: Fragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         DaggerMainFeatureComponent
@@ -30,11 +48,53 @@ class MainActivity : MSActivity<MainActivity, MSActivityViewModel>(), HasCompone
             .inject(this)
         super.onCreate(savedInstanceState)
 
-if (savedInstanceState == null) {
-    supportFragmentManager.beginTransaction()
-        .replace(R.id.container, MastersFragment.newInstance())
-        .commitNow()
-}
+        installFragments()
+        val navView: BottomNavigationView = findViewById(R.id.nav_view)
+        navView.setOnNavigationItemSelectedListener{ item ->
+            when (item.itemId){
+                R.id.navigation_masters -> {
+                    changeActiveFragment(mastersFragment)
+                    true
+                }
+                R.id.navigation_services -> {
+                    changeActiveFragment(servicesFragment)
+                    true
+                }
+                R.id.navigation_schedule -> {
+                    changeActiveFragment (scheduleFragment)
+                    true
+                }
+                else ->
+                    false
+            }
+        }
+        activeFragment = mastersFragment
+        navView.selectedItemId = R.id.navigation_masters
+    }
+
+    private fun installFragments() {
+        supportFragmentManager
+            .beginTransaction()
+            .add(R.id.container, scheduleFragment)
+            .hide(scheduleFragment)
+            .commit();
+        supportFragmentManager
+            .beginTransaction()
+            .add(R.id.container, servicesFragment)
+            .hide(servicesFragment)
+            .commit();
+        supportFragmentManager
+            .beginTransaction()
+            .add(R.id.container, mastersFragment)
+            .commit();
+    }
+
+    private fun changeActiveFragment(fragment: Fragment){
+        supportFragmentManager.beginTransaction()
+            .hide(activeFragment)
+            .show(fragment)
+            .commitNow()
+        activeFragment = fragment
     }
 
     override fun createViewModel(savedInstanceState: Bundle?): MSActivityViewModel {
@@ -42,8 +102,6 @@ if (savedInstanceState == null) {
     }
 
     override fun getLayoutId() = R.layout.main_activity
-
-    override fun getThis() = this
 
     override fun onStartObservingViewModel(viewModel: MSActivityViewModel) {
 

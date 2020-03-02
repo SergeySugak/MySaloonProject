@@ -24,7 +24,7 @@ import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenterImpl
 import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
 import com.google.android.material.navigation.NavigationView
 
-abstract class MSActivity<C : MSActivity<C, VM>, VM : MSViewModel> :
+abstract class MSActivity<VM : MSViewModel> :
     AppCompatActivity(), MSContext<VM>,
     ViewModelHolder<VM>,
     FragmentManager.OnBackStackChangedListener {
@@ -44,7 +44,6 @@ abstract class MSActivity<C : MSActivity<C, VM>, VM : MSViewModel> :
     @LayoutRes
     abstract fun getLayoutId(): Int
 
-    protected abstract fun getThis(): C
     private fun bind(savedInstanceState: Bundle?) {
         setContentView(getLayoutId())
         viewModel = createViewModel(savedInstanceState)
@@ -99,7 +98,7 @@ abstract class MSActivity<C : MSActivity<C, VM>, VM : MSViewModel> :
 
     override fun onBackStackChanged() {
         val currFrag = getCurrentFragment()
-        if (currFrag is MSFragment<*, *>) currFrag.onFragmentResume()
+        if (currFrag is MSFragment<*>) currFrag.onFragmentResume()
     }
 
     fun getCurrentFragment(): Fragment? {

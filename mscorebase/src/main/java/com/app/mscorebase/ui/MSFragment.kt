@@ -16,7 +16,7 @@ import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment.Compani
 import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment.Companion.showError
 import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment.Companion.showMessage
 
-abstract class MSFragment<F : MSFragment<F, VM>, VM : MSFragmentViewModel> :
+abstract class MSFragment<VM : MSFragmentViewModel> :
     Fragment(), MSContext<VM>, ViewModelHolder<VM>,
     DialogButtonClickListener, OnBackPressedListener {
     private val TAG = javaClass.simpleName
@@ -32,7 +32,6 @@ abstract class MSFragment<F : MSFragment<F, VM>, VM : MSFragmentViewModel> :
     @get:LayoutRes
     abstract val layoutId: Int
 
-    protected abstract fun getThis(): F
     abstract fun createViewModel(savedInstanceState: Bundle?): VM
 
     override fun getViewModel(): VM {
@@ -96,8 +95,8 @@ abstract class MSFragment<F : MSFragment<F, VM>, VM : MSFragmentViewModel> :
     }
 
     fun setTitle(fVM: MSFragmentViewModel) {
-        if (activity is MSActivity<*, *>) {
-            val activity = activity as MSActivity<*, *>
+        if (activity is MSActivity<*>) {
+            val activity = activity as MSActivity<*>
             val viewModel = activity.getViewModel()
             viewModel.apply {
                 title.value = fVM.title.value

@@ -46,14 +46,12 @@ android {
 
 def dagger_version = '2.26'
 dependencies {
-    implementation project(path: ':app', configuration: 'default')
-    api project(path: ':scopes', configuration: 'default')
-    api project(path: ':navigation_api', configuration: 'default')
-    implementation project(path: ':mscorebase', configuration: 'default')
-    implementation (project(configuration: 'default', path: ':repository_auth')){
-        exclude group: 'com.google.firebase'
-    }
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    api project(path:':mscorebase', configuration:'default')
+    api project(path:':navigation_api', configuration:'default')
+    api project(path:':scopes', configuration:'default')
+    implementation project(path:':repository_auth', configuration:'default')
+
     //jetbrains
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
@@ -76,7 +74,6 @@ dependencies {
     //google
     implementation 'com.google.android.material:material:1.1.0'
     compileOnly 'com.google.firebase:firebase-auth:19.2.0'
-    compileOnly 'com.google.firebase:firebase-database:19.2.1'
 
     //tests
     testImplementation 'junit:junit:4.13'

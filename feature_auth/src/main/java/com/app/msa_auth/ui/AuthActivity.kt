@@ -21,7 +21,7 @@ import com.app.mscorebase.di.ViewModelProviderFactory
 import com.app.mscorebase.di.findComponentDependencies
 import javax.inject.Inject
 
-class AuthActivity : MSActivity<AuthActivity, AuthActivityViewModel>() {
+class AuthActivity : MSActivity<AuthActivityViewModel>() {
 
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory
@@ -35,8 +35,6 @@ class AuthActivity : MSActivity<AuthActivity, AuthActivityViewModel>() {
 
 
     override fun getLayoutId() = R.layout.activity_auth
-
-    override fun getThis() = this
 
     override fun onCreate(savedInstanceState: Bundle?) {
         DaggerAuthComponent
