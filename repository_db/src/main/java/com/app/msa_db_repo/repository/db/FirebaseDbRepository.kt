@@ -7,10 +7,10 @@ import javax.inject.Inject
 @Suppress("BlockingMethodInNonBlockingContext")
 class FirebaseDbRepository
     @Inject constructor(private val firebaseDb: FirebaseDatabase): DbRepository {
-
-    private val db = firebaseDb.reference
-
     init{
         firebaseDb.setPersistenceEnabled(true);
     }
+    private val db = firebaseDb.reference
+
+
 }

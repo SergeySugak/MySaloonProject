@@ -7,6 +7,7 @@ import com.app.feature_masters.di.DaggerMastersFeatureComponent
 import com.app.mscorebase.di.ViewModelProviderFactory
 import com.app.mscorebase.di.findComponentDependencies
 import com.app.mscorebase.ui.MSFragment
+import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
 import javax.inject.Inject
 
 class MastersFragment : MSFragment<MastersViewModel>() {
@@ -32,6 +33,9 @@ class MastersFragment : MSFragment<MastersViewModel>() {
 
     override fun onStartObservingViewModel(viewModel: MastersViewModel) {
 
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
     }
 
     companion object {

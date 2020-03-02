@@ -6,8 +6,9 @@ import com.app.mscorebase.ui.MSFragmentViewModel
 import com.app.msa_db_repo.repository.db.DbRepository
 import javax.inject.Inject
 
-class ScheduleViewModel @Inject constructor(appState: AppState,
-                                            val dbRepository: DbRepository) : MSFragmentViewModel(appState) {
+class ScheduleViewModel
+    @Inject constructor(appState: AppState,
+                        val dbRepository: DbRepository) : MSFragmentViewModel(appState) {
     override fun restoreState(writer: StateWriter) {
 
     }

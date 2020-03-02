@@ -1,6 +1,9 @@
 package com.app.feature_services.ui
 
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 
@@ -10,14 +13,11 @@ import com.app.feature_services.models.ServicesAdapter
 import com.app.mscorebase.di.ViewModelProviderFactory
 import com.app.mscorebase.di.findComponentDependencies
 import com.app.mscorebase.ui.MSFragment
+import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
 import kotlinx.android.synthetic.main.services_fragment.*
 import javax.inject.Inject
 
 class ServicesFragment : MSFragment<ServicesViewModel>() {
-
-    companion object {
-        fun newInstance() = ServicesFragment()
-    }
 
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory
@@ -35,7 +35,12 @@ class ServicesFragment : MSFragment<ServicesViewModel>() {
             .build()
             .inject(this)
         super.onCreate(savedInstanceState)
-        services_list.adapter = servicesAdapter as RecyclerView.Adapter<*>
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val servicesList = view.findViewById<RecyclerView>(R.id.services_list)
+        servicesList.adapter = servicesAdapter as RecyclerView.Adapter<*>
     }
 
     override fun createViewModel(savedInstanceState: Bundle?): ServicesViewModel {
@@ -49,5 +54,13 @@ class ServicesFragment : MSFragment<ServicesViewModel>() {
 
     override fun onStartObservingViewModel(viewModel: ServicesViewModel) {
 
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+
+    }
+
+    companion object {
+        fun newInstance() = ServicesFragment()
     }
 }

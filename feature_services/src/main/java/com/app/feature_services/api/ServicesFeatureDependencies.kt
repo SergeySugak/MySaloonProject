@@ -6,5 +6,5 @@ import com.app.mscorebase.di.ComponentDependencies
 
 interface ServicesFeatureDependencies : ComponentDependencies {
     fun appState(): AppState
-    //fun dbRepository(): DbRepository
+    fun dbRepository(): DbRepository
 }

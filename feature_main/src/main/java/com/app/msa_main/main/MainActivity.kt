@@ -47,8 +47,11 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
             .build()
             .inject(this)
         super.onCreate(savedInstanceState)
+        //Предотвращаем Fragment already added
+        if (savedInstanceState == null) {
+            installFragments()
+        }
 
-        installFragments()
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
         navView.setOnNavigationItemSelectedListener{ item ->
             when (item.itemId){
