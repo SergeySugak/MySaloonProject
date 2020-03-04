@@ -2,6 +2,7 @@ package com.app.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.app.models.AuthManagerImpl
 import com.app.msa.repository.auth.FirebaseDbRepository
 import com.app.msa_auth.api.AuthFeatureDependencies
 import com.app.msa_db_repo.repository.db.DbRepository
@@ -9,6 +10,7 @@ import com.app.msa_main.api.MainFeatureDependencies
 import com.app.msa_nav_api.navigation.AppNavigator
 import com.app.msa_nav_impl.navigation_impl.AppNavigatorImpl
 import com.app.mscorebase.appstate.AppState
+import com.app.mscorebase.appstate.StateHolder
 import com.app.mscorebase.di.ComponentDependencies
 import com.app.mscorebase.di.ComponentDependenciesKey
 import com.google.gson.Gson
@@ -17,6 +19,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
+import main.java.com.app.mscorebase.auth.AuthManager
 import javax.inject.Singleton
 
 @Module
@@ -36,10 +39,10 @@ object AppModule {
 
     @Provides
     @Singleton
-    internal fun provideAppState(sharedPrefs: SharedPreferences, gson: Gson): AppState {
-        val appState = AppState(sharedPrefs, gson)
+    internal fun provideAppState(authManager: AuthManager, sharedPrefs: SharedPreferences, gson: Gson): AppState {
+        val appState = AppState(authManager, sharedPrefs, gson)
         //Тут добавляем StateManager-ы, которые существуют все время работы приложения
-        //например, appState.attachStateManager(authManager)
+        appState.attachStateManager(authManager as StateHolder) // authManager = AuthManagerImpl = StateHolder
         return appState
     }
 }
@@ -53,6 +56,10 @@ abstract class BindingsModule {
     @Binds
     @Singleton
     abstract fun dbRepository(repository: FirebaseDbRepository): DbRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindAuthManager(authManager: AuthManagerImpl): AuthManager
 }
 
 @Module

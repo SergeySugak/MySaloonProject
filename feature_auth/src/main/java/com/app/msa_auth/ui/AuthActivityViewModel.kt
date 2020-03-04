@@ -21,7 +21,7 @@ import java.util.*
 import javax.inject.Inject
 
 class AuthActivityViewModel
-    @Inject constructor(appState: AppState,
+    @Inject constructor(private val appState: AppState,
                         private val authRepository: AuthRepository,
                         private val authValidator: AuthValidator
     ): MSActivityViewModel(appState) {
@@ -42,6 +42,7 @@ class AuthActivityViewModel
             //Если вход выполнен успешно обновляем статус и фиксируем userId
             if (actionResult is Result.Success){
                 _loginResult.postValue(actionResult)
+                appState.authManager.logIn(username)
             }
             else {
                 //Проверяем зарегистрирован ли указанный email

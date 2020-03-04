@@ -7,8 +7,8 @@ import com.app.mscorebase.ui.MSFragmentViewModel
 import javax.inject.Inject
 
 class MastersViewModel
-    @Inject constructor(appState: AppState,
-                        val dbRepository: DbRepository) : MSFragmentViewModel(appState) {
+    @Inject constructor(private val appState: AppState,
+                        private val dbRepository: DbRepository) : MSFragmentViewModel(appState) {
 
     override fun restoreState(writer: StateWriter) {
 

@@ -7,8 +7,8 @@ import com.app.msa_db_repo.repository.db.DbRepository
 import javax.inject.Inject
 
 class ScheduleViewModel
-    @Inject constructor(appState: AppState,
-                        val dbRepository: DbRepository) : MSFragmentViewModel(appState) {
+    @Inject constructor(private val appState: AppState,
+                        private val dbRepository: DbRepository) : MSFragmentViewModel(appState) {
     override fun restoreState(writer: StateWriter) {
 
     }

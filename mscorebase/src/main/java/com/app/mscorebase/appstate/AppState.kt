@@ -8,9 +8,10 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import main.java.com.app.mscorebase.auth.AuthManager
 
-
-class AppState(private val appSharedPreferences: SharedPreferences,
+class AppState(val authManager: AuthManager,
+               private val appSharedPreferences: SharedPreferences,
                private val gson: Gson) : AppStateManager {
 
     private val stateManagers: MutableMap<String, StateHolder> =
@@ -72,11 +73,6 @@ class AppState(private val appSharedPreferences: SharedPreferences,
         for (sm in stateManagers.values) {
             sm.saveState(this)
         }
-    }
-
-    override fun logout() {
-//        authManager.logout();
-//        authManager.saveState(this);
     }
 
     companion object {

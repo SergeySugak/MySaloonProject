@@ -10,8 +10,8 @@ import com.app.mscorebase.ui.MSFragmentViewModel
 import javax.inject.Inject
 
 class ServicesViewModel
-    @Inject constructor(appState: AppState,
-                        val dbRepository: DbRepository) : MSFragmentViewModel(appState) {
+    @Inject constructor(private val appState: AppState,
+                        private val dbRepository: DbRepository) : MSFragmentViewModel(appState) {
 
     private val _services = StatefulMutableLiveData<List<SaloonService>>()
     val services: StatefulLiveData<List<SaloonService>> = _services

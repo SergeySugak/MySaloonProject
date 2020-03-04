@@ -77,6 +77,6 @@ abstract class MSViewModel (private val appState: AppState) : ViewModel(), State
     fun onDestroy() {}
 
     fun logout() {
-        appState.logout()
+        appState.authManager.logOut()
     }
 }

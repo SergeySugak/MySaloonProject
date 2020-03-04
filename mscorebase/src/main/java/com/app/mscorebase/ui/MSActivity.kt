@@ -169,7 +169,8 @@ abstract class MSActivity<VM : MSViewModel> :
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @CallSuper
-    protected open fun setupActionBar() { // Show the Up button in the action bar.
+    protected open fun setupActionBar() {
+        // Show the Up button in the action bar.
         val actionBar = supportActionBar
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true)

@@ -1,8 +1,7 @@
 package com.app.msa_main.main
 
 import android.os.Bundle
-import androidx.annotation.IdRes
-import androidx.appcompat.app.AppCompatActivity
+import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.app.feature_masters.ui.MastersFragment
@@ -73,6 +72,7 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
         }
         activeFragment = mastersFragment
         navView.selectedItemId = R.id.navigation_masters
+        setupActionBar()
     }
 
     private fun installFragments() {
@@ -109,4 +109,21 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
     override fun onStartObservingViewModel(viewModel: MSActivityViewModel) {
 
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onBackPressed() {
+        getViewModel().logout()
+        appNavigator.navigateToAuthActivity(this)
+        finish()
+    }
+
 }
