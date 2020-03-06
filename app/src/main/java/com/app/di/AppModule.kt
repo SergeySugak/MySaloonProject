@@ -3,9 +3,9 @@ package com.app.di
 import android.content.Context
 import android.content.SharedPreferences
 import com.app.models.AuthManagerImpl
-import com.app.msa.repository.auth.FirebaseDbRepository
 import com.app.msa_auth.api.AuthFeatureDependencies
 import com.app.msa_db_repo.repository.db.DbRepository
+import com.app.msa_db_repo.repository.db.FirebaseDbRepository
 import com.app.msa_main.api.MainFeatureDependencies
 import com.app.msa_nav_api.navigation.AppNavigator
 import com.app.msa_nav_impl.navigation_impl.AppNavigatorImpl
@@ -39,8 +39,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    internal fun provideAppState(authManager: AuthManager, sharedPrefs: SharedPreferences, gson: Gson): AppState {
-        val appState = AppState(authManager, sharedPrefs, gson)
+    internal fun provideAppState(context: Context, authManager: AuthManager, sharedPrefs: SharedPreferences, gson: Gson): AppState {
+        val appState = AppState(context, authManager, sharedPrefs, gson)
         //Тут добавляем StateManager-ы, которые существуют все время работы приложения
         appState.attachStateManager(authManager as StateHolder) // authManager = AuthManagerImpl = StateHolder
         return appState

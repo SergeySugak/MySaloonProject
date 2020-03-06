@@ -51,6 +51,7 @@ def coroutines_version = '1.3.3'
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     api project(path: ':mscorebase', configuration: 'default')
+    api project(path: ':mscoremodels', configuration: 'default')
     api project(path: ':scopes', configuration: 'default')
 
     //jetbrains

@@ -49,6 +49,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     api project(path: ':mscorebase', configuration: 'default')
     api project(path: ':scopes', configuration: 'default')
+    api project(path: ':navigation_api', configuration: 'default')
+    api project(path:':mscoremodels', configuration:'default')
     implementation project(path:':repository_db', configuration:'default')
 
     //jetbrains

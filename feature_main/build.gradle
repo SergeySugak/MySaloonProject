@@ -52,6 +52,7 @@ dependencies {
     api project(path: ':navigation_api', configuration: 'default')
     implementation project(path: ':feature_masters', configuration: 'default')
     implementation project(path: ':feature_services', configuration: 'default')
+    implementation project(path: ':feature_newservice', configuration:'default')
     implementation project(path: ':feature_schedule', configuration: 'default')
     implementation project(path:':repository_db', configuration:'default')
 

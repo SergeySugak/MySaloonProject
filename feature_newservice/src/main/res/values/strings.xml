@@ -1,0 +1,7 @@
+<resources>
+    <string name="title_fragment_new_service">Новая услуга</string>
+    <string name="title_fragment_edit_service">Редактирование услуги</string>
+    <string name="str_service_name">Название услуги</string>
+    <string name="str_service_duration">Продолжительность в минутах</string>
+    <string name="str_service_description">Подробное описание услуги</string>
+</resources>

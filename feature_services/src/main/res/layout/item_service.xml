@@ -25,7 +25,6 @@
                 fresco:actualImageScaleType="focusCrop"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:actualImageResource="@drawable/ic_camera"
                 />
 
         <TextView

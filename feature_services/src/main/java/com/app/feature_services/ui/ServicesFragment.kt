@@ -1,20 +1,17 @@
 package com.app.feature_services.ui
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
-
 import com.app.feature_services.R
 import com.app.feature_services.di.DaggerServicesFeatureComponent
 import com.app.feature_services.models.ServicesAdapter
+import com.app.msa_nav_api.navigation.AppNavigator
 import com.app.mscorebase.di.ViewModelProviderFactory
 import com.app.mscorebase.di.findComponentDependencies
 import com.app.mscorebase.ui.MSFragment
-import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
-import kotlinx.android.synthetic.main.services_fragment.*
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import javax.inject.Inject
 
 class ServicesFragment : MSFragment<ServicesViewModel>() {
@@ -24,7 +21,12 @@ class ServicesFragment : MSFragment<ServicesViewModel>() {
         protected set
 
     @Inject
+    lateinit var appNavigator: AppNavigator
+        protected set
+
+    @Inject
     lateinit var servicesAdapter: ServicesAdapter
+        protected set
 
     override val layoutId = R.layout.services_fragment
 

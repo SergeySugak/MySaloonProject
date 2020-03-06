@@ -15,9 +15,11 @@
             <option value="$PROJECT_DIR$/feature_auth" />
             <option value="$PROJECT_DIR$/feature_main" />
             <option value="$PROJECT_DIR$/feature_masters" />
+            <option value="$PROJECT_DIR$/feature_newservice" />
             <option value="$PROJECT_DIR$/feature_schedule" />
             <option value="$PROJECT_DIR$/feature_services" />
             <option value="$PROJECT_DIR$/mscorebase" />
+            <option value="$PROJECT_DIR$/mscoremodels" />
             <option value="$PROJECT_DIR$/navigation_api" />
             <option value="$PROJECT_DIR$/navigation_impl" />
             <option value="$PROJECT_DIR$/repository_auth" />

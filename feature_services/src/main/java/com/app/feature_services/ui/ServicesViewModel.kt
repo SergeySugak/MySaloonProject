@@ -1,6 +1,6 @@
 package com.app.feature_services.ui
 
-import com.app.feature_services.models.SaloonService
+import com.app.mscoremodels.services.SaloonService
 import com.app.msa_db_repo.repository.db.DbRepository
 import com.app.mscorebase.appstate.AppState
 import com.app.mscorebase.appstate.StateWriter
@@ -13,8 +13,8 @@ class ServicesViewModel
     @Inject constructor(private val appState: AppState,
                         private val dbRepository: DbRepository) : MSFragmentViewModel(appState) {
 
-    private val _services = StatefulMutableLiveData<List<SaloonService>>()
-    val services: StatefulLiveData<List<SaloonService>> = _services
+    private val _services = StatefulMutableLiveData<List<com.app.mscoremodels.services.SaloonService>>()
+    val services: StatefulLiveData<List<com.app.mscoremodels.services.SaloonService>> = _services
 
     override fun restoreState(writer: StateWriter) {
 

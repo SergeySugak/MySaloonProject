@@ -16,10 +16,19 @@ import com.app.mscorebase.di.ViewModelProviderFactory
 import com.app.mscorebase.di.findComponentDependencies
 import com.app.mscorebase.ui.MSActivity
 import com.app.mscorebase.ui.MSActivityViewModel
+import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import javax.inject.Inject
 
 class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies {
+
+    private val injector: DaggerMainFeatureComponent by lazy {
+        DaggerMainFeatureComponent
+        .builder()
+        .mainFeatureDependencies(findComponentDependencies())
+        .build() as DaggerMainFeatureComponent //Без as DaggerMainFeatureComponent - орет
+    }
 
     //Зависимсоти, которые будут запрашивать фрагменты
     @Inject
@@ -37,14 +46,11 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
     lateinit var servicesFragment: ServicesFragment
     @Inject
     lateinit var scheduleFragment: ScheduleFragment
-    lateinit var activeFragment: Fragment
+    private lateinit var activeFragment: Fragment
+    private val fab: FloatingActionButton by lazy {findViewById<FloatingActionButton>(R.id.fab)}
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        DaggerMainFeatureComponent
-            .builder()
-            .mainFeatureDependencies(findComponentDependencies())
-            .build()
-            .inject(this)
+        injector.inject(this)
         super.onCreate(savedInstanceState)
         //Предотвращаем Fragment already added
         if (savedInstanceState == null) {
@@ -54,23 +60,13 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
         navView.setOnNavigationItemSelectedListener{ item ->
             when (item.itemId){
-                R.id.navigation_masters -> {
-                    changeActiveFragment(mastersFragment)
-                    true
-                }
-                R.id.navigation_services -> {
-                    changeActiveFragment(servicesFragment)
-                    true
-                }
-                R.id.navigation_schedule -> {
-                    changeActiveFragment (scheduleFragment)
-                    true
-                }
-                else ->
-                    false
+                R.id.navigation_masters  -> changeActiveFragment(mastersFragment)
+                R.id.navigation_services -> changeActiveFragment(servicesFragment)
+                R.id.navigation_schedule ->  changeActiveFragment (scheduleFragment)
+                else -> false
             }
         }
-        activeFragment = mastersFragment
+        changeActiveFragment(mastersFragment)
         navView.selectedItemId = R.id.navigation_masters
         setupActionBar()
     }
@@ -92,12 +88,49 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
             .commit();
     }
 
-    private fun changeActiveFragment(fragment: Fragment){
-        supportFragmentManager.beginTransaction()
-            .hide(activeFragment)
-            .show(fragment)
-            .commitNow()
-        activeFragment = fragment
+    private fun changeActiveFragment(fragment: Fragment): Boolean{
+        return try {
+            val tran = supportFragmentManager.beginTransaction()
+            if (::activeFragment.isInitialized) {
+                tran.hide(activeFragment)
+            }
+            tran.show(fragment).commitNow()
+            activeFragment = fragment
+            setFabBehaviour()
+            true
+        }
+        catch (ex: Exception) {
+            MessageDialogFragment.showError(this, ex)
+            false
+        }
+    }
+
+    private fun setFabBehaviour() {
+        if (activeFragment != servicesFragment){
+
+        }
+        fab.setOnClickListener {
+            when (activeFragment){
+                mastersFragment -> mastersFragmentFabAction()
+                servicesFragment -> servicesFragmentFabAction()
+                scheduleFragment -> scheduleFragmentFabAction()
+            }
+        }
+    }
+
+
+    private fun mastersFragmentFabAction() {
+
+    }
+
+    private fun servicesFragmentFabAction() {
+        val newServiceFragment = injector.newServiceFragment()
+        newServiceFragment.setTargetFragment(servicesFragment, REQ_NEW_SERVICE)
+        showDialogFragment(newServiceFragment, NEW_SERVICE_FRAGMENT_TAG)
+    }
+
+    private fun scheduleFragmentFabAction() {
+
     }
 
     override fun createViewModel(savedInstanceState: Bundle?): MSActivityViewModel {
@@ -126,4 +159,8 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
         finish()
     }
 
+    companion object {
+        const val REQ_NEW_SERVICE = 10001
+        const val NEW_SERVICE_FRAGMENT_TAG = "NewServiceDialogFragment"
+    }
 }

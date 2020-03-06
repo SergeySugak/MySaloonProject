@@ -53,6 +53,7 @@ dependencies {
     implementation project(path: ':feature_auth', configuration: 'default')
     implementation project(path: ':feature_main', configuration: 'default')
 
+    //jetbrains
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     //dagger

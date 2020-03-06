@@ -33,7 +33,6 @@ class AuthActivity : MSActivity<AuthActivityViewModel>() {
     val login: Button by lazy { findViewById<Button>(R.id.login) }
     val loading: ProgressBar by lazy { findViewById<ProgressBar>(R.id.loading) }
 
-
     override fun getLayoutId() = R.layout.activity_auth
 
     override fun onCreate(savedInstanceState: Bundle?) {

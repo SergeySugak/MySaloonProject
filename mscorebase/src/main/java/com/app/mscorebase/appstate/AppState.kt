@@ -1,6 +1,7 @@
 package com.app.mscorebase.appstate
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.SharedPreferences
 import android.text.TextUtils
 import android.util.Log
@@ -10,7 +11,8 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import main.java.com.app.mscorebase.auth.AuthManager
 
-class AppState(val authManager: AuthManager,
+class AppState(val context: Context, //Application context
+               val authManager: AuthManager,
                private val appSharedPreferences: SharedPreferences,
                private val gson: Gson) : AppStateManager {
 

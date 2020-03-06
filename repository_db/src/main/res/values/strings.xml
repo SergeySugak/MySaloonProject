@@ -1,3 +1,73 @@
 <resources>
     <string name="app_name">repository</string>
+
+    <string-array name="service_duration_names">
+        <item name="min_15">15 мин</item>
+        <item name="min_30">30 мин</item>
+        <item name="min_45">45 мин</item>
+        <item name="min_1_0">1 час</item>
+        <item name="min_1_15">1 час 15 мин</item>
+        <item name="min_1_30">1 час 30 мин</item>
+        <item name="min_1_45">1 час 45 мин</item>
+        <item name="min_2_0">2 часа</item>
+        <item name="min_2_15">2 часа 15 мин</item>
+        <item name="min_2_30">2 часа 30 мин</item>
+        <item name="min_2_45">2 часа 45 мин</item>
+        <item name="min_3_0">3 часа</item>
+        <item name="min_3_15">3 часа 15 мин</item>
+        <item name="min_3_30">3 часа 30 мин</item>
+        <item name="min_3_45">3 часа 45 мин</item>
+        <item name="min_4_0">4 часа</item>
+        <item name="min_4_15">4 часа 15 мин</item>
+        <item name="min_4_30">4 часа 30 мин</item>
+        <item name="min_4_45">4 часа 45 мин</item>
+        <item name="min_5_0">5 часов</item>
+        <item name="min_5_15">5 часов 15 мин</item>
+        <item name="min_5_30">5 часов 30 мин</item>
+        <item name="min_5_45">5 часов 45 мин</item>
+        <item name="min_6_0">6 часов</item>
+        <item name="min_6_15">6 часов 15 мин</item>
+        <item name="min_6_30">6 часов 30 мин</item>
+        <item name="min_6_45">6 часов 45 мин</item>
+        <item name="min_7_0">7 часов</item>
+        <item name="min_7_15">7 часов 15 мин</item>
+        <item name="min_7_30">7 часов 30 мин</item>
+        <item name="min_7_45">7 часов 45 мин</item>
+        <item name="min_8_0">8 часов </item>
+    </string-array>
+
+    <integer-array name="service_durations">
+        <item name="min_15">15</item>
+        <item name="min_30">30</item>
+        <item name="min_45">45</item>
+        <item name="min_1_0">60</item>
+        <item name="min_1_15">75</item>
+        <item name="min_1_30">90</item>
+        <item name="min_1_45">105</item>
+        <item name="min_2_0">120</item>
+        <item name="min_2_15">135</item>
+        <item name="min_2_30">150</item>
+        <item name="min_2_45">165</item>
+        <item name="min_3_0">180</item>
+        <item name="min_3_15">195</item>
+        <item name="min_3_30">210</item>
+        <item name="min_3_45">225</item>
+        <item name="min_4_0">240</item>
+        <item name="min_4_15">255</item>
+        <item name="min_4_30">270</item>
+        <item name="min_4_45">285</item>
+        <item name="min_5_0">300</item>
+        <item name="min_5_15">315</item>
+        <item name="min_5_30">330</item>
+        <item name="min_5_45">345</item>
+        <item name="min_6_0">360</item>
+        <item name="min_6_15">375</item>
+        <item name="min_6_30">390</item>
+        <item name="min_6_45">405</item>
+        <item name="min_7_0">420</item>
+        <item name="min_7_15">435</item>
+        <item name="min_7_30">450</item>
+        <item name="min_7_45">465</item>
+        <item name="min_8_0">480 </item>
+    </integer-array>
 </resources>
