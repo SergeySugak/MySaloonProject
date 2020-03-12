@@ -53,7 +53,7 @@ abstract class MSDialogFragment<VM : MSFragmentViewModel> :
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = onBuildDialog(this, savedInstanceState)
+        val dialog = onBuildDialog(savedInstanceState)
         dialog.setCancelable(false)
         dialog.setCanceledOnTouchOutside(false)
         return dialog
@@ -68,7 +68,7 @@ abstract class MSDialogFragment<VM : MSFragmentViewModel> :
         onStartObservingViewModel(viewModel)
     }
 
-    protected abstract fun onBuildDialog(f: MSDialogFragment<VM>, savedInstanceState: Bundle?): Dialog
+    protected abstract fun onBuildDialog(savedInstanceState: Bundle?): Dialog
 
     /*
     Реализация должна выглядеть как-нибудь типа

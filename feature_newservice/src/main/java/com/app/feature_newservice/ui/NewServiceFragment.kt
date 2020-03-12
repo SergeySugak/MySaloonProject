@@ -41,8 +41,7 @@ class NewServiceFragment : MSDialogFragment<NewServiceViewModel>() {
         super.onCreate(savedInstanceState)
     }
 
-    override fun onBuildDialog(f: MSDialogFragment<NewServiceViewModel>,
-                               savedInstanceState: Bundle?): Dialog {
+    override fun onBuildDialog(savedInstanceState: Bundle?): Dialog {
         val inflater = activity!!.layoutInflater
         val view = inflater.inflate(layoutId, null)
         val builder = AlertDialog.Builder(activity!!)
