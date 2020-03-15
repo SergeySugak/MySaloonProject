@@ -7,8 +7,8 @@ import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.RecyclerView
 
 
-abstract class SingleChoiceAdapter<T> constructor(@LayoutRes val layoutResID: Int):
-    RecyclerView.Adapter<SingleChoiceAdapter.SingleChoiceAdapterViewHolder>() {
+abstract class RecyclerSingleChoiceAdapter<T> constructor(@LayoutRes val layoutResID: Int):
+    RecyclerView.Adapter<RecyclerSingleChoiceAdapter.SingleChoiceAdapterViewHolder>() {
     private val items = mutableListOf<T>()
     var checkedPosition = 0
         private set

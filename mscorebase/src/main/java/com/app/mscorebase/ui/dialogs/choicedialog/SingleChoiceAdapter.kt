@@ -10,7 +10,7 @@ import com.app.mscorebase.R
 import java.io.Serializable
 import java.util.*
 
-class SingleChoiceAdapter<C : ChoiceItem<out Serializable>> internal constructor() :
+open class SingleChoiceAdapter<C : ChoiceItem<out Serializable>>() :
     BaseAdapter() {
     private var items: List<C> = ArrayList()
     private val enabledTypedValue: TypedValue? = TypedValue()
@@ -33,7 +33,7 @@ class SingleChoiceAdapter<C : ChoiceItem<out Serializable>> internal constructor
     }
 
     override fun isEnabled(position: Int): Boolean {
-        return items[position]!!.isEnabled
+        return items[position].isEnabled
     }
 
     override fun getView(

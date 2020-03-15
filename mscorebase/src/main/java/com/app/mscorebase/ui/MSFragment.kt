@@ -34,8 +34,8 @@ abstract class MSFragment<VM : MSFragmentViewModel> :
 
     abstract fun createViewModel(savedInstanceState: Bundle?): VM
 
-    override fun getViewModel(): VM {
-        return viewModel
+    override fun getViewModel(): VM? {
+        return if (::viewModel.isInitialized) viewModel else null
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,7 +58,7 @@ abstract class MSFragment<VM : MSFragmentViewModel> :
 
     override fun onResume() {
         super.onResume()
-        viewModel.let { onStartObservingViewModel(it) }
+        onStartObservingViewModel(viewModel)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -98,7 +98,7 @@ abstract class MSFragment<VM : MSFragmentViewModel> :
         if (activity is MSActivity<*>) {
             val activity = activity as MSActivity<*>
             val viewModel = activity.getViewModel()
-            viewModel.apply {
+            viewModel?.apply {
                 _title.value = fVM.title.value
                 _subtitle.value = fVM.subtitle.value
             }
@@ -142,8 +142,8 @@ abstract class MSFragment<VM : MSFragmentViewModel> :
         tag: String?
     ) {
         newFragment!!.setTargetFragment(this, 0)
-        val fm = fragmentManager
-        val ft = fm!!.beginTransaction()
+        val fm = parentFragmentManager
+        val ft = fm.beginTransaction()
         val prev = fm.findFragmentByTag(tag)
         if (prev != null) {
             ft.remove(prev)

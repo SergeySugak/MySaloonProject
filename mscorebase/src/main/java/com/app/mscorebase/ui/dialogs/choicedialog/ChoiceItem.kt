@@ -5,7 +5,7 @@ import android.os.Parcelable
 import com.app.mscorebase.common.IdNameEntity
 import java.io.Serializable
 
-class ChoiceItem<T : Serializable?>(override var id: T?, override var name: String?) : IdNameEntity<T>, Parcelable {
+open class ChoiceItem<T : Serializable?>(override var id: T?, override var name: String?) : IdNameEntity<T>, Parcelable {
 
     override val idName: String
         get() = id?.toString() + " - " + name

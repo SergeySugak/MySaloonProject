@@ -33,8 +33,8 @@ abstract class MSDialogFragment<VM : MSFragmentViewModel> :
 
     abstract fun createViewModel(savedInstanceState: Bundle?): VM
 
-    override fun getViewModel(): VM {
-        return viewModel
+    override fun getViewModel(): VM? {
+        return if (::viewModel.isInitialized) viewModel else null
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -102,7 +102,7 @@ abstract class MSDialogFragment<VM : MSFragmentViewModel> :
         if (activity is MSActivity<*>) {
             val activity = activity as MSActivity<*>
             val viewModel = activity.getViewModel()
-            viewModel.apply {
+            viewModel?.apply {
                 _title.value = fVM.title.value
                 _subtitle.value = fVM.subtitle.value
             }
@@ -143,7 +143,7 @@ abstract class MSDialogFragment<VM : MSFragmentViewModel> :
         tag: String?
     ) {
         newFragment!!.setTargetFragment(this, 0)
-        val fm = fragmentManager
+        val fm = parentFragmentManager
         if (fm != null) {
             val ft = fm.beginTransaction()
             val prev = fm.findFragmentByTag(tag)

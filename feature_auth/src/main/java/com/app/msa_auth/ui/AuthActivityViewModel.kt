@@ -1,7 +1,6 @@
 package com.app.msa_auth.ui
 
 import android.content.Context
-import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -13,7 +12,6 @@ import com.app.mscorebase.appstate.AppState
 import com.app.mscorebase.appstate.StateWriter
 import com.app.mscorebase.common.Result
 import com.app.mscorebase.ui.MSActivityViewModel
-import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
 import com.app.mscorebase.utils.isOnline
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -103,7 +101,7 @@ class AuthActivityViewModel
                 login(username, password)
             }
             else {
-                intNoInternetConnectionError.value = R.string.err_no_internet
+                _noInternetConnectionError.value = R.string.err_no_internet
             }
         }
     }

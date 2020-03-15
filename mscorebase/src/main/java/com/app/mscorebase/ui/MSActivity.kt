@@ -82,8 +82,8 @@ abstract class MSActivity<VM : MSViewModel> :
         onStartObservingViewModel(viewModel)
     }
 
-    override fun getViewModel(): VM {
-        return viewModel
+    override fun getViewModel(): VM? {
+        return if (::viewModel.isInitialized) viewModel else null
     }
 
     @MenuRes

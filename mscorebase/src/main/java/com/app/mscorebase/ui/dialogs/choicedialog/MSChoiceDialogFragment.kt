@@ -14,20 +14,18 @@ abstract class MSChoiceDialogFragment<C : ChoiceItem<out Serializable>, VM : MSC
     MSDialogFragment<VM>(), DialogInterface.OnClickListener,
     OnMultiChoiceClickListener {
     private lateinit var dialog: AlertDialog
-    private var resultListener: OnChoiceItemsSelectedListener<C, out Parcelable>? = null
-    fun setResultListener(resultListener: OnChoiceItemsSelectedListener<C, out Parcelable>) {
+    private var resultListener: OnChoiceItemsSelectedListener<C, out Parcelable?>? = null
+    fun setResultListener(resultListener: OnChoiceItemsSelectedListener<C, out Parcelable?>) {
         this.resultListener = resultListener
-        if (getViewModel() != null) {
-            getViewModel().resultListener = resultListener
-        }
+        getViewModel()?.resultListener = resultListener
     }
 
     override val layoutId: Int
         get() = 0
 
     override fun onViewModelCreated(viewModel: VM, savedInstanceState: Bundle?) {
-        viewModel.choiceMode = if (arguments != null) arguments!!.getSerializable(ARGUMENT_MODE) as ChoiceItem.ChoiceMode
-                                else ChoiceItem.ChoiceMode.cmSingle
+        val choiceMode = arguments?.getSerializable(ARGUMENT_MODE) as ChoiceItem.ChoiceMode?
+        viewModel.choiceMode = choiceMode ?: ChoiceItem.ChoiceMode.cmSingle
         viewModel.setChoices(if (arguments != null && arguments!!.getParcelableArrayList<C>(ARGUMENT_CHOICES) != null)
                                 arguments!!.getParcelableArrayList<C>(ARGUMENT_CHOICES)!!
                             else emptyList())
@@ -40,16 +38,16 @@ abstract class MSChoiceDialogFragment<C : ChoiceItem<out Serializable>, VM : MSC
         if (arguments != null) {
             builder.setTitle(arguments!!.getString(ARGUMENT_TITLE))
         }
-        if (getViewModel().choiceMode === ChoiceItem.ChoiceMode.cmSingle) {
+        if (getViewModel()?.choiceMode === ChoiceItem.ChoiceMode.cmSingle) {
             builder.setSingleChoiceItems(
-                getViewModel().adapter,
-                getViewModel().selectedPosition,
+                getViewModel()?.adapter,
+                getViewModel()?.selectedPosition ?: -1,
                 this
             )
         } else {
             builder.setMultiChoiceItems(
-                getViewModel().choicesArray,
-                getViewModel().multiSelectedPositions,
+                getViewModel()?.choicesArray,
+                getViewModel()?.multiSelectedPositions,
                 this
             )
         }
@@ -59,8 +57,12 @@ abstract class MSChoiceDialogFragment<C : ChoiceItem<out Serializable>, VM : MSC
         dialog.setCancelable(false)
         dialog.setCanceledOnTouchOutside(false)
         dialog.setOnShowListener { d: DialogInterface ->
+            val vm = getViewModel()
             (d as AlertDialog).getButton(DialogInterface.BUTTON_POSITIVE).isEnabled =
-                if (getViewModel().choiceMode === ChoiceItem.ChoiceMode.cmSingle) getViewModel().selectedPosition >= 0 else getViewModel().multiSelectedPositions.isNotEmpty()
+                if (vm != null && vm.choiceMode == ChoiceItem.ChoiceMode.cmSingle)
+                    vm.selectedPosition >= 0
+                else
+                    vm?.multiSelectedPositions?.isNotEmpty() ?: false
             onShow(d)
         }
         return dialog
@@ -71,7 +73,7 @@ abstract class MSChoiceDialogFragment<C : ChoiceItem<out Serializable>, VM : MSC
     }
 
     private fun onShow(dialog: AlertDialog) {
-        if (getViewModel().visibleItems.size == 1) {
+        if (getViewModel()?.visibleItems?.size == 1) {
             selectSingleItem()
         }
     }
@@ -85,26 +87,28 @@ abstract class MSChoiceDialogFragment<C : ChoiceItem<out Serializable>, VM : MSC
 
     @Suppress("UNCHECKED_CAST")
     override fun onClick(dialog: DialogInterface, which: Int) {
+        val vm = getViewModel()
+        if (vm != null)
         when (which) {
             DialogInterface.BUTTON_POSITIVE -> {
                 if (arguments != null) {
-                    if (getViewModel().resultListener != null) {
-                        getViewModel().resultListener?.onChoiceItemsSelected(
-                            if (getViewModel().choiceMode === ChoiceItem.ChoiceMode.cmSingle) getViewModel().selectedItem else getViewModel().multiSelections,
+                    if (vm.resultListener != null) {
+                        vm.resultListener?.onChoiceItemsSelected(
+                            if (vm.choiceMode === ChoiceItem.ChoiceMode.cmSingle) vm.selectedItem else vm.multiSelections,
                             arguments!!.getParcelable(ARGUMENT_PAYLOAD)
                         )
                     } else {
                         if (targetFragment is OnChoiceItemsSelectedListener<*, *>) {
                             (targetFragment as OnChoiceItemsSelectedListener<C, Parcelable>)
                                 .onChoiceItemsSelected(
-                                    if (getViewModel().choiceMode === ChoiceItem.ChoiceMode.cmSingle) getViewModel().selectedItem else getViewModel().multiSelections,
+                                    if (vm.choiceMode === ChoiceItem.ChoiceMode.cmSingle) vm.selectedItem else vm.multiSelections,
                                     arguments?.getParcelable<Parcelable>(ARGUMENT_PAYLOAD)
                                 )
                         } else {
                             if (activity is OnChoiceItemsSelectedListener<*, *>) {
                                 (activity as OnChoiceItemsSelectedListener<C, Parcelable>)
                                     .onChoiceItemsSelected(
-                                        if (getViewModel().choiceMode === ChoiceItem.ChoiceMode.cmSingle) getViewModel().selectedItem else getViewModel().multiSelections,
+                                        if (vm.choiceMode === ChoiceItem.ChoiceMode.cmSingle) vm.selectedItem else vm.multiSelections,
                                         arguments!!.getParcelable<Parcelable>(ARGUMENT_PAYLOAD)
                                     )
                             }
@@ -115,8 +119,8 @@ abstract class MSChoiceDialogFragment<C : ChoiceItem<out Serializable>, VM : MSC
             }
             DialogInterface.BUTTON_NEGATIVE, DialogInterface.BUTTON_NEUTRAL -> {
                 if (arguments != null) {
-                    if (getViewModel().resultListener != null) {
-                        getViewModel().resultListener?.onNoItemSelected(arguments!!.getParcelable(ARGUMENT_PAYLOAD) )
+                    if (vm.resultListener != null) {
+                        vm.resultListener?.onNoItemSelected(arguments!!.getParcelable(ARGUMENT_PAYLOAD) )
                     } else {
                         if (targetFragment is OnChoiceItemsSelectedListener<*, *>) {
                             (targetFragment as OnChoiceItemsSelectedListener<C, Parcelable>)
@@ -137,15 +141,13 @@ abstract class MSChoiceDialogFragment<C : ChoiceItem<out Serializable>, VM : MSC
             }
             else -> if (dialog is AlertDialog) {
                 dialog.getButton(DialogInterface.BUTTON_POSITIVE).isEnabled = which >= 0
-                getViewModel().selectedPosition = which
+                vm.selectedPosition = which
             }
         }
     }
 
     override fun dismiss() {
-        if (getViewModel() != null) {
-            getViewModel().clearInstanceState()
-        }
+        getViewModel()?.clearInstanceState()
         super.dismiss()
     }
 
@@ -154,7 +156,7 @@ abstract class MSChoiceDialogFragment<C : ChoiceItem<out Serializable>, VM : MSC
         which: Int,
         isChecked: Boolean
     ) {
-        getViewModel().setSelected(which, isChecked)
+        getViewModel()?.setSelected(which, isChecked)
     }
 
     companion object {

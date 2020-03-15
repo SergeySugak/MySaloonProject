@@ -4,18 +4,18 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
-import android.widget.CheckedTextView
+import android.os.Parcelable
+import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.app.feature_newservice.R
 import com.app.feature_newservice.di.DaggerNewServiceFeatureComponent
 import com.app.mscorebase.di.ViewModelProviderFactory
 import com.app.mscorebase.di.findComponentDependencies
 import com.app.mscorebase.ui.MSDialogFragment
-import com.app.mscorebase.ui.dialogs.SingleChoiceAdapter
+import com.app.mscorebase.ui.dialogs.choicedialog.OnChoiceItemsSelectedListener
+import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
 import com.app.mscoremodels.services.ServiceDuration
 import javax.inject.Inject
 
@@ -24,13 +24,7 @@ class NewServiceFragment : MSDialogFragment<NewServiceViewModel>() {
     lateinit var providerFactory: ViewModelProviderFactory
         protected set
 
-    @Inject
-    lateinit var serviceDurationsAdapter: SingleChoiceAdapter<ServiceDuration>
-        protected set
-
     override val layoutId = R.layout.fragment_new_service
-
-    private lateinit var recyclerView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         DaggerNewServiceFeatureComponent
@@ -47,26 +41,41 @@ class NewServiceFragment : MSDialogFragment<NewServiceViewModel>() {
         val builder = AlertDialog.Builder(activity!!)
         builder.setView(view)
             .setTitle(R.string.title_fragment_edit_service)
-            .setPositiveButton(getString(R.string.ok)) { _, _ ->
-                val intent = Intent()
-                //intent.putExtra(TAG_WEIGHT_SELECTED, mNpWeight.getValue())
-                targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
-            }
-        recyclerView = view.findViewById(R.id.service_descriptions)
-        setupRecyclerView(recyclerView)
+            .setPositiveButton(getString(R.string.ok)) { _, _ -> }
+        val serviceDuration = view.findViewById<EditText>(R.id.service_duration)
+        serviceDuration.setOnClickListener{
+            val fragment = ServiceDurationSelectionDialog.newInstance(getString(R.string.str_service_duration),
+                null,
+                object: OnChoiceItemsSelectedListener<ServiceDuration, Parcelable?>{
+                    override fun onChoiceItemsSelected(item: List<ServiceDuration>, payload: Parcelable?){
+                        getViewModel()?.serviceDuration = item[0]
+                        serviceDuration.setText(item[0].description)
+                    }
+                    override fun onNoItemSelected(payload: Parcelable?) {}
+                })
+            showDialogFragment(fragment, "")
+        }
         return builder.create()
     }
 
-    private fun setupRecyclerView(recyclerView: RecyclerView) {
-        recyclerView.layoutManager = LinearLayoutManager(activity)
-        serviceDurationsAdapter.setViewBinder { view, position ->
-            val nameTextView: CheckedTextView = view.findViewById(android.R.id.text1)
-            val nameText = serviceDurationsAdapter.getItem(position).name
-            nameTextView.text = nameText
-            nameTextView.isChecked = position == serviceDurationsAdapter.checkedPosition
+    override fun onStart() {
+        super.onStart()
+        val dlg = dialog as AlertDialog?
+        if (dlg != null){
+            val ok = dlg.getButton(Dialog.BUTTON_POSITIVE)
+            ok.setOnClickListener{ _ ->
+                val intent = Intent()
+                val result = getViewModel()?.saveServiceInfo(
+                    dlg.findViewById<EditText>(R.id.service_name)?.text.toString(),
+                    dlg.findViewById<EditText>(R.id.service_price)?.text.toString(),
+                    dlg.findViewById<EditText>(R.id.service_description)?.text.toString()) ?: false
+                if (result) {
+                    targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
+                    dismiss()
+                }
+            }
         }
-        recyclerView.adapter = serviceDurationsAdapter
-        getViewModel().getServiceDurations()
+
     }
 
     override fun createViewModel(savedInstanceState: Bundle?): NewServiceViewModel {
@@ -74,8 +83,11 @@ class NewServiceFragment : MSDialogFragment<NewServiceViewModel>() {
     }
 
     override fun onStartObservingViewModel(viewModel: NewServiceViewModel) {
-        viewModel.serviceDurations.observe(this, Observer { items ->
-            serviceDurationsAdapter.setItems(items)
+        viewModel.genericError.observe(this, Observer { error ->
+            if (!viewModel.genericError.isHandled){
+                MessageDialogFragment.showError(this, error, false)
+                viewModel.genericError.isHandled = true
+            }
         })
     }
 

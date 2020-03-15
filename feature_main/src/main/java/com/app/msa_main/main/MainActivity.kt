@@ -23,6 +23,8 @@ import javax.inject.Inject
 
 class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies {
 
+    val navView: BottomNavigationView by lazy { findViewById<BottomNavigationView>(R.id.nav_view) }
+
     private val injector: DaggerMainFeatureComponent by lazy {
         DaggerMainFeatureComponent
         .builder()
@@ -57,7 +59,6 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
             installFragments()
         }
 
-        val navView: BottomNavigationView = findViewById(R.id.nav_view)
         navView.setOnNavigationItemSelectedListener{ item ->
             when (item.itemId){
                 R.id.navigation_masters  -> changeActiveFragment(mastersFragment)
@@ -67,8 +68,13 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
             }
         }
         changeActiveFragment(mastersFragment)
-        navView.selectedItemId = R.id.navigation_masters
+        navView.selectedItemId = savedInstanceState?.getInt(ID_SELECTED_ITEM_ID, R.id.navigation_masters) ?: R.id.navigation_masters
         setupActionBar()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putInt(ID_SELECTED_ITEM_ID, navView.selectedItemId)
+        super.onSaveInstanceState(outState)
     }
 
     private fun installFragments() {
@@ -106,9 +112,6 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
     }
 
     private fun setFabBehaviour() {
-        if (activeFragment != servicesFragment){
-
-        }
         fab.setOnClickListener {
             when (activeFragment){
                 mastersFragment -> mastersFragmentFabAction()
@@ -154,13 +157,15 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
     }
 
     override fun onBackPressed() {
-        getViewModel().logout()
+        getViewModel()?.logout()
         appNavigator.navigateToAuthActivity(this)
         finish()
     }
 
     companion object {
-        const val REQ_NEW_SERVICE = 10001
         const val NEW_SERVICE_FRAGMENT_TAG = "NewServiceDialogFragment"
+        const val ID_SELECTED_ITEM_ID = NEW_SERVICE_FRAGMENT_TAG + "ID_SELECTED_ITEM_ID"
+        const val REQ_NEW_SERVICE = 10001
+
     }
 }

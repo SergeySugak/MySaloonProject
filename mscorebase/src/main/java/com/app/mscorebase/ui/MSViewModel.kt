@@ -17,18 +17,18 @@ abstract class MSViewModel (private val appState: AppState) : ViewModel(), State
     internal val _subtitle = MutableLiveData<String>()
     val subtitle: LiveData<String> = _subtitle
 
-    protected val intNoInternetConnectionError =
+    protected val _noInternetConnectionError =
         StatefulMutableLiveData<Int>()
-    protected val intGenericHTTPError =
-        StatefulMutableLiveData<Throwable>()
-    protected val intError =
-        StatefulMutableLiveData<Throwable>()
     val noInternetConnectionError: StatefulLiveData<Int>
-        get() = intNoInternetConnectionError
+        get() = _noInternetConnectionError
+    protected val _HTTPError =
+        StatefulMutableLiveData<Throwable>()
     val genericHTTPError: StatefulLiveData<Throwable>
-        get() = intGenericHTTPError
+        get() = _HTTPError
+    protected val _genericError =
+        StatefulMutableLiveData<Throwable>()
     val genericError: StatefulLiveData<Throwable>
-        get() = intError
+        get() = _genericError
 
     protected val _isInProgress = MutableLiveData<Boolean>()
     val isInProgress: LiveData<Boolean> = _isInProgress

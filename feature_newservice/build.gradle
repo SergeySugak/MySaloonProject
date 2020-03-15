@@ -47,10 +47,10 @@ android {
 def dagger_version = '2.26'
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    api project(path: ':mscorebase', configuration: 'default')
-    api project(path:':mscoremodels', configuration:'default')
-    api project(path: ':scopes', configuration: 'default')
-    implementation project(path: ':repository_db', configuration: 'default')
+    api project(':mscorebase')
+    api project(':mscoremodels')
+    api project(':scopes')
+    implementation project(':repository_db')
 
     //jetbrains
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"

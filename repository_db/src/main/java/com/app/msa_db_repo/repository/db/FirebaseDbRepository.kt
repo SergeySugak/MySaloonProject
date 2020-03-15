@@ -19,8 +19,12 @@ class FirebaseDbRepository
         val durations = context.resources.getIntArray(R.array.service_durations)
         val result = mutableListOf<ServiceDuration>()
         for ((i, name) in names.withIndex()){
-            result.add(ServiceDuration(name, durations[i]))
+            result.add(ServiceDuration(durations[i], name))
         }
         return result
+    }
+
+    override fun saveServiceInfo(name: String, duration: Int, price: Double, description: String): Boolean {
+        return true
     }
 }

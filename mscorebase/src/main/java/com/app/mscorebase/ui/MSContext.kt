@@ -12,6 +12,5 @@ interface MSContext<VM : MSViewModel> :
     fun startActivity(intent: Intent?)
     fun startActivityForResult(intent: Intent?, requestCode: Int)
     fun setInProgress(inProgress: Boolean)
-    fun getViewModel(): VM
     fun getContext(): Context?
 }

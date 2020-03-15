@@ -8,21 +8,20 @@ import com.app.mscorebase.ui.MSFragmentViewModel
 import java.io.Serializable
 import java.util.*
 
-class MSChoiceDialogFragmentViewModel<C : ChoiceItem<out Serializable>>(
-    private val appState: AppState
+open class MSChoiceDialogFragmentViewModel<C : ChoiceItem<out Serializable>>(
+    private val appState: AppState,
+    val adapter: SingleChoiceAdapter<C>
 ) : MSFragmentViewModel(appState) {
     val LDE_DATA_LOADED =
         MutableLiveData<Boolean>()
     var choiceMode = ChoiceItem.ChoiceMode.cmSingle
     var selectedPosition = -1
     private val choices: MutableLiveData<List<C>> = MutableLiveData()
-    var resultListener: OnChoiceItemsSelectedListener<C, out Parcelable>? = null
-    var adapter: SingleChoiceAdapter<C>? = null
+    var resultListener: OnChoiceItemsSelectedListener<C, out Parcelable?>? = null
+
     fun setChoices(choices: List<C>) {
-        if (choiceMode === ChoiceItem.ChoiceMode.cmSingle) {
-            this.choices.value = choices
-            adapter?.setItems(visibleItems)
-        }
+        this.choices.value = choices
+        adapter?.setItems(visibleItems)
     }
 
     fun getChoices(): List<C> {
@@ -130,11 +129,5 @@ class MSChoiceDialogFragmentViewModel<C : ChoiceItem<out Serializable>>(
     override fun clearState(writer: StateWriter) {
         writer.clearState(this, true)
         appState.detachStateManager(this)
-    }
-
-    init {
-        if (choiceMode === ChoiceItem.ChoiceMode.cmSingle) {
-            adapter = SingleChoiceAdapter<C>()
-        }
     }
 }

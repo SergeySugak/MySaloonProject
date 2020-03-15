@@ -1,3 +1,5 @@
 package com.app.mscoremodels.services
 
-data class ServiceDuration(val name: String, val duration: Int)
+import com.app.mscorebase.ui.dialogs.choicedialog.ChoiceItem
+
+class ServiceDuration(duration: Int, val description: String): ChoiceItem<Int>(duration, description)
