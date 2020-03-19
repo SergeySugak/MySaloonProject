@@ -11,7 +11,7 @@ import com.app.msa_main.api.MainFeatureDependencies
 import com.app.msa_main.main.MainActivity
 import com.app.msa_nav_api.navigation.AppNavigator
 import com.app.msa_scopes.scopes.FeatureScope
-import com.app.mscorebase.appstate.AppState
+import com.app.mscorebase.appstate.AppStateManager
 import dagger.Component
 
 @Component(modules = [MainFeatureModule::class,
@@ -24,7 +24,7 @@ interface MainFeatureComponent: MastersFeatureDependencies,
                                 ServicesFeatureDependencies,
                                 ScheduleFeatureDependencies,
                                 NewServiceFeatureDependencies {
-    override fun appState(): AppState
+    override fun appStateManager(): AppStateManager
     override fun dbRepository(): DbRepository
     override fun appNavigator(): AppNavigator
     fun newServiceFragment(): NewServiceFragment

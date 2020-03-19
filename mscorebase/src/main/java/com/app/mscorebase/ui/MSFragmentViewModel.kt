@@ -1,8 +1,8 @@
 package com.app.mscorebase.ui
 
-import com.app.mscorebase.appstate.AppState
+import com.app.mscorebase.appstate.AppStateManager
 
-abstract class MSFragmentViewModel(appState: AppState) : MSViewModel(appState){
+abstract class MSFragmentViewModel(appState: AppStateManager) : MSViewModel(appState){
     protected fun setTitle(
         title: String,
         subtitle: String?

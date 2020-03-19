@@ -53,6 +53,7 @@ dependencies {
     api project(':mscorebase')
     api project(':mscoremodels')
     api project(':scopes')
+    implementation project(':repository_auth')
 
     //jetbrains
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -67,7 +68,7 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
 
     //google
-    compileOnly 'com.google.firebase:firebase-auth:19.2.0'
+    compileOnly 'com.google.firebase:firebase-auth:19.3.0'
     compileOnly 'com.google.firebase:firebase-database:19.2.1'
 
     testImplementation 'junit:junit:4.13'

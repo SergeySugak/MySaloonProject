@@ -6,8 +6,8 @@ import com.app.feature_newservice.ui.ServiceDurationSelectionDialog
 import com.app.msa_scopes.scopes.FeatureScope
 import dagger.Component
 
-@Component(modules = [NewServiceFeatureModule::class,
-                        NewServiceFeatureViewModelsModule::class],
+@Component(modules = [NewServiceFeatureBindingsModule::class,
+                      NewServiceFeatureViewModelsModule::class],
     dependencies = [NewServiceFeatureDependencies::class])
 @FeatureScope
 interface NewServiceFeatureComponent {

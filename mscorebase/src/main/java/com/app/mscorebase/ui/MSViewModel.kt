@@ -4,34 +4,27 @@ import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.app.mscorebase.livedata.StatefulLiveData
-import com.app.mscorebase.livedata.StatefulMutableLiveData
-import com.app.mscorebase.appstate.AppState
+import com.app.mscorebase.appstate.AppStateManager
 import com.app.mscorebase.appstate.StateHolder
 import com.app.mscorebase.appstate.StateWriter
+import com.app.mscorebase.livedata.StatefulLiveData
+import com.app.mscorebase.livedata.StatefulMutableLiveData
 import kotlinx.coroutines.Job
 
-abstract class MSViewModel (private val appState: AppState) : ViewModel(), StateHolder {
+abstract class MSViewModel (private val appState: AppStateManager) : ViewModel(), StateHolder {
     internal val _title = MutableLiveData<String>()
     val title: LiveData<String> = _title
     internal val _subtitle = MutableLiveData<String>()
     val subtitle: LiveData<String> = _subtitle
 
-    protected val _noInternetConnectionError =
-        StatefulMutableLiveData<Int>()
-    val noInternetConnectionError: StatefulLiveData<Int>
-        get() = _noInternetConnectionError
-    protected val _HTTPError =
-        StatefulMutableLiveData<Throwable>()
-    val genericHTTPError: StatefulLiveData<Throwable>
-        get() = _HTTPError
-    protected val _genericError =
-        StatefulMutableLiveData<Throwable>()
-    val genericError: StatefulLiveData<Throwable>
-        get() = _genericError
-
-    protected val _isInProgress = MutableLiveData<Boolean>()
-    val isInProgress: LiveData<Boolean> = _isInProgress
+    protected val _isInProgress = StatefulMutableLiveData<Boolean>()
+    val isInProgress: StatefulLiveData<Boolean> = _isInProgress
+    protected val _noInternetConnectionError = StatefulMutableLiveData<Int>()
+    val noInternetConnectionError: StatefulLiveData<Int> = _noInternetConnectionError
+    protected val _HTTPError = StatefulMutableLiveData<Throwable>()
+    val genericHTTPError: StatefulLiveData<Throwable> = _HTTPError
+    protected val _error = StatefulMutableLiveData<Throwable>()
+    val error: StatefulLiveData<Throwable> = _error
 
     protected val mCompositeJob = mutableListOf<Job>()
 
@@ -77,6 +70,6 @@ abstract class MSViewModel (private val appState: AppState) : ViewModel(), State
     fun onDestroy() {}
 
     fun logout() {
-        appState.authManager.logOut()
+        appState.authManager.logout()
     }
 }

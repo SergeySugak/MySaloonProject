@@ -54,7 +54,8 @@ dependencies {
     implementation project(':feature_services')
     implementation project(':feature_newservice')
     implementation project(':feature_schedule')
-    implementation project(path:':repository_db')
+    implementation project(':repository_auth')
+    implementation project(':repository_db')
 
     //jetbrains
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"

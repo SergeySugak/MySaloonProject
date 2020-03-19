@@ -10,6 +10,7 @@ import com.app.msa_main.api.MainFeatureDependencies
 import com.app.msa_nav_api.navigation.AppNavigator
 import com.app.msa_nav_impl.navigation_impl.AppNavigatorImpl
 import com.app.mscorebase.appstate.AppState
+import com.app.mscorebase.appstate.AppStateManager
 import com.app.mscorebase.appstate.StateHolder
 import com.app.mscorebase.di.ComponentDependencies
 import com.app.mscorebase.di.ComponentDependenciesKey
@@ -39,7 +40,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    internal fun provideAppState(context: Context, authManager: AuthManager, sharedPrefs: SharedPreferences, gson: Gson): AppState {
+    internal fun provideAppState(context: Context, authManager: AuthManager, sharedPrefs: SharedPreferences, gson: Gson): AppStateManager {
         val appState = AppState(context, authManager, sharedPrefs, gson)
         //Тут добавляем StateManager-ы, которые существуют все время работы приложения
         appState.attachStateManager(authManager as StateHolder) // authManager = AuthManagerImpl = StateHolder

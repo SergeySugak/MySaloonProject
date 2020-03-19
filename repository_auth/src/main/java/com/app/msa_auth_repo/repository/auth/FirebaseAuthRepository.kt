@@ -52,4 +52,10 @@ class FirebaseAuthRepository
             return Result.Error(ex)
         }
     }
+
+    override fun getUserId() = firebaseAuth.currentUser?.uid ?: ""
+
+    override fun logout(){
+        firebaseAuth.signOut()
+    }
 }

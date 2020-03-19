@@ -8,7 +8,7 @@ import com.app.mscorebase.di.ViewModelProviderFactory
 import com.app.mscorebase.di.findComponentDependencies
 import com.app.mscorebase.ui.dialogs.choicedialog.MSChoiceDialogFragment
 import com.app.mscorebase.ui.dialogs.choicedialog.OnChoiceItemsSelectedListener
-import com.app.mscoremodels.services.ServiceDuration
+import com.app.mscoremodels.saloon.ServiceDuration
 import javax.inject.Inject
 
 class ServiceDurationSelectionDialog: MSChoiceDialogFragment<ServiceDuration, ServiceDurationSelectionDialogViewModel>() {

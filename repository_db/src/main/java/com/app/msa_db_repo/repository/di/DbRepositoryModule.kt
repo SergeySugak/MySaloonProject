@@ -10,5 +10,5 @@ object DbRepositoryModule {
 
     @Provides
     @Singleton
-    fun provideFirebaseDatabase() = FirebaseDatabase.getInstance()
+    internal fun provideFirebaseDatabase() = FirebaseDatabase.getInstance()
 }

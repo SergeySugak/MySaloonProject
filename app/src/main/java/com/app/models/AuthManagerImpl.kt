@@ -1,15 +1,19 @@
 package com.app.models
 
 import android.text.TextUtils
+import com.app.msa_auth_repo.repository.auth.AuthRepository
 import com.app.mscorebase.appstate.StateHolder
 import com.app.mscorebase.appstate.StateWriter
+import com.google.firebase.auth.FirebaseAuth
 import main.java.com.app.mscorebase.auth.AuthManager
 import javax.inject.Inject
 
-class AuthManagerImpl @Inject constructor(): AuthManager, StateHolder {
+class AuthManagerImpl @Inject constructor(private val authRepository: AuthRepository): AuthManager, StateHolder {
     private var username = ""
 
-    override fun getUsername() = username
+    override fun getUserName() = username
+
+    override fun getUserId() = authRepository.getUserId()
 
     override fun getState(): AuthManager.State {
         return if (TextUtils.isEmpty(username)) {
@@ -19,11 +23,12 @@ class AuthManagerImpl @Inject constructor(): AuthManager, StateHolder {
         }
     }
 
-    override fun logIn(username: String) {
+    override fun login(username: String, userId: String) {
         this.username = username
     }
 
-    override fun logOut() {
+    override fun logout() {
+        authRepository.logout()
         username = ""
     }
 

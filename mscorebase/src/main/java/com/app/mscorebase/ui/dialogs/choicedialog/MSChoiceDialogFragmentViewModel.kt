@@ -2,14 +2,14 @@ package com.app.mscorebase.ui.dialogs.choicedialog
 
 import android.os.Parcelable
 import androidx.lifecycle.MutableLiveData
-import com.app.mscorebase.appstate.AppState
+import com.app.mscorebase.appstate.AppStateManager
 import com.app.mscorebase.appstate.StateWriter
 import com.app.mscorebase.ui.MSFragmentViewModel
 import java.io.Serializable
 import java.util.*
 
 open class MSChoiceDialogFragmentViewModel<C : ChoiceItem<out Serializable>>(
-    private val appState: AppState,
+    private val appState: AppStateManager,
     val adapter: SingleChoiceAdapter<C>
 ) : MSFragmentViewModel(appState) {
     val LDE_DATA_LOADED =

@@ -11,9 +11,9 @@ import javax.inject.Inject
 
 class ServicesAdapterImpl @Inject constructor(): RecyclerView.Adapter<ServicesAdapterImpl.ViewHolder>(), ServicesAdapter {
 
-    private val items = ArrayList<com.app.mscoremodels.services.SaloonService>()
+    private val items = ArrayList<com.app.mscoremodels.saloon.SaloonService>()
 
-    override fun setItems(items: List<com.app.mscoremodels.services.SaloonService>){
+    override fun setItems(items: List<com.app.mscoremodels.saloon.SaloonService>){
         this.items.clear()
         this.items.addAll(items)
         notifyDataSetChanged()
@@ -35,7 +35,7 @@ class ServicesAdapterImpl @Inject constructor(): RecyclerView.Adapter<ServicesAd
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        fun bind(service: com.app.mscoremodels.services.SaloonService){
+        fun bind(service: com.app.mscoremodels.saloon.SaloonService){
             var name = itemView.findViewById<TextView>(R.id.service_name)
             var duration = itemView.findViewById<TextView>(R.id.service_duration)
             var price = itemView.findViewById<TextView>(R.id.service_price)

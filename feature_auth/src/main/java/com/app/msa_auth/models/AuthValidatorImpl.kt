@@ -1,8 +1,9 @@
 package com.app.msa_auth.models
 
 import android.util.Patterns
+import javax.inject.Inject
 
-open class AuthValidatorImpl : AuthValidator {
+open class AuthValidatorImpl @Inject constructor(): AuthValidator {
     override fun validateUserName(username: String?): Boolean {
         if (username == null) {
             return false

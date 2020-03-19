@@ -16,7 +16,7 @@ import com.app.mscorebase.di.findComponentDependencies
 import com.app.mscorebase.ui.MSDialogFragment
 import com.app.mscorebase.ui.dialogs.choicedialog.OnChoiceItemsSelectedListener
 import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
-import com.app.mscoremodels.services.ServiceDuration
+import com.app.mscoremodels.saloon.ServiceDuration
 import javax.inject.Inject
 
 class NewServiceFragment : MSDialogFragment<NewServiceViewModel>() {
@@ -64,18 +64,12 @@ class NewServiceFragment : MSDialogFragment<NewServiceViewModel>() {
         if (dlg != null){
             val ok = dlg.getButton(Dialog.BUTTON_POSITIVE)
             ok.setOnClickListener{ _ ->
-                val intent = Intent()
-                val result = getViewModel()?.saveServiceInfo(
+                getViewModel()?.saveServiceInfo(
                     dlg.findViewById<EditText>(R.id.service_name)?.text.toString(),
                     dlg.findViewById<EditText>(R.id.service_price)?.text.toString(),
-                    dlg.findViewById<EditText>(R.id.service_description)?.text.toString()) ?: false
-                if (result) {
-                    targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
-                    dismiss()
-                }
+                    dlg.findViewById<EditText>(R.id.service_description)?.text.toString())
             }
         }
-
     }
 
     override fun createViewModel(savedInstanceState: Bundle?): NewServiceViewModel {
@@ -83,10 +77,17 @@ class NewServiceFragment : MSDialogFragment<NewServiceViewModel>() {
     }
 
     override fun onStartObservingViewModel(viewModel: NewServiceViewModel) {
-        viewModel.genericError.observe(this, Observer { error ->
-            if (!viewModel.genericError.isHandled){
+        viewModel.error.observe(this, Observer { error ->
+            if (!viewModel.error.isHandled){
                 MessageDialogFragment.showError(this, error, false)
-                viewModel.genericError.isHandled = true
+                viewModel.error.isHandled = true
+            }
+        })
+        viewModel.serviceInfoSaveState.observe(this, Observer {
+            if (it) {
+                val intent = Intent()
+                targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
+                dismiss()
             }
         })
     }

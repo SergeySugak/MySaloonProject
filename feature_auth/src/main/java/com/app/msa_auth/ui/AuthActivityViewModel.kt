@@ -8,7 +8,8 @@ import com.app.msa_auth.models.AuthValidator
 import com.app.msa.auth.R
 import com.app.msa_auth.models.AuthFormState
 import com.app.msa_auth_repo.repository.auth.AuthRepository
-import com.app.mscorebase.appstate.AppState
+import com.app.msa_db_repo.repository.db.DbRepository
+import com.app.mscorebase.appstate.AppStateManager
 import com.app.mscorebase.appstate.StateWriter
 import com.app.mscorebase.common.Result
 import com.app.mscorebase.ui.MSActivityViewModel
@@ -19,9 +20,10 @@ import java.util.*
 import javax.inject.Inject
 
 class AuthActivityViewModel
-    @Inject constructor(private val appState: AppState,
+    @Inject constructor(private val appState: AppStateManager,
                         private val authRepository: AuthRepository,
-                        private val authValidator: AuthValidator
+                        private val authValidator: AuthValidator,
+                        private val dbRepository: DbRepository
     ): MSActivityViewModel(appState) {
 
     private val _loginForm = MutableLiveData<AuthFormState>()
@@ -33,14 +35,33 @@ class AuthActivityViewModel
     private val _loginResult = MutableLiveData<Result<String>>()
     val loginResult: LiveData<Result<String>> = _loginResult
 
-    fun login(username: String, password: String) {
+    private fun login(username: String, password: String) {
         viewModelScope.launch(Dispatchers.IO) {
             //Пытаемся войти
-            val actionResult = authRepository.login(username, password)
+            val loginActionResult = authRepository.login(username, password)
             //Если вход выполнен успешно обновляем статус и фиксируем userId
-            if (actionResult is Result.Success){
-                _loginResult.postValue(actionResult)
-                appState.authManager.logIn(username)
+            if (loginActionResult is Result.Success){
+                //Проверяем, что для этого администратора создана ветка в базе
+                var checkResult = dbRepository.checkUserRoot(loginActionResult.data)
+                if (checkResult is Result.Success) {
+                    //Если нет - создаем
+                    if (!checkResult.data) {
+                        val createUserRootResult = dbRepository.createUserRoot(loginActionResult.data, username)
+                        //Если при создании ошибка, то работать нельзя
+                        if (createUserRootResult is Result.Error) {
+                            _loginResult.postValue(Result.Error(createUserRootResult.exception))
+                            return@launch
+                        }
+                    }
+                }
+                else {
+                    //Если при проверке ошибка, то работать нельзя
+                    _loginResult.postValue(Result.Error((checkResult as Result.Error).exception))
+                    return@launch
+                }
+                //Если все нормально
+                _loginResult.postValue(loginActionResult)
+                appState.authManager.login(username, loginActionResult.data)
             }
             else {
                 //Проверяем зарегистрирован ли указанный email
@@ -51,7 +72,7 @@ class AuthActivityViewModel
                     if (accountExists){
                         //Если при этом не удалось войти, то что-то не так с e-mail-ом или паролем
                         //значит выдаем сообщение, полученное при попытке войти
-                        _loginResult.postValue(actionResult)
+                        _loginResult.postValue(loginActionResult)
                     }
                     else {
                         //Если указанный email НЕ зарегистрирован - регистрируем, отправляем письмо

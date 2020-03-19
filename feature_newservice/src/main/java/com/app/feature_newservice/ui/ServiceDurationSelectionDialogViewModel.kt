@@ -1,23 +1,23 @@
 package com.app.feature_newservice.ui
 
 import androidx.lifecycle.viewModelScope
-import com.app.feature_newservice.modes.ServiceDurationAdapter
+import com.app.feature_newservice.models.ServiceDurationAdapter
 import com.app.msa_db_repo.repository.db.DbRepository
-import com.app.mscorebase.appstate.AppState
+import com.app.mscorebase.appstate.AppStateManager
 import com.app.mscorebase.appstate.StateWriter
+import com.app.mscorebase.common.Result
 import com.app.mscorebase.livedata.StatefulLiveData
 import com.app.mscorebase.livedata.StatefulMutableLiveData
 import com.app.mscorebase.ui.dialogs.choicedialog.MSChoiceDialogFragmentViewModel
-import com.app.mscoremodels.services.ServiceDuration
+import com.app.mscoremodels.saloon.ServiceDuration
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.HashMap
+import java.util.*
 import javax.inject.Inject
 
 class ServiceDurationSelectionDialogViewModel
-    @Inject constructor(appState: AppState,
+    @Inject constructor(appState: AppStateManager,
                         adapter: ServiceDurationAdapter,
                         private val dbRepository: DbRepository
     ): MSChoiceDialogFragmentViewModel<ServiceDuration>(appState, adapter) {
@@ -27,11 +27,17 @@ class ServiceDurationSelectionDialogViewModel
 
     fun getServiceDurations() {
         viewModelScope.launch(Dispatchers.IO) {
-            _serviceDurations.postValue(dbRepository.getServiceDurations())
-            withContext(Dispatchers.Main){
-                if (_serviceDurations.value != null) {
-                    setChoices(_serviceDurations.value!!)
+            val result = dbRepository.getServiceDurations()
+            if (result is Result.Success) {
+                _serviceDurations.postValue(result.data)
+                withContext(Dispatchers.Main) {
+                    if (_serviceDurations.value != null) {
+                        setChoices(_serviceDurations.value!!)
+                    }
                 }
+            }
+            else {
+                _error.postValue((result as Result.Error).exception)
             }
         }
     }

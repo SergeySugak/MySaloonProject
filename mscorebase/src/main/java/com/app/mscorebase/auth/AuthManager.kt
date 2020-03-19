@@ -5,7 +5,8 @@ interface AuthManager {
         loggedIn, loggedOut
     }
     fun getState(): State
-    fun getUsername(): String
-    fun logIn(username: String)
-    fun logOut()
+    fun getUserName(): String
+    fun getUserId(): String
+    fun login(username: String, userId: String)
+    fun logout()
 }
