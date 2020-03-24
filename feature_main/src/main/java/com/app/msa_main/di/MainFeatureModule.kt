@@ -45,13 +45,4 @@ object MainFeatureModule {
         }
         return savedScheduleFragment
     }
-
-    @Provides
-    @FeatureScope
-    fun provideNewServiceFragment(): NewServiceFragment {
-        val result = NewServiceFragment.newInstance()
-        result.retainInstance = true
-        return result
-    }
-
 }

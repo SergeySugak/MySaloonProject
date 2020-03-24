@@ -127,9 +127,7 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
     }
 
     private fun servicesFragmentFabAction() {
-        val newServiceFragment = injector.newServiceFragment()
-        newServiceFragment.setTargetFragment(servicesFragment, REQ_NEW_SERVICE)
-        showDialogFragment(newServiceFragment, NEW_SERVICE_FRAGMENT_TAG)
+        appNavigator.navigateToNewServiceFragment(servicesFragment, REQ_NEW_SERVICE, NEW_SERVICE_FRAGMENT_TAG)
     }
 
     private fun scheduleFragmentFabAction() {

@@ -17,23 +17,23 @@ abstract class MSViewModel (private val appState: AppStateManager) : ViewModel()
     internal val _subtitle = MutableLiveData<String>()
     val subtitle: LiveData<String> = _subtitle
 
-    protected val _isInProgress = StatefulMutableLiveData<Boolean>()
-    val isInProgress: StatefulLiveData<Boolean> = _isInProgress
-    protected val _noInternetConnectionError = StatefulMutableLiveData<Int>()
-    val noInternetConnectionError: StatefulLiveData<Int> = _noInternetConnectionError
-    protected val _HTTPError = StatefulMutableLiveData<Throwable>()
-    val genericHTTPError: StatefulLiveData<Throwable> = _HTTPError
-    protected val _error = StatefulMutableLiveData<Throwable>()
-    val error: StatefulLiveData<Throwable> = _error
+    protected val intIsInProgress = StatefulMutableLiveData<Boolean>()
+    val isInProgress: StatefulLiveData<Boolean> = intIsInProgress
+    protected val intNoInternetConnectionError = StatefulMutableLiveData<Int>()
+    val noInternetConnectionError: StatefulLiveData<Int> = intNoInternetConnectionError
+    protected val intHTTPError = StatefulMutableLiveData<Throwable>()
+    val genericHTTPError: StatefulLiveData<Throwable> = intHTTPError
+    protected val intError = StatefulMutableLiveData<Throwable>()
+    val error: StatefulLiveData<Throwable> = intError
 
-    protected val mCompositeJob = mutableListOf<Job>()
+    private val mCompositeJob = mutableListOf<Job>()
 
     fun addJob(job: Job){
         mCompositeJob.add(job)
     }
 
     fun setInProgress(inProgress: Boolean) {
-        _isInProgress.value = inProgress
+        intIsInProgress.value = inProgress
     }
 
     protected fun disposeJobs(){

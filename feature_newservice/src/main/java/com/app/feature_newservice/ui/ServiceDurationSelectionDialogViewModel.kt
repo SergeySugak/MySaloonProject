@@ -37,7 +37,7 @@ class ServiceDurationSelectionDialogViewModel
                 }
             }
             else {
-                _error.postValue((result as Result.Error).exception)
+                intError.postValue((result as Result.Error).exception)
             }
         }
     }

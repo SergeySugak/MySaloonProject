@@ -122,13 +122,13 @@ class DialogFragmentPresenterImpl :
         const val THREE_BUTTONS_YNC = 5
 
         fun showDialogFragment(
-            curFragment: DialogFragment,
+            curFragment: Fragment,
             newFragment: DialogFragment,
             tag: String?
         ) {
             newFragment.setTargetFragment(curFragment, 0)
-            val fm = curFragment.fragmentManager
-            val ft = fm!!.beginTransaction()
+            val fm = curFragment.parentFragmentManager
+            val ft = fm.beginTransaction()
             val prev = fm.findFragmentByTag(tag)
             if (prev != null) {
                 ft.remove(prev)

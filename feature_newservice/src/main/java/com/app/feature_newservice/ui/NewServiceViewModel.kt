@@ -24,6 +24,7 @@ class NewServiceViewModel
     val _serviceInfoSaveState = StatefulMutableLiveData<Boolean>()
     val serviceInfoSaveState: StatefulLiveData<Boolean> = _serviceInfoSaveState
     var serviceDuration: ServiceDuration? = null
+    var serviceId: String = ""
 
     override fun restoreState(writer: StateWriter) {
 
@@ -36,21 +37,23 @@ class NewServiceViewModel
     fun saveServiceInfo(name: String, price: String, description: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val duration = serviceDuration?.id
-            _serviceInfoSaveState.postValue(if (duration != null) {
-                val result = dbRepository.saveServiceInfo(
-                    saloonFactory.createSaloonService(name, valueOf(price), duration, description))
-                if (result is Result.Success){
-                    result.data
+            _serviceInfoSaveState.postValue(
+                if (duration != null) {
+                    val result = dbRepository.saveServiceInfo(
+                        saloonFactory.createSaloonService(appState.authManager.getUserId(),
+                            serviceId, name, valueOf(price), duration, description))
+                    if (result is Result.Success){
+                        result.data
+                    }
+                    else {
+                        intError.postValue((result as Result.Error).exception)
+                        false
+                    }
                 }
                 else {
-                    _error.postValue((result as Result.Error).exception)
+                    intError.postValue(Exception(appState.context.getString(R.string.err_fill_required_before_save)))
                     false
-                }
-            }
-            else {
-                _error.postValue(Exception(appState.context.getString(R.string.err_fill_required_before_save)))
-                false
-            })
+                })
         }
     }
 }

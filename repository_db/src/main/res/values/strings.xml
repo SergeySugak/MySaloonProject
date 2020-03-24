@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">repository</string>
     <string name="err_cant_create_new_key">Не удалось создать новый ключ в таблице</string>
+    <string name="err_cant_update_data">Не удалось обновить данные в таблице</string>
 
     <string-array name="service_duration_names">
         <item name="min_15">15 мин</item>

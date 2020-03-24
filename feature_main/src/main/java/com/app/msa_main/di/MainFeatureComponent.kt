@@ -27,7 +27,6 @@ interface MainFeatureComponent: MastersFeatureDependencies,
     override fun appStateManager(): AppStateManager
     override fun dbRepository(): DbRepository
     override fun appNavigator(): AppNavigator
-    fun newServiceFragment(): NewServiceFragment
 
     fun inject(mainActivity: MainActivity)
 }

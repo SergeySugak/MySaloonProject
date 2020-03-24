@@ -52,6 +52,7 @@ dependencies {
     api project(':navigation_api')
     implementation project(':feature_auth')
     implementation project(':feature_main')
+    implementation project(':feature_newservice')
 
     //jetbrains
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"

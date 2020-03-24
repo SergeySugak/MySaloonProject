@@ -1,3 +1,4 @@
 <resources>
     <dimen name="card_elevation">12dp</dimen>
+    <dimen name="card_item_margin">10dp</dimen>
 </resources>

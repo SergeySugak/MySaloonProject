@@ -2,7 +2,9 @@ package com.app.feature_services.ui
 
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.feature_services.R
 import com.app.feature_services.di.DaggerServicesFeatureComponent
@@ -15,6 +17,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import javax.inject.Inject
 
 class ServicesFragment : MSFragment<ServicesViewModel>() {
+
+    private lateinit var servicesList: RecyclerView
 
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory
@@ -41,7 +45,8 @@ class ServicesFragment : MSFragment<ServicesViewModel>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val servicesList = view.findViewById<RecyclerView>(R.id.services_list)
+        servicesList = view.findViewById(R.id.services_list)
+        servicesList.layoutManager = LinearLayoutManager(context)
         servicesList.adapter = servicesAdapter as RecyclerView.Adapter<*>
     }
 
@@ -49,13 +54,10 @@ class ServicesFragment : MSFragment<ServicesViewModel>() {
         return ViewModelProvider(this, providerFactory).get(ServicesViewModel::class.java)
     }
 
-    override fun onViewModelCreated(viewModel: ServicesViewModel, savedInstanceState: Bundle?) {
-        super.onViewModelCreated(viewModel, savedInstanceState)
-        viewModel.loadData()
-    }
-
     override fun onStartObservingViewModel(viewModel: ServicesViewModel) {
-
+        viewModel.services.observe(this, Observer { services ->
+            servicesAdapter.setItems(services)
+        })
     }
 
     override fun onHiddenChanged(hidden: Boolean) {

@@ -6,14 +6,15 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.app.feature_services.R
+import com.app.mscoremodels.saloon.SaloonService
 import java.util.*
 import javax.inject.Inject
 
 class ServicesAdapterImpl @Inject constructor(): RecyclerView.Adapter<ServicesAdapterImpl.ViewHolder>(), ServicesAdapter {
 
-    private val items = ArrayList<com.app.mscoremodels.saloon.SaloonService>()
+    private val items = ArrayList<SaloonService>()
 
-    override fun setItems(items: List<com.app.mscoremodels.saloon.SaloonService>){
+    override fun setItems(items: List<SaloonService>){
         this.items.clear()
         this.items.addAll(items)
         notifyDataSetChanged()
@@ -34,12 +35,15 @@ class ServicesAdapterImpl @Inject constructor(): RecyclerView.Adapter<ServicesAd
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-
-        fun bind(service: com.app.mscoremodels.saloon.SaloonService){
-            var name = itemView.findViewById<TextView>(R.id.service_name)
-            var duration = itemView.findViewById<TextView>(R.id.service_duration)
-            var price = itemView.findViewById<TextView>(R.id.service_price)
-            var description = itemView.findViewById<TextView>(R.id.service_description)
+        fun bind(service: SaloonService){
+            val name = itemView.findViewById<TextView>(R.id.service_name)
+            val duration = itemView.findViewById<TextView>(R.id.service_duration)
+            val price = itemView.findViewById<TextView>(R.id.service_price)
+            val description = itemView.findViewById<TextView>(R.id.service_description)
+            name.text = service.name
+            duration.text = service.duration.toString()
+            price.text = service.price.toString()
+            description.text = service.description
         }
     }
 }

@@ -118,11 +118,11 @@ class AuthActivityViewModel
     fun tryLogin(context: Context, username: String, password: String) {
         if (validate(username, password)) {
             if (isOnline(context)) {
-                _isInProgress.value = true
+                intIsInProgress.value = true
                 login(username, password)
             }
             else {
-                _noInternetConnectionError.value = R.string.err_no_internet
+                intNoInternetConnectionError.value = R.string.err_no_internet
             }
         }
     }
