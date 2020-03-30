@@ -8,10 +8,10 @@ import com.app.mscorebase.di.ViewModelProviderFactory
 import com.app.mscorebase.di.findComponentDependencies
 import com.app.mscorebase.ui.dialogs.choicedialog.MSChoiceDialogFragment
 import com.app.mscorebase.ui.dialogs.choicedialog.OnChoiceItemsSelectedListener
-import com.app.mscoremodels.saloon.ServiceDuration
+import com.app.mscoremodels.saloon.ChoosableServiceDuration
 import javax.inject.Inject
 
-class ServiceDurationSelectionDialog: MSChoiceDialogFragment<ServiceDuration, ServiceDurationSelectionDialogViewModel>() {
+class ServiceDurationSelectionDialog: MSChoiceDialogFragment<ChoosableServiceDuration, ServiceDurationSelectionDialogViewModel>() {
 
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory
@@ -36,7 +36,7 @@ class ServiceDurationSelectionDialog: MSChoiceDialogFragment<ServiceDuration, Se
 
     companion object {
         fun newInstance(title: String, payload: Parcelable?,
-                        resultListener: OnChoiceItemsSelectedListener<ServiceDuration, Parcelable?>): ServiceDurationSelectionDialog {
+                        resultListener: OnChoiceItemsSelectedListener<ChoosableServiceDuration, Parcelable?>): ServiceDurationSelectionDialog {
             val args = Bundle();
             val fragment = ServiceDurationSelectionDialog();
             args.putParcelable(ARGUMENT_PAYLOAD, payload);

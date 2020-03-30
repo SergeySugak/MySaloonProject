@@ -1,5 +1,10 @@
 package com.app.mscoremodels.saloon
 
-import com.app.mscorebase.ui.dialogs.choicedialog.ChoiceItem
+import com.google.firebase.database.IgnoreExtraProperties
 
-class ServiceDuration(duration: Int, val description: String): ChoiceItem<Int>(duration, description)
+@IgnoreExtraProperties
+open class ServiceDuration(
+    val duration: Int?,
+    val description: String?) {
+    constructor(): this(null, null)
+}

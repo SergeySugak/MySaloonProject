@@ -3,7 +3,7 @@ package com.app.feature_newservice.di
 import com.app.feature_newservice.models.ServiceDurationAdapter
 import com.app.msa_scopes.scopes.FeatureScope
 import com.app.mscorebase.ui.dialogs.choicedialog.SingleChoiceAdapter
-import com.app.mscoremodels.saloon.ServiceDuration
+import com.app.mscoremodels.saloon.ChoosableServiceDuration
 import dagger.Binds
 import dagger.Module
 
@@ -11,5 +11,5 @@ import dagger.Module
 abstract class NewServiceFeatureBindingsModule {
     @Binds
     @FeatureScope
-    abstract fun bindServiceDurationAdapter(serviceDurationAdapter: ServiceDurationAdapter): SingleChoiceAdapter<ServiceDuration>
+    abstract fun bindServiceDurationAdapter(serviceDurationAdapter: ServiceDurationAdapter): SingleChoiceAdapter<ChoosableServiceDuration>
 }

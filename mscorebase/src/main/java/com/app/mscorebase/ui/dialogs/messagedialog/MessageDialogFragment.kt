@@ -13,9 +13,20 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.app.mscorebase.ui.dialogs.DialogButtonClickListener
-import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenterImpl.Buttons
-import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenterImpl.WhichButton
+import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter.Buttons
+import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter.WhichButton
 import com.app.mscorebase.R
+import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter.Companion.ICON_ERROR
+import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter.Companion.ICON_INFO
+import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter.Companion.ICON_QUESTION
+import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter.Companion.ICON_WARNING
+import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter.Companion.NO_ICON
+import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter.Companion.ONE_BUTTON
+import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter.Companion.ONE_BUTTON_Y
+import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter.Companion.THREE_BUTTONS
+import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter.Companion.THREE_BUTTONS_YNC
+import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter.Companion.TWO_BUTTONS
+import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter.Companion.TWO_BUTTONS_YN
 import com.app.mscorebase.utils.getStackTraceAsString
 
 @SuppressLint("WrongConstant")
@@ -47,15 +58,15 @@ class MessageDialogFragment : DialogFragment(),
         @DrawableRes var iconResId =
             arguments!!.getInt(ARGUMENT_ICON)
         when (arguments!!.getInt(ARGUMENT_ICON)) {
-            DialogFragmentPresenterImpl.ICON_INFO -> iconResId = R.drawable.ic_info
-            DialogFragmentPresenterImpl.ICON_QUESTION -> iconResId =
+            ICON_INFO -> iconResId = R.drawable.ic_info
+            ICON_QUESTION -> iconResId =
                 R.drawable.ic_question
-            DialogFragmentPresenterImpl.ICON_WARINING -> iconResId = R.drawable.ic_warning
-            DialogFragmentPresenterImpl.ICON_ERROR -> iconResId = R.drawable.ic_error
+            ICON_WARNING -> iconResId = R.drawable.ic_warning
+            ICON_ERROR -> iconResId = R.drawable.ic_error
             else -> {
             }
         }
-        if (arguments!!.getInt(ARGUMENT_ICON) != DialogFragmentPresenterImpl.NO_ICON) {
+        if (arguments!!.getInt(ARGUMENT_ICON) != NO_ICON) {
             builder.setIcon(iconResId)
         }
         if (!TextUtils.isEmpty(arguments!!.getString(ARGUMENT_TITLE))) {
@@ -63,7 +74,7 @@ class MessageDialogFragment : DialogFragment(),
         }
         val buttons = arguments!!.getInt(ARGUMENT_BUTTONS)
         when (buttons) {
-            DialogFragmentPresenterImpl.THREE_BUTTONS -> {
+            THREE_BUTTONS -> {
                 builder.setNeutralButton(android.R.string.cancel, this)
                 builder.setNeutralButton(R.string.cancel, this)
                 builder.setNegativeButton(android.R.string.no, this)
@@ -71,29 +82,29 @@ class MessageDialogFragment : DialogFragment(),
                 builder.setPositiveButton(android.R.string.yes, this)
                 builder.setPositiveButton(R.string.yes, this)
             }
-            DialogFragmentPresenterImpl.THREE_BUTTONS_YNC -> {
+            THREE_BUTTONS_YNC -> {
                 builder.setNeutralButton(R.string.cancel, this)
                 builder.setNegativeButton(android.R.string.no, this)
                 builder.setNegativeButton(R.string.no, this)
                 builder.setPositiveButton(android.R.string.yes, this)
                 builder.setPositiveButton(R.string.yes, this)
             }
-            DialogFragmentPresenterImpl.TWO_BUTTONS -> {
+            TWO_BUTTONS -> {
                 builder.setNegativeButton(android.R.string.no, this)
                 builder.setNegativeButton(R.string.no, this)
                 builder.setPositiveButton(android.R.string.yes, this)
                 builder.setPositiveButton(R.string.yes, this)
             }
-            DialogFragmentPresenterImpl.TWO_BUTTONS_YN -> {
+            TWO_BUTTONS_YN -> {
                 builder.setNegativeButton(R.string.no, this)
                 builder.setPositiveButton(android.R.string.yes, this)
                 builder.setPositiveButton(R.string.yes, this)
             }
-            DialogFragmentPresenterImpl.ONE_BUTTON -> {
+            ONE_BUTTON -> {
                 builder.setPositiveButton(android.R.string.yes, this)
                 builder.setPositiveButton(R.string.yes, this)
             }
-            DialogFragmentPresenterImpl.ONE_BUTTON_Y -> builder.setPositiveButton(
+            ONE_BUTTON_Y -> builder.setPositiveButton(
                 R.string.yes,
                 this
             )
@@ -116,7 +127,7 @@ class MessageDialogFragment : DialogFragment(),
     }
 
     private val messageDialogListener: DialogButtonClickListener?
-        private get() = DialogFragmentPresenterImpl().getMessageDialogListener(this)
+        get() = DialogFragmentPresenterImpl().getMessageDialogListener(this)
 
     override fun onClickDialogButton(
         dialog: DialogInterface?, @WhichButton whichButton: Int,
@@ -152,8 +163,8 @@ class MessageDialogFragment : DialogFragment(),
         fun newInstance(
             context: Context,
             titleResID: Int,
-            messageResID: Int, @DialogFragmentPresenterImpl.Icon iconResID: Int = DialogFragmentPresenterImpl.ICON_INFO,
-            requestCode: Int = REQUEST_CODE_NONE, @Buttons buttons: Int = DialogFragmentPresenterImpl.ONE_BUTTON
+            messageResID: Int, @DialogFragmentPresenter.Icon iconResID: Int = ICON_INFO,
+            requestCode: Int = REQUEST_CODE_NONE, @Buttons buttons: Int = ONE_BUTTON
         ): MessageDialogFragment {
             return newInstance(
                 context.getString(titleResID), context.getString(messageResID),
@@ -164,7 +175,7 @@ class MessageDialogFragment : DialogFragment(),
         fun newInstance(
             context: Context,
             titleResID: Int,
-            messageResID: Int, @DialogFragmentPresenterImpl.Icon iconResID: Int,
+            messageResID: Int, @DialogFragmentPresenter.Icon iconResID: Int,
             requestCode: Int, @Buttons buttons: Int,
             params: Bundle?
         ): MessageDialogFragment {
@@ -182,7 +193,7 @@ class MessageDialogFragment : DialogFragment(),
             bundle.putCharSequence(ARGUMENT_MESSAGE, message)
             bundle.putInt(
                 ARGUMENT_ICON,
-                DialogFragmentPresenterImpl.ICON_INFO
+                ICON_INFO
             )
             bundle.putInt(
                 ARGUMENT_REQUEST_CODE,
@@ -190,7 +201,7 @@ class MessageDialogFragment : DialogFragment(),
             )
             bundle.putInt(
                 ARGUMENT_BUTTONS,
-                DialogFragmentPresenterImpl.ONE_BUTTON
+                ONE_BUTTON
             )
             bundle.putParcelable(ARGUMENT_PARAMS, null)
             fragment.arguments = bundle
@@ -207,7 +218,7 @@ class MessageDialogFragment : DialogFragment(),
                 context,
                 ex,
                 requestCode,
-                DialogFragmentPresenterImpl.ONE_BUTTON,
+                ONE_BUTTON,
                 false,
                 params
             )
@@ -223,7 +234,7 @@ class MessageDialogFragment : DialogFragment(),
                 context,
                 ex,
                 requestCode,
-                DialogFragmentPresenterImpl.ONE_BUTTON,
+                ONE_BUTTON,
                 stackTrace,
                 null
             )
@@ -233,7 +244,7 @@ class MessageDialogFragment : DialogFragment(),
         fun newInstance(
             context: Context,
             ex: Throwable,
-            requestCode: Int = REQUEST_CODE_NONE, @Buttons buttons: Int = DialogFragmentPresenterImpl.ONE_BUTTON,
+            requestCode: Int = REQUEST_CODE_NONE, @Buttons buttons: Int = ONE_BUTTON,
             stackTrace: Boolean = false,
             params: Bundle? = null
         ): MessageDialogFragment {
@@ -254,7 +265,7 @@ class MessageDialogFragment : DialogFragment(),
             return newInstance(
                 context.getString(R.string.title_error),
                 messageText,
-                DialogFragmentPresenterImpl.ICON_ERROR,
+                ICON_ERROR,
                 requestCode,
                 buttons,
                 params
@@ -264,8 +275,8 @@ class MessageDialogFragment : DialogFragment(),
         @JvmOverloads
         fun newInstance(
             title: String?,
-            message: CharSequence?, @DialogFragmentPresenterImpl.Icon iconResID: Int = DialogFragmentPresenterImpl.ICON_INFO,
-            requestCode: Int = REQUEST_CODE_NONE, @Buttons buttons: Int = DialogFragmentPresenterImpl.ONE_BUTTON,
+            message: CharSequence?, @DialogFragmentPresenter.Icon iconResID: Int = ICON_INFO,
+            requestCode: Int = REQUEST_CODE_NONE, @Buttons buttons: Int = ONE_BUTTON,
             params: Bundle? = null
         ): MessageDialogFragment {
             val fragment =
@@ -520,9 +531,9 @@ class MessageDialogFragment : DialogFragment(),
                 newInstance(
                     title,
                     message,
-                    DialogFragmentPresenterImpl.ICON_INFO,
+                    ICON_INFO,
                     REQUEST_CODE_NONE,
-                    DialogFragmentPresenterImpl.ONE_BUTTON,
+                    ONE_BUTTON,
                     null
                 )
             display(
@@ -543,9 +554,9 @@ class MessageDialogFragment : DialogFragment(),
                 newInstance(
                     title,
                     message,
-                    DialogFragmentPresenterImpl.ICON_INFO,
+                    ICON_INFO,
                     REQUEST_CODE_NONE,
-                    DialogFragmentPresenterImpl.ONE_BUTTON,
+                    ONE_BUTTON,
                     null
                 )
             display(
@@ -559,7 +570,7 @@ class MessageDialogFragment : DialogFragment(),
         fun showMessage(
             activity: FragmentActivity,
             title: String?,
-            message: CharSequence?, @DialogFragmentPresenterImpl.Icon iconResID: Int,
+            message: CharSequence?, @DialogFragmentPresenter.Icon iconResID: Int,
             tag: String? = FRAGMENT_TAG
         ) {
             val f =
@@ -568,7 +579,7 @@ class MessageDialogFragment : DialogFragment(),
                     message,
                     iconResID,
                     REQUEST_CODE_NONE,
-                    DialogFragmentPresenterImpl.ONE_BUTTON,
+                    ONE_BUTTON,
                     null
                 )
             display(
@@ -582,7 +593,7 @@ class MessageDialogFragment : DialogFragment(),
         fun showMessage(
             fragment: Fragment,
             title: String?,
-            message: CharSequence?, @DialogFragmentPresenterImpl.Icon iconResID: Int,
+            message: CharSequence?, @DialogFragmentPresenter.Icon iconResID: Int,
             tag: String? = FRAGMENT_TAG
         ) {
             val f =
@@ -591,7 +602,7 @@ class MessageDialogFragment : DialogFragment(),
                     message,
                     iconResID,
                     REQUEST_CODE_NONE,
-                    DialogFragmentPresenterImpl.ONE_BUTTON,
+                    ONE_BUTTON,
                     null
                 )
             display(
@@ -605,7 +616,7 @@ class MessageDialogFragment : DialogFragment(),
         fun showMessage(
             activity: FragmentActivity,
             title: String?,
-            message: CharSequence?, @DialogFragmentPresenterImpl.Icon iconResID: Int,
+            message: CharSequence?, @DialogFragmentPresenter.Icon iconResID: Int,
             requestCode: Int,
             tag: String? = FRAGMENT_TAG
         ) {
@@ -615,7 +626,7 @@ class MessageDialogFragment : DialogFragment(),
                     message,
                     iconResID,
                     requestCode,
-                    DialogFragmentPresenterImpl.ONE_BUTTON,
+                    ONE_BUTTON,
                     null
                 )
             display(
@@ -629,7 +640,7 @@ class MessageDialogFragment : DialogFragment(),
         fun showMessage(
             fragment: Fragment,
             title: String?,
-            message: CharSequence?, @DialogFragmentPresenterImpl.Icon iconResID: Int,
+            message: CharSequence?, @DialogFragmentPresenter.Icon iconResID: Int,
             requestCode: Int,
             tag: String? = FRAGMENT_TAG
         ) {
@@ -639,7 +650,7 @@ class MessageDialogFragment : DialogFragment(),
                     message,
                     iconResID,
                     requestCode,
-                    DialogFragmentPresenterImpl.ONE_BUTTON,
+                    ONE_BUTTON,
                     null
                 )
             display(
@@ -653,7 +664,7 @@ class MessageDialogFragment : DialogFragment(),
         fun showMessage(
             activity: FragmentActivity,
             title: String?,
-            message: CharSequence?, @DialogFragmentPresenterImpl.Icon iconResID: Int,
+            message: CharSequence?, @DialogFragmentPresenter.Icon iconResID: Int,
             requestCode: Int, @Buttons buttons: Int,
             tag: String? = FRAGMENT_TAG
         ) {
@@ -677,7 +688,7 @@ class MessageDialogFragment : DialogFragment(),
         fun showMessage(
             fragment: Fragment,
             title: String?,
-            message: CharSequence?, @DialogFragmentPresenterImpl.Icon iconResID: Int,
+            message: CharSequence?, @DialogFragmentPresenter.Icon iconResID: Int,
             requestCode: Int, @Buttons buttons: Int,
             tag: String? = FRAGMENT_TAG
         ) {
@@ -701,7 +712,7 @@ class MessageDialogFragment : DialogFragment(),
         fun showMessage(
             fragment: Fragment,
             title: String?,
-            message: CharSequence?, @DialogFragmentPresenterImpl.Icon iconResID: Int,
+            message: CharSequence?, @DialogFragmentPresenter.Icon iconResID: Int,
             requestCode: Int, @Buttons buttons: Int,
             params: Bundle?,
             tag: String? = FRAGMENT_TAG
@@ -732,9 +743,9 @@ class MessageDialogFragment : DialogFragment(),
         activity,
         activity.getString(titleResID),
         activity.getString(messageResID),
-        DialogFragmentPresenterImpl.ICON_INFO,
+        ICON_INFO,
         REQUEST_CODE_NONE,
-        DialogFragmentPresenterImpl.ONE_BUTTON
+        ONE_BUTTON
     )
         }
 
@@ -747,16 +758,16 @@ class MessageDialogFragment : DialogFragment(),
                 fragment,
                 fragment.getString(titleResID),
                 fragment.getString(messageResID),
-                DialogFragmentPresenterImpl.ICON_INFO,
+                ICON_INFO,
                 REQUEST_CODE_NONE,
-                DialogFragmentPresenterImpl.ONE_BUTTON
+                ONE_BUTTON
             )
         }
 
         fun showMessage(
             activity: FragmentActivity,
             titleResID: Int,
-            messageResID: Int, @DialogFragmentPresenterImpl.Icon iconResID: Int
+            messageResID: Int, @DialogFragmentPresenter.Icon iconResID: Int
         ) {
             showMessage(
                 activity,
@@ -764,14 +775,14 @@ class MessageDialogFragment : DialogFragment(),
                 activity.getString(messageResID),
                 iconResID,
                 REQUEST_CODE_NONE,
-                DialogFragmentPresenterImpl.ONE_BUTTON
+                ONE_BUTTON
             )
         }
 
         fun showMessage(
             fragment: Fragment,
             titleResID: Int,
-            messageResID: Int, @DialogFragmentPresenterImpl.Icon iconResID: Int
+            messageResID: Int, @DialogFragmentPresenter.Icon iconResID: Int
         ) {
             showMessage(
                 fragment,
@@ -779,14 +790,14 @@ class MessageDialogFragment : DialogFragment(),
                 fragment.getString(messageResID),
                 iconResID,
                 REQUEST_CODE_NONE,
-                DialogFragmentPresenterImpl.ONE_BUTTON
+                ONE_BUTTON
             )
         }
 
         fun showMessage(
             activity: FragmentActivity,
             titleResID: Int,
-            messageResID: Int, @DialogFragmentPresenterImpl.Icon iconResID: Int,
+            messageResID: Int, @DialogFragmentPresenter.Icon iconResID: Int,
             requestCode: Int
         ) {
             showMessage(
@@ -795,14 +806,14 @@ class MessageDialogFragment : DialogFragment(),
                 activity.getString(messageResID),
                 iconResID,
                 requestCode,
-                DialogFragmentPresenterImpl.ONE_BUTTON
+                ONE_BUTTON
             )
         }
 
         fun showMessage(
             fragment: Fragment,
             titleResID: Int,
-            messageResID: Int, @DialogFragmentPresenterImpl.Icon iconResID: Int,
+            messageResID: Int, @DialogFragmentPresenter.Icon iconResID: Int,
             requestCode: Int
         ) {
             showMessage(
@@ -811,14 +822,14 @@ class MessageDialogFragment : DialogFragment(),
                 fragment.getString(messageResID),
                 iconResID,
                 requestCode,
-                DialogFragmentPresenterImpl.ONE_BUTTON
+                ONE_BUTTON
             )
         }
 
         fun showMessage(
             activity: FragmentActivity,
             titleResID: Int,
-            messageResID: Int, @DialogFragmentPresenterImpl.Icon iconResID: Int,
+            messageResID: Int, @DialogFragmentPresenter.Icon iconResID: Int,
             requestCode: Int, @Buttons buttons: Int
         ) {
             showMessage(
@@ -831,7 +842,7 @@ class MessageDialogFragment : DialogFragment(),
         fun showMessage(
             fragment: Fragment,
             titleResID: Int,
-            messageResID: Int, @DialogFragmentPresenterImpl.Icon iconResID: Int,
+            messageResID: Int, @DialogFragmentPresenter.Icon iconResID: Int,
             requestCode: Int, @Buttons buttons: Int
         ) {
             showMessage(
@@ -844,7 +855,7 @@ class MessageDialogFragment : DialogFragment(),
         fun showMessage(
             fragment: Fragment,
             titleResID: Int,
-            messageResID: Int, @DialogFragmentPresenterImpl.Icon iconResID: Int,
+            messageResID: Int, @DialogFragmentPresenter.Icon iconResID: Int,
             requestCode: Int, @Buttons buttons: Int,
             params: Bundle?
         ) {

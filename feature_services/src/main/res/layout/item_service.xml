@@ -5,6 +5,7 @@
         android:id="@+id/picture_card"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:layout_margin="@dimen/card_item_margin"
         android:foreground="?android:attr/selectableItemBackground"
         android:focusable="true"
         android:clickable="true"
@@ -12,9 +13,10 @@
         android:elevation="@dimen/card_elevation"
         app:cardCornerRadius="4dp"
         tools:targetApi="lollipop">
+
     <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
         <TextView
                 android:id="@+id/service_name"
@@ -26,15 +28,16 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Saloon service name" />
+
         <TextView
                 android:id="@+id/label_duration"
                 style="@style/TextAppearance.AppCompat.Medium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/card_item_margin"
+                android:text="@string/str_duration"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/service_name"
-                android:text="@string/str_duration"/>
+                app:layout_constraintTop_toBottomOf="@+id/service_name" />
 
         <TextView
                 android:id="@+id/service_duration"
@@ -44,37 +47,53 @@
                 android:layout_margin="@dimen/card_item_margin"
                 app:layout_constraintStart_toEndOf="@+id/label_duration"
                 app:layout_constraintTop_toBottomOf="@+id/service_name"
-                tools:text="Duration"/>
+                tools:text="Duration" />
+
+        <TextView
+                android:id="@+id/service_description"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/card_item_margin"
+                app:layout_constraintEnd_toStartOf="@+id/service_price"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/service_duration"
+                tools:text="Saloon service description" />
 
         <TextView
                 android:id="@+id/service_price"
                 style="@style/TextAppearance.AppCompat.Large"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/card_item_margin"
+                android:layout_marginEnd="@dimen/card_item_margin"
+                android:layout_marginBottom="@dimen/card_item_margin"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/service_price_currency"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/service_description"
                 tools:text="Price" />
 
         <TextView
                 android:id="@+id/service_price_currency"
-                style="@style/TextAppearance.AppCompat.Large"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/str_cur_code"
+                android:layout_marginEnd="@dimen/card_item_margin"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/service_price"
+                tools:layout_editor_absoluteX="369dp" />
+
+        <ImageButton
+                android:id="@+id/delete_service"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/card_item_margin"
+                android:background="@android:color/transparent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="руб." />
-        <TextView
-                android:id="@+id/service_description"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                style="@style/TextAppearance.AppCompat.Medium"
-                android:layout_margin="@dimen/card_item_margin"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/service_duration"
-                tools:text="Saloon service description"/>
+                app:srcCompat="@drawable/ic_close"
+                tools:ignore="ContentDescription" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

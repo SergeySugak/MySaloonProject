@@ -20,7 +20,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.app.mscorebase.R
-import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenterImpl
+import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter
 import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
 import com.google.android.material.navigation.NavigationView
 
@@ -325,7 +325,7 @@ abstract class MSActivity<VM : MSViewModel> :
     }
 
     override fun onClickDialogButton(
-        dialog: DialogInterface?, @DialogFragmentPresenterImpl.WhichButton whichButton: Int,
+        dialog: DialogInterface?, @DialogFragmentPresenter.WhichButton whichButton: Int,
         requestCode: Int,
         params: Bundle?
     ) {
@@ -339,9 +339,9 @@ abstract class MSActivity<VM : MSViewModel> :
             this,
             title,
             message,
-            DialogFragmentPresenterImpl.ICON_INFO,
+            DialogFragmentPresenter.ICON_INFO,
             MessageDialogFragment.REQUEST_CODE_NONE,
-            DialogFragmentPresenterImpl.NO_BUTTONS
+            DialogFragmentPresenter.NO_BUTTONS
         )
     }
 

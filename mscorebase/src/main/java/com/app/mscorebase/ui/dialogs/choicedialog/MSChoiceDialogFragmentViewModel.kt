@@ -12,8 +12,6 @@ open class MSChoiceDialogFragmentViewModel<C : ChoiceItem<out Serializable>>(
     private val appState: AppStateManager,
     val adapter: SingleChoiceAdapter<C>
 ) : MSFragmentViewModel(appState) {
-    val LDE_DATA_LOADED =
-        MutableLiveData<Boolean>()
     var choiceMode = ChoiceItem.ChoiceMode.cmSingle
     var selectedPosition = -1
     private val choices: MutableLiveData<List<C>> = MutableLiveData()
@@ -21,7 +19,7 @@ open class MSChoiceDialogFragmentViewModel<C : ChoiceItem<out Serializable>>(
 
     fun setChoices(choices: List<C>) {
         this.choices.value = choices
-        adapter?.setItems(visibleItems)
+        adapter.setItems(visibleItems)
     }
 
     fun getChoices(): List<C> {

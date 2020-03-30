@@ -1,12 +1,16 @@
 package com.app.feature_services.ui
 
+import androidx.lifecycle.viewModelScope
 import com.app.msa_db_repo.repository.db.DbRepository
 import com.app.mscorebase.appstate.AppStateManager
 import com.app.mscorebase.appstate.StateWriter
+import com.app.mscorebase.common.Result
 import com.app.mscorebase.livedata.StatefulLiveData
 import com.app.mscorebase.livedata.StatefulMutableLiveData
 import com.app.mscorebase.ui.MSFragmentViewModel
 import com.app.mscoremodels.saloon.SaloonService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ServicesViewModel
@@ -18,6 +22,17 @@ class ServicesViewModel
     val services: StatefulLiveData<MutableList<SaloonService>> = _services
 
     private val listenerId: String
+
+    fun deleteService(serviceId: String?) {
+        serviceId?.let{
+            viewModelScope.launch(Dispatchers.IO) {
+                val result = dbRepository.deleteServiceInfo(serviceId)
+                if (result is Result.Error){
+                    intError.postValue(result.exception)
+                }
+            }
+        }
+    }
 
     override fun restoreState(writer: StateWriter) {
 

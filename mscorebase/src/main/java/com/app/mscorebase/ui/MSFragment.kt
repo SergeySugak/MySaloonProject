@@ -9,8 +9,7 @@ import androidx.annotation.MenuRes
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import com.app.mscorebase.ui.dialogs.DialogButtonClickListener
-import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenterImpl
-import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenterImpl.WhichButton
+import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter
 import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
 import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment.Companion.hide
 import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment.Companion.showError
@@ -171,7 +170,7 @@ abstract class MSFragment<VM : MSFragmentViewModel> :
 //        }
 //    }
     override fun onClickDialogButton(
-        dialog: DialogInterface?, @WhichButton whichButton: Int,
+        dialog: DialogInterface?, @DialogFragmentPresenter.WhichButton whichButton: Int,
         requestCode: Int,
         params: Bundle?
     ) { //        if (requestCode == REQUEST_CODE_SHOW_ERROR &&
@@ -194,9 +193,9 @@ abstract class MSFragment<VM : MSFragmentViewModel> :
                         fragment,
                         title,
                         message,
-                        DialogFragmentPresenterImpl.ICON_INFO,
+                        DialogFragmentPresenter.ICON_INFO,
                         MessageDialogFragment.REQUEST_CODE_NONE,
-                        DialogFragmentPresenterImpl.NO_BUTTONS
+                        DialogFragmentPresenter.NO_BUTTONS
                     )
                 }
             }
@@ -206,9 +205,9 @@ abstract class MSFragment<VM : MSFragmentViewModel> :
                     activity,
                     title,
                     message,
-                    DialogFragmentPresenterImpl.ICON_INFO,
+                    DialogFragmentPresenter.ICON_INFO,
                     MessageDialogFragment.REQUEST_CODE_NONE,
-                    DialogFragmentPresenterImpl.NO_BUTTONS
+                    DialogFragmentPresenter.NO_BUTTONS
                 )
             }
         }

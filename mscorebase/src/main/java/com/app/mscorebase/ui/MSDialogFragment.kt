@@ -6,13 +6,11 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.Menu
 import android.view.MenuInflater
-import android.view.MenuItem
 import androidx.annotation.LayoutRes
 import androidx.annotation.MenuRes
 import androidx.fragment.app.DialogFragment
 import com.app.mscorebase.ui.dialogs.DialogButtonClickListener
-import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenterImpl
-import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenterImpl.WhichButton
+import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter
 import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
 
 abstract class MSDialogFragment<VM : MSFragmentViewModel> :
@@ -94,10 +92,6 @@ abstract class MSDialogFragment<VM : MSFragmentViewModel> :
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return super.onOptionsItemSelected(item)
-    }
-
     fun setTitle(fVM: MSFragmentViewModel) {
         if (activity is MSActivity<*>) {
             val activity = activity as MSActivity<*>
@@ -123,7 +117,7 @@ abstract class MSDialogFragment<VM : MSFragmentViewModel> :
     }
 
     override fun onCreateOptionsMenu(optMenu: Menu, inflater: MenuInflater) {
-        @MenuRes val menuId: Int = menu;
+        @MenuRes val menuId: Int = menu
         if (menuId != 0) {
             inflater.inflate(menuId, optMenu)
         }
@@ -144,14 +138,12 @@ abstract class MSDialogFragment<VM : MSFragmentViewModel> :
     ) {
         newFragment!!.setTargetFragment(this, 0)
         val fm = parentFragmentManager
-        if (fm != null) {
-            val ft = fm.beginTransaction()
-            val prev = fm.findFragmentByTag(tag)
-            if (prev != null) {
-                ft.remove(prev)
-            }
-            newFragment.show(ft, tag)
+        val ft = fm.beginTransaction()
+        val prev = fm.findFragmentByTag(tag)
+        if (prev != null) {
+            ft.remove(prev)
         }
+        newFragment.show(ft, tag)
     }
 
     override fun hideDialogFragment(tag: String?) {
@@ -195,7 +187,7 @@ abstract class MSDialogFragment<VM : MSFragmentViewModel> :
 //        }
 //    }
     override fun onClickDialogButton(
-        dialog: DialogInterface?, @WhichButton whichButton: Int,
+        dialog: DialogInterface?, @DialogFragmentPresenter.WhichButton whichButton: Int,
         requestCode: Int,
         params: Bundle?
     ) { //        if (requestCode == REQUEST_CODE_SHOW_ERROR &&
@@ -218,9 +210,9 @@ abstract class MSDialogFragment<VM : MSFragmentViewModel> :
                         fragment,
                         title,
                         message,
-                        DialogFragmentPresenterImpl.ICON_INFO,
+                        DialogFragmentPresenter.ICON_INFO,
                         MessageDialogFragment.REQUEST_CODE_NONE,
-                        DialogFragmentPresenterImpl.NO_BUTTONS
+                        DialogFragmentPresenter.NO_BUTTONS
                     )
                 }
             }
@@ -230,9 +222,9 @@ abstract class MSDialogFragment<VM : MSFragmentViewModel> :
                     activity,
                     title,
                     message,
-                    DialogFragmentPresenterImpl.ICON_INFO,
+                    DialogFragmentPresenter.ICON_INFO,
                     MessageDialogFragment.REQUEST_CODE_NONE,
-                    DialogFragmentPresenterImpl.NO_BUTTONS
+                    DialogFragmentPresenter.NO_BUTTONS
                 )
             }
         }

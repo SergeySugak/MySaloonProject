@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
+import android.text.TextUtils
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
@@ -16,7 +17,7 @@ import com.app.mscorebase.di.findComponentDependencies
 import com.app.mscorebase.ui.MSDialogFragment
 import com.app.mscorebase.ui.dialogs.choicedialog.OnChoiceItemsSelectedListener
 import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
-import com.app.mscoremodels.saloon.ServiceDuration
+import com.app.mscoremodels.saloon.ChoosableServiceDuration
 import javax.inject.Inject
 
 class NewServiceFragment : MSDialogFragment<NewServiceViewModel>() {
@@ -42,12 +43,15 @@ class NewServiceFragment : MSDialogFragment<NewServiceViewModel>() {
         builder.setView(view)
             .setTitle(R.string.title_fragment_edit_service)
             .setPositiveButton(getString(R.string.ok)) { _, _ -> }
+            .setNegativeButton(getString(R.string.cancel)) { _, _ ->
+                dialog?.dismiss()
+            }
         val serviceDuration = view.findViewById<EditText>(R.id.service_duration)
         serviceDuration.setOnClickListener{
             val fragment = ServiceDurationSelectionDialog.newInstance(getString(R.string.str_service_duration),
                 null,
-                object: OnChoiceItemsSelectedListener<ServiceDuration, Parcelable?>{
-                    override fun onChoiceItemsSelected(item: List<ServiceDuration>, payload: Parcelable?){
+                object: OnChoiceItemsSelectedListener<ChoosableServiceDuration, Parcelable?>{
+                    override fun onChoiceItemsSelected(item: List<ChoosableServiceDuration>, payload: Parcelable?){
                         getViewModel()?.serviceDuration = item[0]
                         serviceDuration.setText(item[0].description)
                     }
@@ -66,6 +70,7 @@ class NewServiceFragment : MSDialogFragment<NewServiceViewModel>() {
             ok.setOnClickListener{ _ ->
                 getViewModel()?.saveServiceInfo(
                     dlg.findViewById<EditText>(R.id.service_name)?.text.toString(),
+                    getViewModel()?.serviceDuration,
                     dlg.findViewById<EditText>(R.id.service_price)?.text.toString(),
                     dlg.findViewById<EditText>(R.id.service_description)?.text.toString())
             }
@@ -76,6 +81,14 @@ class NewServiceFragment : MSDialogFragment<NewServiceViewModel>() {
         return ViewModelProvider(this, providerFactory).get(NewServiceViewModel::class.java)
     }
 
+    override fun onViewModelCreated(viewModel: NewServiceViewModel, savedInstanceState: Bundle?) {
+        super.onViewModelCreated(viewModel, savedInstanceState)
+        val serviceId = arguments?.get(ARG_EDIT_SERVICE_ID)?.toString()
+        if (!TextUtils.isEmpty(serviceId)) {
+            viewModel.loadData(serviceId!!)
+        }
+    }
+
     override fun onStartObservingViewModel(viewModel: NewServiceViewModel) {
         viewModel.error.observe(this, Observer { error ->
             if (!viewModel.error.isHandled){
@@ -83,6 +96,7 @@ class NewServiceFragment : MSDialogFragment<NewServiceViewModel>() {
                 viewModel.error.isHandled = true
             }
         })
+
         viewModel.serviceInfoSaveState.observe(this, Observer {
             if (it) {
                 val intent = Intent()
@@ -90,9 +104,18 @@ class NewServiceFragment : MSDialogFragment<NewServiceViewModel>() {
                 dismiss()
             }
         })
+
+        viewModel.serviceInfo.observe(this, Observer { service ->
+            dialog?.findViewById<EditText>(R.id.service_name)?.setText(service.name)
+            dialog?.findViewById<EditText>(R.id.service_duration)?.setText(getViewModel()?.serviceDuration?.description)
+            dialog?.findViewById<EditText>(R.id.service_price)?.setText(service.price.toString())
+            dialog?.findViewById<EditText>(R.id.service_description)?.setText(service.description)
+        })
     }
 
     companion object {
         fun newInstance() = NewServiceFragment()
+
+        const val ARG_EDIT_SERVICE_ID = "ARG_EDIT_SERVICE_ID"
     }
 }

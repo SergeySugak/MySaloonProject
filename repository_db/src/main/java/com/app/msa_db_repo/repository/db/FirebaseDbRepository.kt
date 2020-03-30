@@ -1,12 +1,13 @@
 package com.app.msa_db_repo.repository.db
 import android.content.Context
 import com.app.msa.repository_db.R
-import com.app.mscorebase.appstate.AppStateManager
 import com.app.mscorebase.common.Result
 import com.app.mscoremodels.saloon.SaloonFactory
 import com.app.mscoremodels.saloon.SaloonService
-import com.app.mscoremodels.saloon.ServiceDuration
+import com.app.mscoremodels.saloon.ChoosableServiceDuration
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.database.*
+import com.google.gson.Gson
 import java.util.*
 import javax.inject.Inject
 import kotlin.coroutines.resume
@@ -15,9 +16,9 @@ import kotlin.coroutines.suspendCoroutine
 @Suppress("BlockingMethodInNonBlockingContext")
 class FirebaseDbRepository
     @Inject constructor(private val context: Context,
-                        private val appState: AppStateManager,
                         private val firebaseDb: FirebaseDatabase,
-                        private val saloonFactory: SaloonFactory): DbRepository {
+                        private val saloonFactory: SaloonFactory,
+                        private val gson: Gson): DbRepository {
     init{
         //firebaseDb.setPersistenceEnabled(true)
     }
@@ -29,19 +30,7 @@ class FirebaseDbRepository
         return firebaseDb
             .getReference(TBL_SALOONS)
             .child(userId)
-            .runSuspendQuery()
-    }
-
-    private suspend fun Query.runSuspendQuery(): Result<Boolean> = suspendCoroutine { continuation ->
-        this.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(p0: DataSnapshot) {
-                continuation.resume(Result.Success(p0.exists()))
-            }
-
-            override fun onCancelled(p0: DatabaseError) {
-                continuation.resume(Result.Error(p0.toException()))
-            }
-        })
+            .runSuspendExistenceCheckQuery()
     }
 
     override suspend fun createUserRoot(userId: String, username: String): Result<Boolean> {
@@ -56,13 +45,16 @@ class FirebaseDbRepository
         return Result.Success(true)
     }
 
-    override suspend fun getServiceDurations(): Result<List<ServiceDuration>> {
+    override suspend fun getServiceDurations(id: Int?): Result<List<ChoosableServiceDuration>> {
         return try {
             val names = context.resources.getStringArray(R.array.service_duration_names)
             val durations = context.resources.getIntArray(R.array.service_durations)
-            val result = mutableListOf<ServiceDuration>()
+            val result = mutableListOf<ChoosableServiceDuration>()
             for ((i, name) in names.withIndex()){
-                result.add(ServiceDuration(durations[i], name))
+                if (id == null || id == durations[i]) {
+                    val duration = saloonFactory.createChoosableServiceDuration(durations[i], name)
+                    result.add(duration)
+                }
             }
             Result.Success(result)
         } catch (ex: Exception){
@@ -82,12 +74,31 @@ class FirebaseDbRepository
             }
         }
         try {
-            services.child(service.id).setValue(service)
+            Tasks.await(services.child(service.id).setValue(service))
         }
         catch (ex: Exception){
             return Result.Error(Exception(context.getString(R.string.err_cant_update_data) + " $TBL_SERVICES\n" + ex.message))
         }
         return Result.Success(true)
+    }
+
+    override suspend fun loadServiceInfo(serviceId: String): Result<SaloonService> {
+        return firebaseDb
+            .getReference(TBL_SERVICES)
+            .child(serviceId)
+            .runSuspendGetValueQuery()
+    }
+
+    override suspend fun deleteServiceInfo(serviceId: String): Result<Boolean> {
+        return try {
+            Tasks.await(firebaseDb
+                .getReference(TBL_SERVICES)
+                .child(serviceId)
+                .setValue(null))
+            Result.Success(true)
+        } catch (ex: Exception){
+            Result.Error(ex)
+        }
     }
 
     override fun startListenToServices(onInsert: (service: SaloonService)->Unit,
@@ -111,7 +122,7 @@ class FirebaseDbRepository
 
             override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
                 val item = dataSnapshot.getValue(T::class.java)
-                item?.let{onInsert(it)}
+                item?.let { onInsert(it) }
             }
 
             override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
@@ -143,6 +154,33 @@ class FirebaseDbRepository
         val data = firebaseDb.getReference(path)
         childListenersMap[listenerId]?.let { data.removeEventListener(it) } ?:
         valueListenersMap[listenerId]?.let { data.removeEventListener(it) }
+    }
+
+
+    private suspend fun Query.runSuspendExistenceCheckQuery(): Result<Boolean> =
+        suspendCoroutine { continuation ->
+        this.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(p0: DataSnapshot) {
+                continuation.resume(Result.Success(p0.exists()))
+            }
+
+            override fun onCancelled(p0: DatabaseError) {
+                continuation.resume(Result.Error(p0.toException()))
+            }
+        })
+    }
+
+    private suspend inline fun <reified T: Any?> Query.runSuspendGetValueQuery(): Result<T> =
+        suspendCoroutine { continuation ->
+        this.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(p0: DataSnapshot) {
+                continuation.resume(Result.Success(p0.getValue(T::class.java)!!))
+            }
+
+            override fun onCancelled(p0: DatabaseError) {
+                continuation.resume(Result.Error(p0.toException()))
+            }
+        })
     }
 
     companion object {

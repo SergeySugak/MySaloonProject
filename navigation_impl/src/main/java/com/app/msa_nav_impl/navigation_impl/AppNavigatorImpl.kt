@@ -2,10 +2,12 @@ package com.app.msa_nav_impl.navigation_impl
 
 import android.content.Context
 import android.content.Intent
+import android.text.TextUtils
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import com.app.feature_newservice.ui.NewServiceFragment
+import com.app.feature_newservice.ui.NewServiceFragment.Companion.ARG_EDIT_SERVICE_ID
 import com.app.msa_auth.ui.AuthActivity
 import com.app.msa_main.main.MainActivity
 import com.app.msa_nav_api.navigation.AppNavigator
@@ -32,6 +34,9 @@ class AppNavigatorImpl @Inject constructor(): AppNavigator {
         val newServiceFragment = NewServiceFragment.newInstance().apply {
             retainInstance = true
             setTargetFragment(targetFragment, requestCode)
+            if (!TextUtils.isEmpty(serviceId)) {
+                arguments = bundleOf(Pair(ARG_EDIT_SERVICE_ID, serviceId))
+            }
         }
         showDialogFragment(targetFragment, newServiceFragment, tag)
     }

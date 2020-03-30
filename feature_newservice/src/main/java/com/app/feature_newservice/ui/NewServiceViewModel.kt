@@ -10,7 +10,8 @@ import com.app.mscorebase.livedata.StatefulLiveData
 import com.app.mscorebase.livedata.StatefulMutableLiveData
 import com.app.mscorebase.ui.MSFragmentViewModel
 import com.app.mscoremodels.saloon.SaloonFactory
-import com.app.mscoremodels.saloon.ServiceDuration
+import com.app.mscoremodels.saloon.SaloonService
+import com.app.mscoremodels.saloon.ChoosableServiceDuration
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Double.valueOf
@@ -21,10 +22,12 @@ class NewServiceViewModel
                         private val saloonFactory: SaloonFactory,
                         private val dbRepository: DbRepository): MSFragmentViewModel(appState) {
 
-    val _serviceInfoSaveState = StatefulMutableLiveData<Boolean>()
-    val serviceInfoSaveState: StatefulLiveData<Boolean> = _serviceInfoSaveState
-    var serviceDuration: ServiceDuration? = null
+    val intServiceInfoSaveState = StatefulMutableLiveData<Boolean>()
+    val serviceInfoSaveState: StatefulLiveData<Boolean> = intServiceInfoSaveState
+    var serviceDuration: ChoosableServiceDuration? = null
     var serviceId: String = ""
+    val intServiceInfo = StatefulMutableLiveData<SaloonService>()
+    val serviceInfo: StatefulLiveData<SaloonService> = intServiceInfo
 
     override fun restoreState(writer: StateWriter) {
 
@@ -34,26 +37,44 @@ class NewServiceViewModel
 
     }
 
-    fun saveServiceInfo(name: String, price: String, description: String) {
+    fun saveServiceInfo(name: String, duration: ChoosableServiceDuration?, price: String, description: String) {
+        if (duration != null) {
+            viewModelScope.launch(Dispatchers.IO) {
+                intServiceInfoSaveState.postValue(
+                    run {
+                        val result = dbRepository.saveServiceInfo(
+                            saloonFactory.createSaloonService(
+                                appState.authManager.getUserId(),
+                                serviceId, name, valueOf(price),
+                                saloonFactory.createServiceDuration(duration),
+                                description
+                            )
+                        )
+                        if (result is Result.Success) {
+                            result.data
+                        } else {
+                            intError.postValue((result as Result.Error).exception)
+                            false
+                        }
+                    }
+                )
+            }
+        }
+        else {
+            intError.postValue(Exception(appState.context.getString(R.string.err_fill_required_before_save)))
+        }
+    }
+
+    fun loadData(serviceId: String) {
+        this.serviceId = serviceId
         viewModelScope.launch(Dispatchers.IO) {
-            val duration = serviceDuration?.id
-            _serviceInfoSaveState.postValue(
-                if (duration != null) {
-                    val result = dbRepository.saveServiceInfo(
-                        saloonFactory.createSaloonService(appState.authManager.getUserId(),
-                            serviceId, name, valueOf(price), duration, description))
-                    if (result is Result.Success){
-                        result.data
-                    }
-                    else {
-                        intError.postValue((result as Result.Error).exception)
-                        false
-                    }
-                }
-                else {
-                    intError.postValue(Exception(appState.context.getString(R.string.err_fill_required_before_save)))
-                    false
-                })
+            val serviceResult = dbRepository.loadServiceInfo(serviceId)
+            if (serviceResult is Result.Success) {
+                intServiceInfo.postValue(serviceResult.data)
+                serviceDuration = saloonFactory.createChoosableServiceDuration(serviceResult.data.duration)
+            } else {
+                intError.postValue((serviceResult as Result.Error).exception)
+            }
         }
     }
 }

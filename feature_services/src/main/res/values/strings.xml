@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="str_duration">Продолжительность</string>
+    <string name="str_cur_code">&#x20bd;</string>
+    <string name="str_delete_service">Удалить услу\n%s?</string>
 </resources>

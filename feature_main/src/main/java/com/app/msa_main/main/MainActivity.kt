@@ -164,6 +164,5 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
         const val NEW_SERVICE_FRAGMENT_TAG = "NewServiceDialogFragment"
         const val ID_SELECTED_ITEM_ID = NEW_SERVICE_FRAGMENT_TAG + "ID_SELECTED_ITEM_ID"
         const val REQ_NEW_SERVICE = 10001
-
     }
 }

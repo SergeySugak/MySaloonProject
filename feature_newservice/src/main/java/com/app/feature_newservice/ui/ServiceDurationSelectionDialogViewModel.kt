@@ -9,7 +9,7 @@ import com.app.mscorebase.common.Result
 import com.app.mscorebase.livedata.StatefulLiveData
 import com.app.mscorebase.livedata.StatefulMutableLiveData
 import com.app.mscorebase.ui.dialogs.choicedialog.MSChoiceDialogFragmentViewModel
-import com.app.mscoremodels.saloon.ServiceDuration
+import com.app.mscoremodels.saloon.ChoosableServiceDuration
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -20,10 +20,10 @@ class ServiceDurationSelectionDialogViewModel
     @Inject constructor(appState: AppStateManager,
                         adapter: ServiceDurationAdapter,
                         private val dbRepository: DbRepository
-    ): MSChoiceDialogFragmentViewModel<ServiceDuration>(appState, adapter) {
+    ): MSChoiceDialogFragmentViewModel<ChoosableServiceDuration>(appState, adapter) {
 
-    private val _serviceDurations = StatefulMutableLiveData<List<ServiceDuration>>()
-    val serviceDurations: StatefulLiveData<List<ServiceDuration>> = _serviceDurations
+    private val _serviceDurations = StatefulMutableLiveData<List<ChoosableServiceDuration>>()
+    val serviceDurations: StatefulLiveData<List<ChoosableServiceDuration>> = _serviceDurations
 
     fun getServiceDurations() {
         viewModelScope.launch(Dispatchers.IO) {

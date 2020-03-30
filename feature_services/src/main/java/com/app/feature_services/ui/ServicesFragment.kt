@@ -1,7 +1,10 @@
 package com.app.feature_services.ui
 
+import android.content.DialogInterface
+import android.content.DialogInterface.BUTTON_POSITIVE
 import android.os.Bundle
 import android.view.View
+import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,7 +16,9 @@ import com.app.msa_nav_api.navigation.AppNavigator
 import com.app.mscorebase.di.ViewModelProviderFactory
 import com.app.mscorebase.di.findComponentDependencies
 import com.app.mscorebase.ui.MSFragment
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter.Companion.ICON_WARNING
+import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter.Companion.TWO_BUTTONS_YN
+import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
 import javax.inject.Inject
 
 class ServicesFragment : MSFragment<ServicesViewModel>() {
@@ -45,6 +50,16 @@ class ServicesFragment : MSFragment<ServicesViewModel>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        servicesAdapter.setOnServiceClickListener { service ->
+            appNavigator.navigateToEditServiceFragment(this, service.id, REQ_EDIT_SERVICE,
+                EDIT_SERVICE_FRAGMENT_TAG)
+        }
+        servicesAdapter.setOnServiceDeleteListener { service ->
+            MessageDialogFragment.showMessage(this, getString(R.string.title_warning),
+                String.format(getString(R.string.str_delete_service), service.name),
+                ICON_WARNING, REQ_DELETE_SERVICE, TWO_BUTTONS_YN,
+                bundleOf(Pair(SERVICE_ID, service.id)))
+        }
         servicesList = view.findViewById(R.id.services_list)
         servicesList.layoutManager = LinearLayoutManager(context)
         servicesList.adapter = servicesAdapter as RecyclerView.Adapter<*>
@@ -60,11 +75,30 @@ class ServicesFragment : MSFragment<ServicesViewModel>() {
         })
     }
 
+    override fun onClickDialogButton(
+        dialog: DialogInterface?,
+        whichButton: Int,
+        requestCode: Int,
+        params: Bundle?
+    ) {
+        if (requestCode == REQ_DELETE_SERVICE) {
+            if (whichButton == BUTTON_POSITIVE){
+                getViewModel()?.deleteService(params?.getString(SERVICE_ID))
+            }
+        }
+    }
+
     override fun onHiddenChanged(hidden: Boolean) {
 
     }
 
     companion object {
         fun newInstance() = ServicesFragment()
+
+        const val EDIT_SERVICE_FRAGMENT_TAG = "NewServiceDialogFragment"
+        const val REQ_EDIT_SERVICE = 10002
+        const val REQ_DELETE_SERVICE = 10003
+        val SERVICE_ID = "${ServicesFragment::class.java.simpleName}_SERVICE_ID"
     }
+
 }
