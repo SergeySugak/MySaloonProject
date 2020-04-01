@@ -49,6 +49,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     api project(':mscorebase')
     api project(':scopes')
+    api project(':navigation_api')
+    api project(':mscoremodels')
     implementation project(':repository_db')
 
     //jetbrains
@@ -56,6 +58,7 @@ dependencies {
 
     //dagger
     implementation "com.google.dagger:dagger:$dagger_version"
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
 
     //androidx
@@ -71,6 +74,9 @@ dependencies {
     //google
     implementation 'com.google.android.material:material:1.1.0'
     compileOnly 'com.google.firebase:firebase-database:19.2.1'
+
+    //facebook
+    implementation 'com.facebook.fresco:fresco:2.0.0'
 
     //tests
     testImplementation 'junit:junit:4.13'

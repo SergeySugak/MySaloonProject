@@ -1,0 +1,9 @@
+<resources>
+    <string name="title_fragment_new_master">Новый мастер</string>
+    <string name="title_fragment_edit_master">Редактирование мастера</string>
+    <string name="str_master_name">Имя мастера</string>
+    <string name="err_fill_required_before_save">Перед сохранением необходимо заполнить имя мастера!</string>
+    <string name="str_master_services">Предлагаемые услуги:</string>
+    <string name="str_portfolio_url">URL портфолио (Instagram, Vk, …)</string>
+    <string name="str_master_description">О мастере (опыт и т.п.)</string>
+</resources>

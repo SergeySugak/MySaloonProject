@@ -123,7 +123,7 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
 
 
     private fun mastersFragmentFabAction() {
-
+        appNavigator.navigateToNewMasterFragment(servicesFragment, REQ_NEW_MASTER, NEW_MASTER_FRAGMENT_TAG)
     }
 
     private fun servicesFragmentFabAction() {
@@ -161,8 +161,11 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
     }
 
     companion object {
+        const val NEW_MASTER_FRAGMENT_TAG = "NewMasterDialogFragment"
         const val NEW_SERVICE_FRAGMENT_TAG = "NewServiceDialogFragment"
-        const val ID_SELECTED_ITEM_ID = NEW_SERVICE_FRAGMENT_TAG + "ID_SELECTED_ITEM_ID"
-        const val REQ_NEW_SERVICE = 10001
+        const val REQ_NEW_MASTER = 10001
+        const val REQ_NEW_SERVICE = 10002
+        const val REQ_NEW_SCHEDULE = 10003
+        val ID_SELECTED_ITEM_ID = MainActivity::class.java.simpleName + "_ID_SELECTED_ITEM_ID"
     }
 }

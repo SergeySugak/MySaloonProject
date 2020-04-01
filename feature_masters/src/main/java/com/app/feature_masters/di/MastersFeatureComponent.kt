@@ -5,7 +5,8 @@ import com.app.feature_masters.ui.MastersFragment
 import com.app.msa_scopes.scopes.FeatureScope
 import dagger.Component
 
-@Component(modules = [MastersFeatureViewModelsModule::class],
+@Component(modules = [MastersFeatureModule::class,
+                    MastersFeatureViewModelsModule::class],
     dependencies = [MastersFeatureDependencies::class])
 @FeatureScope
 interface MastersFeatureComponent {

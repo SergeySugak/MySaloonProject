@@ -1,68 +1,59 @@
 package com.app.mscorebase.ui.dialogs.choicedialog
 
-import android.os.Parcelable
-import androidx.lifecycle.MutableLiveData
 import com.app.mscorebase.appstate.AppStateManager
 import com.app.mscorebase.appstate.StateWriter
 import com.app.mscorebase.ui.MSFragmentViewModel
 import java.io.Serializable
 import java.util.*
 
-open class MSChoiceDialogFragmentViewModel<C : ChoiceItem<out Serializable>>(
+open class MSChoiceDialogFragmentViewModel<C : ChoiceItem<out Serializable>, P>(
     private val appState: AppStateManager,
-    val adapter: SingleChoiceAdapter<C>
+    val adapter: SimpleChoiceAdapter<C>
 ) : MSFragmentViewModel(appState) {
-    var choiceMode = ChoiceItem.ChoiceMode.cmSingle
+    val choiceMode
+        get() = adapter.choiceMode
+
     var selectedPosition = -1
-    private val choices: MutableLiveData<List<C>> = MutableLiveData()
-    var resultListener: OnChoiceItemsSelectedListener<C, out Parcelable?>? = null
+    private var choices: List<C> = emptyList()
+    var resultListener: OnChoiceItemsSelectedListener<C, P?>? = null
 
     fun setChoices(choices: List<C>) {
-        this.choices.value = choices
-        adapter.setItems(visibleItems)
+        this.choices = choices
+        adapter.setChoices(visibleItems)
     }
 
-    fun getChoices(): List<C> {
-        return if (choices.value == null)
-            emptyList()
-        else {
-            Collections.unmodifiableList(choices.value!!)
-        }
+    private fun getChoices(): List<C> {
+        return adapter.getChoices()
     }
 
     val visibleItems: List<C>
         get() {
             val result: MutableList<C> = ArrayList()
-            val choices = choices.value
-            if (choices != null) {
-                for (i in choices.indices) {
-                    if (choices[i].isVisible) {
-                        result.add(choices[i])
-                    }
+            for (i in choices.indices) {
+                if (choices[i].isVisible) {
+                    result.add(choices[i])
                 }
             }
             return result
         }
 
     fun setSelected(position: Int, selected: Boolean) {
-        if (choiceMode === ChoiceItem.ChoiceMode.cmMulti) {
-            if (choices.value != null) {
-                choices.value?.get(position)?.isSelected = selected
+        if (position in 0..getChoices().size) {
+            if (choiceMode === ChoiceMode.cmMulti) {
+                getChoices()[position].isSelected = selected
+            } else {
+                selectedPosition = if (selected) position else -1
             }
-        } else {
-            selectedPosition = if (selected) position else -1
         }
     }
 
     val multiSelectedPositions: BooleanArray
-        get() = if (choices.value == null || choices.value!!.isEmpty()) {
-            BooleanArray(0)
-        } else {
-            val result = BooleanArray(choices.value!!.size)
-            for (i in choices.value!!.indices) {
-                result[i] = choices.value!!.get(i).isSelected
+        get() {
+            val result = BooleanArray(getChoices().size)
+            for (i in getChoices().indices) {
+                result[i] = getChoices()[i].isSelected
             }
-            result
+            return result
         }
 
     val selectedItem: List<C>
@@ -86,30 +77,25 @@ open class MSChoiceDialogFragmentViewModel<C : ChoiceItem<out Serializable>>(
         }
 
     val multiSelections: List<C>
-        get() = if (choices.value == null || choices.value!!.isEmpty()) {
-            emptyList()
-        } else {
-            val result: MutableList<C> = ArrayList()
-            for (i in choices.value!!.indices) {
-                if (choices.value!![i].isSelected) {
-                    result.add(choices.value!![i])
+        get() {
+            val result = ArrayList<C>(getChoices().size)
+            for (i in getChoices().indices) {
+                if (getChoices()[i].isSelected) {
+                    result.add(getChoices()[i])
                 }
             }
-            result
+            return result
         }
 
     val choicesArray: Array<String?>
-        get() = if (choices.value == null || choices.value!!.isEmpty()) arrayOfNulls(
-            0
-        ) else {
-            val temp: MutableList<String?> =
-                ArrayList(choices.value!!.size)
-            for (i in choices.value!!.indices) {
-                if (choices.value!![i].isVisible) {
-                    temp.add(choices.value!![i].name)
+        get() {
+            val temp: MutableList<String?> = ArrayList(getChoices().size)
+            for (i in getChoices().indices) {
+                if (getChoices()[i].isVisible) {
+                    temp.add(getChoices()[i].name)
                 }
             }
-            temp.toTypedArray()
+            return temp.toTypedArray()
         }
 
     override fun saveState(writer: StateWriter) {

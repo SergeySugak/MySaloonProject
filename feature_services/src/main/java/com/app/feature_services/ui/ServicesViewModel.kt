@@ -23,6 +23,14 @@ class ServicesViewModel
 
     private val listenerId: String
 
+    override fun restoreState(writer: StateWriter) {
+
+    }
+
+    override fun saveState(writer: StateWriter) {
+
+    }
+
     fun deleteService(serviceId: String?) {
         serviceId?.let{
             viewModelScope.launch(Dispatchers.IO) {
@@ -32,14 +40,6 @@ class ServicesViewModel
                 }
             }
         }
-    }
-
-    override fun restoreState(writer: StateWriter) {
-
-    }
-
-    override fun saveState(writer: StateWriter) {
-
     }
 
     override fun onCleared() {

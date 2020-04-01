@@ -1,7 +1,8 @@
 package com.app.msa_main.di
 
+import com.app.feature_master.api.MasterFeatureDependencies
 import com.app.feature_masters.api.MastersFeatureDependencies
-import com.app.feature_newservice.api.NewServiceFeatureDependencies
+import com.app.feature_service.api.ServiceFeatureDependencies
 import com.app.feature_schedule.api.ScheduleFeatureDependencies
 import com.app.feature_services.api.ServicesFeatureDependencies
 import com.app.mscorebase.di.ComponentDependencies
@@ -19,16 +20,21 @@ abstract class ComponentDependenciesModule {
 
     @Binds
     @IntoMap
+    @ComponentDependenciesKey(MasterFeatureDependencies::class)
+    abstract fun provideMasterFeatureDependencies(component: MainFeatureComponent): ComponentDependencies
+
+    @Binds
+    @IntoMap
     @ComponentDependenciesKey(ServicesFeatureDependencies::class)
     abstract fun provideServicesFeatureDependencies(component: MainFeatureComponent): ComponentDependencies
 
     @Binds
     @IntoMap
-    @ComponentDependenciesKey(ScheduleFeatureDependencies::class)
-    abstract fun provideScheduleFeatureDependencies(component: MainFeatureComponent): ComponentDependencies
+    @ComponentDependenciesKey(ServiceFeatureDependencies::class)
+    abstract fun provideServiceFeatureDependencies(component: MainFeatureComponent): ComponentDependencies
 
     @Binds
     @IntoMap
-    @ComponentDependenciesKey(NewServiceFeatureDependencies::class)
-    abstract fun provideNewServiceFeatureDependencies(component: MainFeatureComponent): ComponentDependencies
+    @ComponentDependenciesKey(ScheduleFeatureDependencies::class)
+    abstract fun provideScheduleFeatureDependencies(component: MainFeatureComponent): ComponentDependencies
 }

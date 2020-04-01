@@ -42,11 +42,11 @@ class AuthActivityViewModel
             //Если вход выполнен успешно обновляем статус и фиксируем userId
             if (loginActionResult is Result.Success){
                 //Проверяем, что для этого администратора создана ветка в базе
-                var checkResult = dbRepository.checkUserRoot(loginActionResult.data)
+                var checkResult = dbRepository.checkSaloonRoot(loginActionResult.data)
                 if (checkResult is Result.Success) {
                     //Если нет - создаем
                     if (!checkResult.data) {
-                        val createUserRootResult = dbRepository.createUserRoot(loginActionResult.data, username)
+                        val createUserRootResult = dbRepository.createSaloonRoot(loginActionResult.data, username)
                         //Если при создании ошибка, то работать нельзя
                         if (createUserRootResult is Result.Error) {
                             _loginResult.postValue(Result.Error(createUserRootResult.exception))

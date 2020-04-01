@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+        package="com.app.feature_service">
+
+    <application>
+        <activity android:name=".ui.NewServiceActivity"></activity>
+    </application>
+
+</manifest>

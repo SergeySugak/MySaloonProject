@@ -62,10 +62,6 @@ open class ChoiceItem<T : Serializable?>(@get:JvmName("getChoiceId") override va
         return 0
     }
 
-    enum class ChoiceMode {
-        cmSingle, cmMulti
-    }
-
     companion object {
         @JvmField
         val CREATOR: Parcelable.Creator<ChoiceItem<*>> =

@@ -1,8 +1,8 @@
 package com.app.msa_main.di
 
+import com.app.feature_master.api.MasterFeatureDependencies
 import com.app.feature_masters.api.MastersFeatureDependencies
-import com.app.feature_newservice.api.NewServiceFeatureDependencies
-import com.app.feature_newservice.ui.NewServiceFragment
+import com.app.feature_service.api.ServiceFeatureDependencies
 import com.app.feature_schedule.api.ScheduleFeatureDependencies
 import com.app.feature_services.api.ServicesFeatureDependencies
 import com.app.msa_db_repo.repository.db.DbRepository
@@ -21,9 +21,10 @@ import dagger.Component
                         dependencies = [MainFeatureDependencies::class])
 @FeatureScope
 interface MainFeatureComponent: MastersFeatureDependencies,
+                                MasterFeatureDependencies,
                                 ServicesFeatureDependencies,
                                 ScheduleFeatureDependencies,
-                                NewServiceFeatureDependencies {
+                                ServiceFeatureDependencies{
     override fun appStateManager(): AppStateManager
     override fun dbRepository(): DbRepository
     override fun appNavigator(): AppNavigator

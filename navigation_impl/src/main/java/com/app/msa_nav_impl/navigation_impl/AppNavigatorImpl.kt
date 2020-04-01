@@ -6,8 +6,10 @@ import android.text.TextUtils
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import com.app.feature_newservice.ui.NewServiceFragment
-import com.app.feature_newservice.ui.NewServiceFragment.Companion.ARG_EDIT_SERVICE_ID
+import com.app.feature_master.ui.MasterFragment
+import com.app.feature_master.ui.MasterFragment.Companion.ARG_EDIT_MASTER_ID
+import com.app.feature_service.ui.ServiceFragment
+import com.app.feature_service.ui.ServiceFragment.Companion.ARG_EDIT_SERVICE_ID
 import com.app.msa_auth.ui.AuthActivity
 import com.app.msa_main.main.MainActivity
 import com.app.msa_nav_api.navigation.AppNavigator
@@ -31,7 +33,7 @@ class AppNavigatorImpl @Inject constructor(): AppNavigator {
 
     override fun navigateToEditServiceFragment(targetFragment: Fragment, serviceId: String,
                                       requestCode: Int, tag: String?){
-        val newServiceFragment = NewServiceFragment.newInstance().apply {
+        val newServiceFragment = ServiceFragment.newInstance().apply {
             retainInstance = true
             setTargetFragment(targetFragment, requestCode)
             if (!TextUtils.isEmpty(serviceId)) {
@@ -40,4 +42,21 @@ class AppNavigatorImpl @Inject constructor(): AppNavigator {
         }
         showDialogFragment(targetFragment, newServiceFragment, tag)
     }
+
+    override fun navigateToNewMasterFragment(targetFragment: Fragment, requestCode: Int, tag: String?){
+        navigateToEditMasterFragment(targetFragment, "", requestCode, tag)
+    }
+
+    override fun navigateToEditMasterFragment(targetFragment: Fragment, masterId: String,
+                                               requestCode: Int, tag: String?){
+        val newServiceFragment = MasterFragment.newInstance().apply {
+            retainInstance = true
+            setTargetFragment(targetFragment, requestCode)
+            if (!TextUtils.isEmpty(masterId)) {
+                arguments = bundleOf(Pair(ARG_EDIT_MASTER_ID, masterId))
+            }
+        }
+        showDialogFragment(targetFragment, newServiceFragment, tag)
+    }
+
 }
