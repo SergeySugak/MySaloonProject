@@ -2,6 +2,8 @@ package com.app.mscorebase.ui.dialogs.choicedialog
 
 import com.app.mscorebase.appstate.AppStateManager
 import com.app.mscorebase.appstate.StateWriter
+import com.app.mscorebase.livedata.StatefulLiveData
+import com.app.mscorebase.livedata.StatefulMutableLiveData
 import com.app.mscorebase.ui.MSFragmentViewModel
 import java.io.Serializable
 import java.util.*
@@ -13,90 +15,67 @@ open class MSChoiceDialogFragmentViewModel<C : ChoiceItem<out Serializable>, P>(
     val choiceMode
         get() = adapter.choiceMode
 
-    var selectedPosition = -1
     private var choices: List<C> = emptyList()
+    var singleChoicePosition: Int = -1
+        private set
     var resultListener: OnChoiceItemsSelectedListener<C, P?>? = null
+    private val intChoicesUpdated = StatefulMutableLiveData<Boolean>()
+    val choicesUpdated: StatefulLiveData<Boolean> = intChoicesUpdated
 
-    fun setChoices(choices: List<C>) {
-        this.choices = choices
-        adapter.setChoices(visibleItems)
+    val selectedItems = mutableListOf<C>()
+
+    private fun getVisibleChoices(choiceItems: List<C>): List<C> {
+        val result: MutableList<C> = ArrayList()
+        for (i in choiceItems.indices) {
+            if (choiceItems[i].isVisible) {
+                result.add(choiceItems[i])
+            }
+        }
+        return result
     }
 
-    private fun getChoices(): List<C> {
-        return adapter.getChoices()
+    fun setChoices(choiceItems: List<C>) {
+        selectedItems.clear()
+        choiceItems.forEach{ item ->
+            if (item.isSelected) {
+                selectedItems.add(item)
+                if (choiceMode === ChoiceMode.cmSingle){
+                    singleChoicePosition = choiceItems.indexOf(item)
+                    return@forEach
+                }
+            }
+        }
+        choices = getVisibleChoices(choiceItems)
+        adapter.setChoices(choices)
+        intChoicesUpdated.value = true
     }
 
     val visibleItems: List<C>
-        get() {
-            val result: MutableList<C> = ArrayList()
-            for (i in choices.indices) {
-                if (choices[i].isVisible) {
-                    result.add(choices[i])
+        get() = choices
+
+    fun setSelected(position: Int) {
+        if (position in 0..choices.size) {
+            if (choiceMode === ChoiceMode.cmSingle) {
+                if (selectedItems.size > 0) {
+                    selectedItems.clear()
+                }
+                selectedItems.add(choices[position])
+                choices[singleChoicePosition].isSelected = false
+                singleChoicePosition = position
+                choices[singleChoicePosition].isSelected = true
+            } else {
+                val index = selectedItems.indexOf(choices[position])
+                if (index == -1){
+                    selectedItems.add(choices[position])
+                    choices[position].isSelected = true
+                } else {
+                    selectedItems.removeAt(index)
+                    choices[position].isSelected = false
                 }
             }
-            return result
-        }
-
-    fun setSelected(position: Int, selected: Boolean) {
-        if (position in 0..getChoices().size) {
-            if (choiceMode === ChoiceMode.cmMulti) {
-                getChoices()[position].isSelected = selected
-            } else {
-                selectedPosition = if (selected) position else -1
-            }
+            adapter.notifyDataSetChanged()
         }
     }
-
-    val multiSelectedPositions: BooleanArray
-        get() {
-            val result = BooleanArray(getChoices().size)
-            for (i in getChoices().indices) {
-                result[i] = getChoices()[i].isSelected
-            }
-            return result
-        }
-
-    val selectedItem: List<C>
-        get() {
-            val selectedPos = selectedPosition
-            var invisible = 0
-            var visible = 0
-            for (i in getChoices().indices) {
-                if (!getChoices()[i].isVisible) {
-                    invisible++
-                } else {
-                    if (visible == selectedPos) {
-                        break
-                    }
-                    visible++
-                }
-            }
-            val result: MutableList<C> = ArrayList()
-            result.add(getChoices()[invisible + selectedPos])
-            return result
-        }
-
-    val multiSelections: List<C>
-        get() {
-            val result = ArrayList<C>(getChoices().size)
-            for (i in getChoices().indices) {
-                if (getChoices()[i].isSelected) {
-                    result.add(getChoices()[i])
-                }
-            }
-            return result
-        }
-
-    val choicesArray: Array<String?>
-        get() {
-            val temp: MutableList<String?> = ArrayList(getChoices().size)
-            for (i in getChoices().indices) {
-                if (getChoices()[i].isVisible) {
-                    temp.add(getChoices()[i].name)
-                }
-            }
-            return temp.toTypedArray()
-        }
 
     override fun saveState(writer: StateWriter) {
         val state: Map<String, String> =

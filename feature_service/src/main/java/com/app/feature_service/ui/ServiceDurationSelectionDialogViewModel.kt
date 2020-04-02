@@ -22,17 +22,25 @@ class ServiceDurationSelectionDialogViewModel
                         adapter: ServiceDurationAdapter,
                         private val dbRepository: DbRepository,
                         private val saloonFactory: SaloonFactory
-    ): MSChoiceDialogFragmentViewModel<ChoosableServiceDuration, String?>(appState, adapter) {
+    ): MSChoiceDialogFragmentViewModel<ChoosableServiceDuration, Int?>(appState, adapter) {
 
-    private fun getServiceDurations() {
+    fun getServiceDurations(selectedDurationId: Int) {
+        intIsInProgress.value = true
         viewModelScope.launch(Dispatchers.IO) {
             val result = dbRepository.getServiceDurations()
             if (result is Result.Success) {
                 val choosable = saloonFactory.createChoosableServiceDurations(result.data)
-                setChoices(choosable)
+                choosable.forEach{ item ->
+                    item.isSelected = item.id == selectedDurationId
+                }
+                withContext(Dispatchers.Main){
+                    setChoices(choosable)
+                    intIsInProgress.value = false
+                }
             }
             else {
                 intError.postValue((result as Result.Error).exception)
+                intIsInProgress.postValue(false)
             }
         }
     }
@@ -46,9 +54,5 @@ class ServiceDurationSelectionDialogViewModel
     override fun restoreState(writer: StateWriter) {
         val state = writer.readState(this)
         //read state
-    }
-
-    init {
-        getServiceDurations()
     }
 }

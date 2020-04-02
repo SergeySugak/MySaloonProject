@@ -25,12 +25,28 @@ class SaloonFactory @Inject constructor() {
         return result
     }
 
+    fun convertToChoosableServices(servicesList: List<SaloonService>): List<ChoosableSaloonService>{
+        val result = mutableListOf<ChoosableSaloonService>()
+        servicesList.forEach{ saloonService ->
+            ChoosableSaloonService(saloonService)
+        }
+        return result
+    }
+
+    fun convertToSaloonServices(servicesList: List<ChoosableSaloonService>): List<SaloonService> {
+        val result = mutableListOf<SaloonService>()
+        servicesList.forEach{ choosableSaloonService ->
+            result.add(choosableSaloonService.service)
+        }
+        return result
+    }
+
     fun createChoosableServices(allServicesList: List<SaloonService>,
                                 masterServicesList: List<SaloonService>): List<ChoosableSaloonService> {
         val result = mutableListOf<ChoosableSaloonService>()
             allServicesList.mapTo(result) { saloonService ->
                 ChoosableSaloonService(saloonService).apply {
-                    isSelected = masterServicesList.indexOf(saloonService) != 1
+                    isSelected = masterServicesList.indexOf(saloonService) != -1
                 }
             }
         return result

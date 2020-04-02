@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
-import android.os.Parcelable
 import android.text.TextUtils
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
@@ -49,13 +48,13 @@ class ServiceFragment : MSDialogFragment<ServiceViewModel>() {
         val serviceDuration = view.findViewById<EditText>(R.id.service_duration)
         serviceDuration.setOnClickListener{
             val fragment = ServiceDurationSelectionDialog.newInstance(getString(R.string.str_service_duration),
-                null,
-                object: OnChoiceItemsSelectedListener<ChoosableServiceDuration, String?>{
-                    override fun onChoiceItemsSelected(item: List<ChoosableServiceDuration>, payload: String?){
-                        getViewModel()?.serviceDuration = item[0]
-                        serviceDuration.setText(item[0].serviceDuration?.description)
+                getViewModel()?.serviceDuration?.id,
+                object: OnChoiceItemsSelectedListener<ChoosableServiceDuration, Int?>{
+                    override fun onChoiceItemsSelected(selections: List<ChoosableServiceDuration>, payload: Int?){
+                        getViewModel()?.serviceDuration = selections[0]
+                        serviceDuration.setText(selections[0].serviceDuration?.description)
                     }
-                    override fun onNoItemSelected(payload: String?) {}
+                    override fun onNoItemSelected(payload: Int?) {}
                 })
             showDialogFragment(fragment, "")
         }

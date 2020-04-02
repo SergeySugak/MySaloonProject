@@ -23,11 +23,17 @@ class FirebaseDbRepository
         //firebaseDb.setPersistenceEnabled(true)
     }
 
-    private val saloonRoot: String = "$TBL_SALOONS/${appState.authManager.getUserId()}"
-    private val servicesRoot: String = "$saloonRoot/${TBL_SERVICES}"
-    private val mastersRoot: String = "$saloonRoot/${TBL_MASTERS}"
+    private lateinit var saloonRoot: String
+    private lateinit var servicesRoot: String
+    private lateinit var mastersRoot: String
     private val childListenersMap = mutableMapOf<String, ChildEventListener>()
     private val valueListenersMap = mutableMapOf<String, ValueEventListener>()
+
+    override fun initialize(userId: String) {
+        saloonRoot = "$TBL_SALOONS/${appState.authManager.getUserId()}"
+        servicesRoot = "$saloonRoot/${TBL_SERVICES}"
+        mastersRoot = "$saloonRoot/${TBL_MASTERS}"
+    }
 
     override suspend fun checkSaloonRoot(userId: String): Result<Boolean> {
         return firebaseDb

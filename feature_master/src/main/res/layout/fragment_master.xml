@@ -57,7 +57,6 @@
                 android:id="@+id/master_portfolio_url"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:autoLink="web"
                 android:hint="@string/str_portfolio_url"
                 android:inputType="textUri" />
     </com.google.android.material.textfield.TextInputLayout>

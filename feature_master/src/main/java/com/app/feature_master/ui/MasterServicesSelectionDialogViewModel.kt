@@ -12,8 +12,10 @@ import com.app.mscorebase.livedata.StatefulMutableLiveData
 import com.app.mscorebase.ui.dialogs.choicedialog.MSChoiceDialogFragmentViewModel
 import com.app.mscoremodels.saloon.ChoosableSaloonService
 import com.app.mscoremodels.saloon.SaloonFactory
+import com.app.mscoremodels.saloon.SaloonService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
 
@@ -24,27 +26,15 @@ class MasterServicesSelectionDialogViewModel
                         private val saloonFactory: SaloonFactory
     ): MSChoiceDialogFragmentViewModel<ChoosableSaloonService, String?>(appState, adapter) {
 
-    fun loadServices(masterId: String?) {
+    private var masterServices = emptyList<SaloonService>()
+
+    fun loadServices() {
         viewModelScope.launch(Dispatchers.IO) {
             val allServicesResult = dbRepository.getServices()
             if (allServicesResult is Result.Success) {
-                if (!TextUtils.isEmpty(masterId)) {
-                    val masterServicesResult = dbRepository.getServices(masterId)
-                    if (masterServicesResult is Result.Success){
-                        val choosable = saloonFactory.createChoosableServices(allServicesResult.data,
-                            masterServicesResult.data)
-                        setChoices(choosable)
-                    }
-                    else {
-                        intError.postValue((masterServicesResult as Result.Error).exception)
-                    }
-                }
-//                _masterServices.postValue(result.data)
-//                withContext(Dispatchers.Main) {
-//                    if (_masterServices.value != null) {
-//                        setChoices(_masterServices.value!!)
-//                    }
-//                }
+                val choosable = saloonFactory.createChoosableServices(allServicesResult.data,
+                    masterServices)
+                    withContext(Dispatchers.Main){setChoices(choosable)}
             }
             else {
                 intError.postValue((allServicesResult as Result.Error).exception)
@@ -61,5 +51,9 @@ class MasterServicesSelectionDialogViewModel
     override fun restoreState(writer: StateWriter) {
         val state = writer.readState(this)
         //read state
+    }
+
+    fun setMasterServices(masterServices: MutableList<SaloonService>) {
+        this.masterServices = masterServices
     }
 }

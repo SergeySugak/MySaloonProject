@@ -53,6 +53,7 @@ class AuthActivityViewModel
                             return@launch
                         }
                     }
+                    dbRepository.initialize(loginActionResult.data)
                 }
                 else {
                     //Если при проверке ошибка, то работать нельзя

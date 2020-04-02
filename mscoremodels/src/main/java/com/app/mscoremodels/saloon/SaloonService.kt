@@ -49,4 +49,9 @@ class SaloonService constructor(){
         return result
     }
 
+    override fun toString(): String {
+        return description
+    }
+
+
 }

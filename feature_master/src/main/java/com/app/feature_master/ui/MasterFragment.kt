@@ -17,12 +17,15 @@ import com.app.mscorebase.ui.MSDialogFragment
 import com.app.mscorebase.ui.dialogs.choicedialog.OnChoiceItemsSelectedListener
 import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
 import com.app.mscoremodels.saloon.ChoosableSaloonService
+import com.app.mscoremodels.saloon.SaloonService
 import javax.inject.Inject
 
-class MasterFragment : MSDialogFragment<MasterViewModel>() {
+class MasterFragment : MSDialogFragment<MasterFragmentViewModel>() {
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory
         protected set
+
+    private lateinit var masterServices: EditText
 
     override val layoutId = R.layout.fragment_master
 
@@ -45,14 +48,14 @@ class MasterFragment : MSDialogFragment<MasterViewModel>() {
             .setNegativeButton(getString(R.string.cancel)) { _, _ ->
                 dialog?.dismiss()
             }
-        val masterServices = view.findViewById<EditText>(R.id.master_services)
+        masterServices = view.findViewById(R.id.master_services)
         masterServices.setOnClickListener{
             val fragment = MasterServicesSelectionDialog.newInstance(getString(R.string.str_master_services),
                 getViewModel()?.masterId,
+                getViewModel()?.masterServices?.value ?: emptyList(),
                 object: OnChoiceItemsSelectedListener<ChoosableSaloonService, String?> {
-                    override fun onChoiceItemsSelected(item: List<ChoosableSaloonService>, payload: String?){
-//                        getViewModel()?.serviceDuration = item[0]
-//                        serviceDuration.setText(item[0].description)
+                    override fun onChoiceItemsSelected(selections: List<ChoosableSaloonService>, payload: String?){
+                        getViewModel()?.setMasterServices(selections)
                     }
                     override fun onNoItemSelected(payload: String?) {}
                 })
@@ -75,11 +78,11 @@ class MasterFragment : MSDialogFragment<MasterViewModel>() {
         }
     }
 
-    override fun createViewModel(savedInstanceState: Bundle?): MasterViewModel {
-        return ViewModelProvider(this, providerFactory).get(MasterViewModel::class.java)
+    override fun createViewModel(savedInstanceState: Bundle?): MasterFragmentViewModel {
+        return ViewModelProvider(this, providerFactory).get(MasterFragmentViewModel::class.java)
     }
 
-    override fun onViewModelCreated(viewModel: MasterViewModel, savedInstanceState: Bundle?) {
+    override fun onViewModelCreated(viewModel: MasterFragmentViewModel, savedInstanceState: Bundle?) {
         super.onViewModelCreated(viewModel, savedInstanceState)
         val serviceId = arguments?.get(ARG_EDIT_MASTER_ID)?.toString()
         if (!TextUtils.isEmpty(serviceId)) {
@@ -87,7 +90,7 @@ class MasterFragment : MSDialogFragment<MasterViewModel>() {
         }
     }
 
-    override fun onStartObservingViewModel(viewModel: MasterViewModel) {
+    override fun onStartObservingViewModel(viewModel: MasterFragmentViewModel) {
         viewModel.error.observe(this, Observer { error ->
             if (!viewModel.error.isHandled){
                 MessageDialogFragment.showError(this, error, false)
@@ -96,17 +99,32 @@ class MasterFragment : MSDialogFragment<MasterViewModel>() {
         })
 
         viewModel.masterInfoSaveState.observe(this, Observer {
-            if (it) {
-                val intent = Intent()
-                targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
-                dismiss()
+            if (!viewModel.masterInfoSaveState.isHandled) {
+                if (it) {
+                    val intent = Intent()
+                    targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
+                    dismiss()
+                }
+                viewModel.masterInfoSaveState.isHandled = true
             }
         })
 
         viewModel.masterInfo.observe(this, Observer { service ->
-            dialog?.findViewById<EditText>(R.id.master_name)?.setText(service.name)
-            dialog?.findViewById<EditText>(R.id.master_description)?.setText(service.description)
-            dialog?.findViewById<EditText>(R.id.master_portfolio_url)?.setText(service.portfolioUrl)
+            if (!viewModel.masterInfo.isHandled){
+                dialog?.findViewById<EditText>(R.id.master_name)?.setText(service.name)
+                dialog?.findViewById<EditText>(R.id.master_description)?.setText(service.description)
+                dialog?.findViewById<EditText>(R.id.master_portfolio_url)?.setText(service.portfolioUrl)
+                viewModel.masterInfo.isHandled = true
+            }
+        })
+
+        viewModel.masterServices.observe(this, Observer { services ->
+            if (!viewModel.masterServices.isHandled){
+                if (::masterServices.isInitialized){
+                    masterServices.setText(services.joinToString())
+                    viewModel.masterServices.isHandled = true
+                }
+            }
         })
     }
 

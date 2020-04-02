@@ -4,6 +4,8 @@ import com.app.mscorebase.common.Result
 import com.app.mscoremodels.saloon.*
 
 interface DbRepository {
+    fun initialize(userId: String)
+
     suspend fun checkSaloonRoot(userId: String): Result<Boolean>
     suspend fun createSaloonRoot(userId: String, username: String): Result<Boolean>
     suspend fun getServiceDurations(id: Int? = null): Result<List<ServiceDuration>>

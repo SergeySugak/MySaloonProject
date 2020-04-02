@@ -1,14 +1,11 @@
 package com.app.mscorebase.ui.dialogs.choicedialog
 
-import android.os.Handler
-import android.os.Looper
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.CheckedTextView
-import androidx.annotation.MainThread
 import com.app.mscorebase.R
 import java.io.Serializable
 import java.util.*
@@ -18,11 +15,10 @@ open class SimpleChoiceAdapter<C : ChoiceItem<out Serializable>>(val choiceMode:
     private var choices: List<C> = ArrayList()
     private val enabledTypedValue: TypedValue? = TypedValue()
     private val disabledTypedValue: TypedValue? = TypedValue()
-    private val handler: Handler = Handler(Looper.getMainLooper())
 
     fun setChoices(choiceItems: List<C>) {
         choices = choiceItems
-        handler.post{notifyDataSetChanged()}
+        notifyDataSetChanged()
     }
 
     fun getChoices(): List<C> = Collections.unmodifiableList(choices)
@@ -79,6 +75,7 @@ open class SimpleChoiceAdapter<C : ChoiceItem<out Serializable>>(val choiceMode:
             )
         }
         viewHolder.checkedTextView!!.text = choices[position].name
+        viewHolder.checkedTextView!!.isChecked = choices[position].isSelected
         viewHolder.checkedTextView!!.isEnabled = isEnabled(position)
         val checkMark = if (isEnabled(position)) {
             enabledTypedValue!!.resourceId
@@ -90,6 +87,7 @@ open class SimpleChoiceAdapter<C : ChoiceItem<out Serializable>>(val choiceMode:
         }
         viewHolder.checkedTextView!!.visibility =
             if (choices[position].isVisible) View.VISIBLE else View.GONE
+
         convertView!!.visibility = viewHolder.checkedTextView!!.visibility
         return convertView
     }
