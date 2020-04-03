@@ -57,10 +57,12 @@ open class MSChoiceDialogFragmentViewModel<C : ChoiceItem<out Serializable>, P>(
         if (position in 0..choices.size) {
             if (choiceMode === ChoiceMode.cmSingle) {
                 if (selectedItems.size > 0) {
+                    if (singleChoicePosition != -1) {
+                        choices[singleChoicePosition].isSelected = false
+                    }
                     selectedItems.clear()
                 }
                 selectedItems.add(choices[position])
-                choices[singleChoicePosition].isSelected = false
                 singleChoicePosition = position
                 choices[singleChoicePosition].isSelected = true
             } else {

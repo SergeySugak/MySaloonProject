@@ -60,8 +60,8 @@ class ServiceDurationSelectionDialog: MSChoiceDialogFragment<ChoosableServiceDur
             else
                 args.putInt(ARGUMENT_PAYLOAD, -1)
             args.putString(ARGUMENT_TITLE, title)
+            args.putParcelable(ARGUMENT_RESULT_LISTENER, resultListener)
             fragment.arguments = args
-            fragment.setResultListener(resultListener)
             return fragment
         }
     }

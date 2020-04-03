@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcel
 import android.text.TextUtils
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
@@ -59,6 +60,8 @@ class MasterFragment : MSDialogFragment<MasterFragmentViewModel>() {
                         getViewModel()?.setMasterServices(selections)
                     }
                     override fun onNoItemSelected(payload: String?) {}
+                    override fun writeToParcel(dest: Parcel?, flags: Int) {}
+                    override fun describeContents(): Int {return 0}
                 })
             showDialogFragment(fragment, "")
         }

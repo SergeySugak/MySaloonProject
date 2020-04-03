@@ -1,14 +1,11 @@
 package com.app.feature_master.ui
 
-import android.text.TextUtils
 import androidx.lifecycle.viewModelScope
 import com.app.feature_master.models.MasterServicesAdapter
 import com.app.msa_db_repo.repository.db.DbRepository
 import com.app.mscorebase.appstate.AppStateManager
 import com.app.mscorebase.appstate.StateWriter
 import com.app.mscorebase.common.Result
-import com.app.mscorebase.livedata.StatefulLiveData
-import com.app.mscorebase.livedata.StatefulMutableLiveData
 import com.app.mscorebase.ui.dialogs.choicedialog.MSChoiceDialogFragmentViewModel
 import com.app.mscoremodels.saloon.ChoosableSaloonService
 import com.app.mscoremodels.saloon.SaloonFactory

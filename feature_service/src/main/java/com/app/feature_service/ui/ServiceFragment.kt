@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcel
 import android.text.TextUtils
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
@@ -55,6 +56,8 @@ class ServiceFragment : MSDialogFragment<ServiceViewModel>() {
                         serviceDuration.setText(selections[0].serviceDuration?.description)
                     }
                     override fun onNoItemSelected(payload: Int?) {}
+                    override fun writeToParcel(dest: Parcel?, flags: Int) {}
+                    override fun describeContents(): Int {return 0}
                 })
             showDialogFragment(fragment, "")
         }

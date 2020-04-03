@@ -57,12 +57,12 @@ class MasterServicesSelectionDialog: MSChoiceDialogFragment<ChoosableSaloonServi
         fun newInstance(title: String, masterId: String?, masterServices: List<SaloonService>,
                         resultListener: OnChoiceItemsSelectedListener<ChoosableSaloonService, String?>): MasterServicesSelectionDialog {
             val args = Bundle();
-            val fragment = MasterServicesSelectionDialog();
+            val fragment = MasterServicesSelectionDialog()
             fragment.retainInstance = true
-            args.putString(ARGUMENT_PAYLOAD, masterId);
-            args.putString(ARGUMENT_TITLE, title);
-            fragment.arguments = args;
-            fragment.setResultListener(resultListener);
+            args.putString(ARGUMENT_PAYLOAD, masterId)
+            args.putString(ARGUMENT_TITLE, title)
+            args.putParcelable(ARGUMENT_RESULT_LISTENER, resultListener)
+            fragment.arguments = args
             fragment.masterServices.clear()
             fragment.masterServices.addAll(masterServices)
             return fragment;

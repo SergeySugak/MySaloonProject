@@ -12,11 +12,6 @@ import java.io.Serializable
 abstract class MSChoiceDialogFragment<C : ChoiceItem<out Serializable>, VM : MSChoiceDialogFragmentViewModel<C, P>, P> :
     MSDialogFragment<VM>(), DialogInterface.OnClickListener {
     private lateinit var dialog: AlertDialog
-    private var resultListener: OnChoiceItemsSelectedListener<C, P?>? = null
-    fun setResultListener(resultListener: OnChoiceItemsSelectedListener<C, P?>?) {
-        this.resultListener = resultListener
-        getViewModel()?.resultListener = resultListener
-    }
 
     override val layoutId: Int
         get() = 0
@@ -25,7 +20,7 @@ abstract class MSChoiceDialogFragment<C : ChoiceItem<out Serializable>, VM : MSC
         viewModel.setChoices(if (arguments != null && arguments!!.getParcelableArrayList<C>(ARGUMENT_CHOICES) != null)
                                 arguments!!.getParcelableArrayList(ARGUMENT_CHOICES)!!
                             else emptyList())
-        viewModel.resultListener = resultListener
+        viewModel.resultListener = arguments?.getParcelable(ARGUMENT_RESULT_LISTENER)
         super.onViewModelCreated(viewModel, savedInstanceState)
     }
 
@@ -151,5 +146,6 @@ abstract class MSChoiceDialogFragment<C : ChoiceItem<out Serializable>, VM : MSC
         const val ARGUMENT_PAYLOAD = "payload"
         const val ARGUMENT_TITLE = "title"
         const val ARGUMENT_CHOICES = "choices"
+        const val ARGUMENT_RESULT_LISTENER = "result_listener"
     }
 }
