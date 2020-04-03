@@ -26,13 +26,16 @@ class FirebaseDbRepository
     private lateinit var saloonRoot: String
     private lateinit var servicesRoot: String
     private lateinit var mastersRoot: String
+    private lateinit var masterServicesRoot: String
     private val childListenersMap = mutableMapOf<String, ChildEventListener>()
     private val valueListenersMap = mutableMapOf<String, ValueEventListener>()
 
+    //region general
     override fun initialize(userId: String) {
         saloonRoot = "$TBL_SALOONS/${appState.authManager.getUserId()}"
         servicesRoot = "$saloonRoot/${TBL_SERVICES}"
         mastersRoot = "$saloonRoot/${TBL_MASTERS}"
+        masterServicesRoot = "$saloonRoot/${TBL_MASTER_SERVICES}"
     }
 
     override suspend fun checkSaloonRoot(userId: String): Result<Boolean> {
@@ -53,7 +56,9 @@ class FirebaseDbRepository
         }
         return Result.Success(true)
     }
+    //endregion
 
+    //region durations
     override suspend fun getServiceDurations(id: Int?): Result<List<ServiceDuration>> {
         return try {
             val names = appState.context.resources.getStringArray(R.array.service_duration_names)
@@ -70,8 +75,9 @@ class FirebaseDbRepository
             Result.Error(ex)
         }
     }
+    //endregion
 
-    //region Services
+    //region services
     override suspend fun saveServiceInfo(service: SaloonService): Result<Boolean> {
         val services = firebaseDb.getReference(servicesRoot)
         if (service.id == ""){
@@ -122,7 +128,7 @@ class FirebaseDbRepository
     }
     //endregion Services
 
-    //region Masters start
+    //region masters
     override suspend fun saveMasterInfo(master: SaloonMaster): Result<Boolean> {
         val services = firebaseDb
             .getReference(mastersRoot)
@@ -174,16 +180,64 @@ class FirebaseDbRepository
     }
     //endregion Masters
 
+    //region master services
     override suspend fun getServices(masterId: String?): Result<List<SaloonService>> {
         return if (TextUtils.isEmpty(masterId))
             firebaseDb.getReference(servicesRoot).runSuspendGetListQuery()
-        else
-            Result.Success(emptyList())
-//            firebaseDb.getReference(servicesRoot)
-//            .child(masterId)
-//            .runSuspendGetValueQuery()
+        else {
+            val masterServicesResult = firebaseDb.getReference(masterServicesRoot)
+                .child(masterId!!)
+                .runSuspendGetListQuery<MasterService>()
+            if (masterServicesResult is Result.Success){
+                convertMasterServicesToSaloonServices(masterServicesResult.data)
+            }
+            else {
+                masterServicesResult as Result.Error
+                Result.Error(masterServicesResult.exception)
+            }
+        }
     }
 
+    override suspend fun saveMasterServicesInfo(masterId: String, services: List<SaloonService>): Result<Boolean> {
+        return try {
+            val masterServices = convertSaloonServicesToMasterServices(masterId, services)
+            Tasks.await(firebaseDb.getReference(masterServicesRoot).child(masterId).setValue(masterServices))
+            Result.Success(true)
+        } catch (ex: Exception){
+            Result.Error(Exception(appState.context.getString(R.string.err_cant_update_data) + " $TBL_MASTERS\n" + ex.message))
+        }
+    }
+
+    private fun convertSaloonServicesToMasterServices(masterId: String, saloonServices: List<SaloonService>?): List<MasterService>{
+        val result = mutableListOf<MasterService>()
+        saloonServices?.forEach{ saloonService ->
+            result.add(MasterService(masterId, saloonService.id))
+        }
+        return result
+    }
+
+    private suspend fun convertMasterServicesToSaloonServices(masterServices: List<MasterService>?): Result<List<SaloonService>>{
+        val result = mutableListOf<SaloonService>()
+        masterServices?.forEach{ masterService ->
+            val serviceResult = loadServiceInfo(masterService.serviceId)
+            if (serviceResult is Result.Success) {
+                val saloonService = serviceResult.data
+                if (saloonService != null) {
+                    result.add(SaloonService(masterService.serviceId, saloonService.name,
+                        saloonService.price, saloonService.duration, saloonService.description,
+                        saloonService.imageUrl))
+                }
+            }
+            else {
+                serviceResult as Result.Error
+                return Result.Error(serviceResult.exception)
+            }
+        }
+        return Result.Success(result)
+    }
+    //endregion
+
+    //region helpers
     private inline fun <reified T: Any>
             startListenToUpdates(path: String,
                                  crossinline onInsert: (item: T)->Unit,
@@ -277,25 +331,29 @@ class FirebaseDbRepository
             })
         }
 
-
     private suspend inline fun <T>
             Query.runSuspendGetValueQuery(gti: GenericTypeIndicator<T>): Result<T?> =
         suspendCoroutine { continuation ->
-            this.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(p0: DataSnapshot) {
-                    continuation.resume(Result.Success(p0.getValue(gti)!!))
-                }
+        this.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(p0: DataSnapshot) {
+                continuation.resume(Result.Success(p0.getValue(gti)!!))
+            }
 
-                override fun onCancelled(p0: DatabaseError) {
-                    continuation.resume(Result.Error(p0.toException()))
-                }
-            })
-        }
+            override fun onCancelled(p0: DatabaseError) {
+                continuation.resume(Result.Error(p0.toException()))
+            }
+        })
+    }
+    //endregion
 
+    data class MasterService(val masterId: String, val serviceId: String){
+        constructor():this("", "")
+    }
 
     companion object {
         const val TBL_SALOONS = "Saloons"
         const val TBL_SERVICES = "Services"
         const val TBL_MASTERS = "Masters"
+        const val TBL_MASTER_SERVICES = "MasterServices"
     }
 }

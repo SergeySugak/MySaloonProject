@@ -50,7 +50,7 @@ class SaloonService constructor(){
     }
 
     override fun toString(): String {
-        return description
+        return name
     }
 
 

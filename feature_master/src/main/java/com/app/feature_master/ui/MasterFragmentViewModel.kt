@@ -46,10 +46,12 @@ class MasterFragmentViewModel
         viewModelScope.launch(Dispatchers.IO) {
             intMasterInfoSaveState.postValue(
                 run {
-                    val result = dbRepository.saveMasterInfo(
-                        saloonFactory.createSaloonMaster(masterId, name, description, portfolioUrl)
-                    )
+                    val master = saloonFactory.createSaloonMaster(masterId, name, description, portfolioUrl)
+                    val result = dbRepository.saveMasterInfo(master)
                     if (result is Result.Success) {
+                        masterId = master.id
+                        dbRepository.saveMasterServicesInfo(master.id,
+                            intMasterServices.value ?: emptyList())
                         result.data
                     } else {
                         intError.postValue((result as Result.Error).exception)
