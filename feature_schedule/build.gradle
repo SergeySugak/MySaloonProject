@@ -50,6 +50,7 @@ dependencies {
     api project(':mscorebase')
     api project(':scopes')
     implementation project(':repository_db')
+    implementation project(':view_schedule')
 
     //jetbrains
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"

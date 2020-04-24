@@ -27,6 +27,7 @@
             <option value="$PROJECT_DIR$/repository_db" />
             <option value="$PROJECT_DIR$/scopes" />
             <option value="$PROJECT_DIR$/tests" />
+            <option value="$PROJECT_DIR$/view_schedule" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SchedulerView">
+        <attr name="fitDays" format="integer" />
+        <attr name="fitHours" format="integer" />
+        <attr name="minHour" format="integer" />
+        <attr name="maxHour" format="integer" />
+        <attr name="colorMon" format="color" />
+        <attr name="colorTue" format="color" />
+        <attr name="colorWed" format="color" />
+        <attr name="colorThu" format="color" />
+        <attr name="colorFri" format="color" />
+        <attr name="colorSat" format="color" />
+        <attr name="colorSun" format="color" />
+        <attr name="daySepColor" format="color" />
+        <attr name="daySepWidth" format="dimension" />
+        <attr name="hourSepColor" format="color" />
+        <attr name="hourSepWidth" format="dimension" />
+        <attr name="hourFraction" format="enum">
+            <enum name="none" value="1"/>
+            <enum name="each_5_min" value="12"/>
+            <enum name="each_10_min" value="6"/>
+            <enum name="each_15_min" value="4"/>
+            <enum name="each_20_min" value="3"/>
+            <enum name="each_30_min" value="2"/>
+        </attr>
+        <attr name="daysHeaderHeight" format="dimension" />
+        <attr name="hoursHeaderWidth" format="dimension" />
+        <attr name="startingDate" format="string"/>
+        <attr name="dateFormat" format="string"/>
+    </declare-styleable>
+</resources>
