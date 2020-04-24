@@ -25,11 +25,11 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
     @ColorInt
     var colorMon: Int = Color.WHITE
     @ColorInt
-    var colorTue: Int = Color.LTGRAY
+    var colorTue: Int = 0xFFEEEEEE.toInt() //Kotlin Bug https://youtrack.jetbrains.com/issue/KT-2780
     @ColorInt
     var colorWed: Int = Color.WHITE
     @ColorInt
-    var colorThu: Int = Color.LTGRAY
+    var colorThu: Int = 0xFFEEEEEE.toInt() //Kotlin Bug https://youtrack.jetbrains.com/issue/KT-2780
     @ColorInt
     var colorFri: Int = Color.WHITE
     @ColorInt
@@ -37,15 +37,15 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
     @ColorInt
     var colorSun: Int = 0xAAFFEBEE.toInt() //Kotlin Bug https://youtrack.jetbrains.com/issue/KT-2780
     @ColorInt
-    var daySepColor: Int = Color.GRAY
+    var daySepColor: Int = 0xFFEAEAEA.toInt()
     @ColorInt
-    var hourSepColor: Int = Color.GRAY
+    var hourSepColor: Int = 0xFFEAEAEA.toInt()
     var hoursHeaderWidth: Int = 40
     var daysHeaderHeight: Int = 40
     var daySepWidth: Int = 1
     var hourSepWidth: Int = 1
-    var dateFormater = SimpleDateFormat(context.getString(R.string.str_def_date_format), Locale.getDefault())
-    var startingDate = Calendar.getInstance()
+    private var dateFormater = SimpleDateFormat(context.getString(R.string.str_def_date_format), Locale.getDefault())
+    var startingDate: Calendar = Calendar.getInstance()
 
     val paint = Paint()
 
@@ -133,12 +133,15 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
 
         //нам сказали уместить fitHours часов по высоте
         //с учетом разделитей, приклеивающихся снизу
-        //вычисляем высоту дня
-        val cellHeight = viewPortHeight / fitHours - (hourSepWidth * fitHours)
-        startingOffset = top
+        //вычисляем высоту часа
+        val cellHeight = (viewPortHeight - (hourSepWidth * fitHours))/ fitHours
+        startingOffset = top + cellHeight + daySepWidth
         //рисуем горизотнальные линии для отображения разделителей часов
-        for (i in 1 until fitHours){
-
+        for (i in 0 until fitHours){
+            paint.color = hourSepColor
+            paint.strokeWidth = hourSepWidth.toFloat()
+            canvas.drawLine(leftPadding, startingOffset, right, startingOffset, paint)
+            startingOffset += (cellHeight + daySepWidth)
         }
 
         //рисуем вертикальный заголовок для часов
