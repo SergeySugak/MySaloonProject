@@ -28,5 +28,9 @@
         <attr name="hoursHeaderWidth" format="dimension" />
         <attr name="startingDate" format="string"/>
         <attr name="dateFormat" format="string"/>
+        <attr name="daysHeaderTextSize" format="dimension"/>
+        <attr name="daysHeaderTextColor" format="color"/>
+        <attr name="hoursHeaderTextSize" format="dimension"/>
+        <attr name="hoursHeaderTextColor" format="color"/>
     </declare-styleable>
 </resources>

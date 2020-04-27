@@ -1,9 +1,7 @@
 package com.app.view_schedule.ui
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
+import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
 import androidx.annotation.ColorInt
@@ -18,9 +16,9 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
     View(context, attrs, defStyleAttr) {
 
     var fitDays: Int = 5
-    var fitHours: Int = 8
-    var minHour: Int = 9
-    var maxHour: Int = 18
+    var fitHours: Int = 4
+    var minHour: Int = 8
+    var maxHour: Int = 22
     var hourFraction: HourFraction = HourFraction.hf1
     @ColorInt
     var colorMon: Int = Color.WHITE
@@ -46,8 +44,14 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
     var hourSepWidth: Int = 1
     private var dateFormater = SimpleDateFormat(context.getString(R.string.str_def_date_format), Locale.getDefault())
     var startingDate: Calendar = Calendar.getInstance()
+    var daysHeaderTextSize: Int = 20
+    var daysHeaderTextColor: Int = Color.BLACK
+    var hoursHeaderTextSize: Int = 14
+    var hoursHeaderTextColor: Int = Color.BLACK
 
-    val paint = Paint()
+    private val paint = Paint()
+    private val textPaint = Paint()
+    var textRect = RectF()
 
     constructor(context: Context): this(context, null, 0)
 
@@ -87,6 +91,10 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
                 startingDate.time = it
             }
         }
+        daysHeaderTextSize = attributes.getDimensionPixelSize(R.styleable.SchedulerView_daysHeaderTextSize, daysHeaderTextSize)
+        daysHeaderTextColor = attributes.getColor(R.styleable.SchedulerView_daysHeaderTextColor, daysHeaderTextColor)
+        hoursHeaderTextSize = attributes.getDimensionPixelSize(R.styleable.SchedulerView_hoursHeaderTextSize, hoursHeaderTextSize)
+        hoursHeaderTextColor = attributes.getColor(R.styleable.SchedulerView_hoursHeaderTextColor, hoursHeaderTextColor)
 
         attributes.recycle()
     }
@@ -108,11 +116,8 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
         val viewPortWidth = right - left + 1
         val viewPortHeight = bottom - top + 1
 
-        //определяем сколько места у нас есть для отрисовки всех разделителей и ячеек
-
         //нам сказали уместить fitDays дней по ширине
-        //с учетом разделитей, приклеивающихся справа
-        //вычисляем ширину дня
+        //вычисляем ширину дня с учетом разделитей, приклеивающихся справа
         val cellWidth = (viewPortWidth - (daySepWidth * fitDays)) / fitDays
         startingOffset = left
         //рисуем вертикальные прямоугольники для отображения дней и вертикальные же разделители
@@ -127,13 +132,19 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
             startingOffset += cellWidth
             paint.color = daySepColor
             paint.strokeWidth = daySepWidth.toFloat()
+
             canvas.drawLine(startingOffset, topPadding, startingOffset, bottom, paint)
+
+            //определяем прямоугольник для рисования текста даты
+            textRect = getDayTextRect (i, left, cellWidth, textRect)
+            drawDaysHeaderText(canvas, prepareDaysHeaderPaint(textPaint),
+                textRect, dateFormater.format(drawingDate.time))
+
             startingOffset += daySepWidth
         }
 
         //нам сказали уместить fitHours часов по высоте
-        //с учетом разделитей, приклеивающихся снизу
-        //вычисляем высоту часа
+        //вычисляем высоту часа, с учетом разделитей, приклеивающихся снизу
         val cellHeight = (viewPortHeight - (hourSepWidth * fitHours))/ fitHours
         startingOffset = top + cellHeight + daySepWidth
         //рисуем горизотнальные линии для отображения разделителей часов
@@ -141,6 +152,12 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
             paint.color = hourSepColor
             paint.strokeWidth = hourSepWidth.toFloat()
             canvas.drawLine(leftPadding, startingOffset, right, startingOffset, paint)
+
+            //определяем прямоугольник для рисования текста часов
+            textRect = getHourTextRect(i, top, cellHeight, textRect)
+            drawHoursHeaderText(canvas, prepareHoursHeaderPaint(textPaint),
+                textRect, "${minHour + i}:00")
+
             startingOffset += (cellHeight + daySepWidth)
         }
 
@@ -157,6 +174,52 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
         startingOffset = topPadding + daysHeaderHeight
         canvas.drawLine(leftPadding, startingOffset,
                         width - rightPadding, startingOffset, paint)
+
+    }
+
+    private fun prepareDaysHeaderPaint(paint: Paint): Paint {
+        paint.isAntiAlias = true
+        paint.style = Paint.Style.FILL
+        paint.color = daysHeaderTextColor
+        paint.textSize = daysHeaderTextSize.toFloat()
+        return paint
+    }
+
+    private fun prepareHoursHeaderPaint(paint: Paint): Paint {
+        paint.isAntiAlias = true
+        paint.style = Paint.Style.FILL
+        paint.color = hoursHeaderTextColor
+        paint.textSize = hoursHeaderTextSize.toFloat()
+        return paint
+    }
+
+    private fun drawDaysHeaderText(canvas: Canvas, paint: Paint, rect: RectF, text: String){
+        val textWidth = paint.measureText(text)
+        canvas.drawText(text, (rect.right + rect.left - textWidth) / 2,
+            (rect.top + rect.bottom + paint.textSize) / 2, paint)
+    }
+
+    private fun drawHoursHeaderText(canvas: Canvas, paint: Paint, rect: RectF, text: String){
+        val textWidth = paint.measureText(text)
+        canvas.drawText(text, (rect.right - rect.left - textWidth) / 2, rect.top + paint.textSize, paint)
+    }
+
+    private fun getHourTextRect(index: Int, top: Float, height: Float, rect: RectF?): RectF {
+        val result = rect ?: RectF(0f, 0f, 0f, 0f)
+        result.left = paddingLeft.toFloat()
+        result.top = top + index * (height + hourSepWidth)
+        result.right = paddingLeft.toFloat() + hoursHeaderWidth
+        result.bottom = top + (index + 1) * (height + hourSepWidth)
+        return result
+    }
+
+    private fun getDayTextRect(index: Int, left: Float, width: Float, rect: RectF?): RectF {
+        val result = rect ?: RectF(0f, 0f, 0f, 0f)
+        result.left = left + index * (width + daySepWidth)
+        result.top = paddingTop.toFloat()
+        result.right = left + (index + 1) * (width + daySepWidth)
+        result.bottom = paddingTop.toFloat() + daysHeaderHeight
+        return result
     }
 
     @ColorInt
