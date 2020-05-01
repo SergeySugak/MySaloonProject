@@ -14,6 +14,8 @@ import android.view.GestureDetector
 import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
 import android.view.View
+import android.view.animation.DecelerateInterpolator
+import android.widget.Scroller
 import androidx.annotation.ColorInt
 import com.app.view_schedule.R
 import java.text.SimpleDateFormat
@@ -91,6 +93,7 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
 
     private val gestureListener = SchedulerViewGestureListener()
     private val gestureDetector = GestureDetector(context, gestureListener)
+    private val scroller = Scroller(context, DecelerateInterpolator(DEF_DECELERATE_FACTOR))
 
     constructor(context: Context): this(context, null, 0)
 
@@ -384,12 +387,29 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
         val action = event.action
         if (action == MotionEvent.ACTION_DOWN) {
             //тут прерываем fling
+            if (gestureListener.flinging){
+                scroller.forceFinished(true)
+                gestureListener.flinging = false
+            }
         }
         gestureDetector.onTouchEvent(event)
         return true
     }
 
     private inner class SchedulerViewGestureListener(): SimpleOnGestureListener() {
+        var flinging = false
+        var prevFlingX = 0
+        var prevFlingY = 0
+
+        fun normalizeYScroll(value: Float): Float {
+            if (value > (25 - minHour - fitHours))
+                return (25 - minHour - fitHours).toFloat()
+            else {
+                if (value < -minHour)
+                    return -minHour.toFloat()
+            }
+            return value
+        }
 
         override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
             val prevScrollX = xScroll
@@ -403,14 +423,8 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
             //Максимальное значение для часов 24. Следовательно yScroll не должен
             //превышать значение 24 - minHour часов.
             if (distanceY != 0f){
-                var newYScroll = distanceY / cellHeight - yScroll
-                if (newYScroll > (25 - minHour - fitHours))
-                    newYScroll = (25 - minHour - fitHours).toFloat()
-                else {
-                    if (newYScroll < -minHour)
-                        newYScroll = -minHour.toFloat()
-                }
-                yScroll = -newYScroll
+                val newYScroll = distanceY / cellHeight - yScroll
+                yScroll = -normalizeYScroll (newYScroll)
             }
 
             //Скролл по горизонтали не имеет ограничений, поэтому
@@ -422,6 +436,33 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
                 invalidate()
             }
             return true
+        }
+
+        override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
+            scroller.forceFinished(true)
+            flinging = true
+            prevFlingX = 0
+            prevFlingY = 0
+            scroller.fling(0, (-yScroll * cellHeight).toInt(),
+                -velocityX.toInt(), -velocityY.toInt(),
+                Int.MIN_VALUE, Int.MAX_VALUE,
+                -minHour * cellHeight.toInt(),  (25 - minHour - fitHours) * cellHeight.toInt())
+            invalidate()
+            return true
+        }
+    }
+
+    override fun computeScroll() {
+        if (gestureListener.flinging){
+            gestureListener.flinging = scroller.computeScrollOffset()
+            val currX = scroller.currX
+            val currY = scroller.currY
+            xScroll += (gestureListener.prevFlingX - currX) / cellWidth
+            yScroll = (currY - gestureListener.prevFlingY ) / cellHeight - yScroll
+            yScroll = -gestureListener.normalizeYScroll(yScroll)
+            gestureListener.prevFlingX = currX
+            gestureListener.prevFlingY = currY
+            postInvalidate()
         }
     }
 
@@ -485,6 +526,7 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
             fitHours = parcel.readInt()
             minHour = parcel.readInt()
             maxHour = parcel.readInt()
+            hourFraction = HourFraction.fromInt(parcel.readInt())
             colorMon = parcel.readInt()
             colorTue = parcel.readInt()
             colorWed = parcel.readInt()
@@ -513,6 +555,7 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
             parcel.writeInt(fitHours)
             parcel.writeInt(minHour)
             parcel.writeInt(maxHour)
+            parcel.writeInt(hourFraction.value)
             parcel.writeInt(colorMon)
             parcel.writeInt(colorTue)
             parcel.writeInt(colorWed)
@@ -585,5 +628,6 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
         const val DEF_DAYS_HEADER_TEXT_COLOR: Int = Color.BLACK
         const val DEF_HOURS_HEADER_TEXT_SIZE: Int = 14
         const val DEF_HOURS_HEADER_TEXT_COLOR: Int = Color.BLACK
+        const val DEF_DECELERATE_FACTOR = 2.5f
     }
 }
