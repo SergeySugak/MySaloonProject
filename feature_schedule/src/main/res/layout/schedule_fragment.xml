@@ -1,18 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        tools:context=".ui.ScheduleFragment">
-
 <com.app.view_schedule.ui.SchedulerView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/schedule_view"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         app:hoursHeaderWidth="40dp"
         app:daysHeaderHeight="40dp"
-        app:daySepWidth="2dp"
-        app:hourSepWidth="2dp"
-        />
-</FrameLayout>
+        app:daySepWidth="1dp"
+        app:hourSepWidth="1dp"/>
