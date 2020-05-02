@@ -8,6 +8,7 @@ import android.graphics.RectF
 import android.os.Parcel
 import android.os.Parcelable
 import android.text.TextPaint
+import android.text.TextUtils
 import android.util.AttributeSet
 import android.util.Log
 import android.view.GestureDetector
@@ -18,14 +19,24 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.Scroller
 import androidx.annotation.ColorInt
 import com.app.view_schedule.R
+import com.app.view_schedule.api.EventDrawer
+import com.app.view_schedule.api.DefaultEventDrawer
+import com.app.view_schedule.api.SchedulerEvent
 import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.util.*
+import java.util.Calendar.*
 import kotlin.math.ceil
+import kotlin.math.floor
+import kotlin.math.round
 import kotlin.properties.ObservableProperty
 import kotlin.reflect.KProperty
 
-
+//View для отображения планировщика событий
+//Для управления рисованием событий необходимо определить интерфейс EventDrawer
+//и либо указать его в xml в атрибуте eventDrawer
+//либо задать его программно вызовом setEventDrawer.
+//Дефолтний рисователь событий - DefaultEventDrawer
+//eventDrawer должен самостоятельно сохранять свое состяние при переворотах
 class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
     View(context, attrs, defStyleAttr) {
 
@@ -36,11 +47,13 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
         }
     }
 
-    fun onPropertyChanged(){
+    private fun onPropertyChanged(){
         if (!delayInvalidation) {
             invalidate()
         }
     }
+
+    private val today = Calendar.getInstance()
     var delayInvalidation = false
     var fitDays: Int by InvalidationInitiatorProperty(DEF_FIT_DAYS){onPropertyChanged()}
     var fitHours: Int by InvalidationInitiatorProperty(DEF_FIT_HOURS){onPropertyChanged()}
@@ -95,6 +108,11 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
     private val gestureDetector = GestureDetector(context, gestureListener)
     private val scroller = Scroller(context, DecelerateInterpolator(DEF_DECELERATE_FACTOR))
 
+    var eventRect = RectF()
+    private val events = mutableListOf<SchedulerEvent>()
+    private val eventRects = mutableListOf<RectF>()
+    private lateinit var eventDrawer: EventDrawer
+
     constructor(context: Context): this(context, null, 0)
 
     constructor(context: Context, attrs: AttributeSet): this(context, attrs, 0){
@@ -129,14 +147,23 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
         val userStaringDate = attributes.getString(R.styleable.SchedulerView_startingDate)
         userStaringDate?.let{
             val date = dateFormatter.parse(it)
-            date?.let {
-                startingDate.time = it
+            date?.let { d ->
+                startingDate.time = d
             }
         }
         daysHeaderTextSize = attributes.getDimensionPixelSize(R.styleable.SchedulerView_daysHeaderTextSize, daysHeaderTextSize)
         daysHeaderTextColor = attributes.getColor(R.styleable.SchedulerView_daysHeaderTextColor, daysHeaderTextColor)
         hoursHeaderTextSize = attributes.getDimensionPixelSize(R.styleable.SchedulerView_hoursHeaderTextSize, hoursHeaderTextSize)
         hoursHeaderTextColor = attributes.getColor(R.styleable.SchedulerView_hoursHeaderTextColor, hoursHeaderTextColor)
+
+        val eventDrawerClassName = attributes.getString(R.styleable.SchedulerView_eventDrawer)
+        if (TextUtils.isEmpty(eventDrawerClassName)){
+            eventDrawer = DefaultEventDrawer()
+        }
+        else {
+            //Это будет порождать exception, если задать некорректное имя класса отрисовщика
+            eventDrawer = Class.forName(eventDrawerClassName!!).newInstance() as EventDrawer
+        }
 
         attributes.recycle()
     }
@@ -231,18 +258,45 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
         drawContent(canvas)
     }
 
+    private fun getFirstDrawableDateTime(): Calendar{
+        val result = today.clone() as Calendar
+        with(result){
+            time = startingDate.time
+            add(DATE, -ceil(xScroll).toInt())
+            set(HOUR_OF_DAY, minHour - ceil(yScroll).toInt())
+            var minutes = floor(60 * (yScroll - floor(yScroll))).toInt()
+            if (minutes != 0) minutes = 60 - minutes
+            set(MINUTE, minutes)
+            set(SECOND, 0)
+            set(MILLISECOND, 0)
+        }
+        return result
+    }
+
+    private fun getLastDrawableDateTime(firstDrawableDate: Calendar): Calendar{
+        val result = firstDrawableDate.clone() as Calendar
+        with (result){
+            add(DATE, fitDays - 1)
+            set(HOUR_OF_DAY, minHour - ceil(yScroll).toInt() + fitHours)
+            var minutes = floor(60 * (yScroll - floor(yScroll))).toInt()
+            if (minutes != 0) minutes = 60 - minutes
+            set(MINUTE, minutes)
+            set(SECOND, 0)
+            set(MILLISECOND, 999)
+        }
+        return result
+    }
+
     private fun drawDays(canvas: Canvas){
         val checkpoint = canvas.save()
         canvas.clipRect(contentLeft, topPadding, contentRight, contentBottom)
         var x = contentLeft - (ceil(xScroll) - xScroll) * cellWidth
         try {
             //рисуем вертикальные прямоугольники для отображения дней и вертикальные же разделители
-            val drawingDate = Calendar.getInstance()
-            drawingDate.time = startingDate.time
-            drawingDate.add(Calendar.DATE, -ceil(xScroll).toInt())
+            val drawingDate = getFirstDrawableDateTime()
             for (i in 0 .. fitDays){
                 if (i > 0) {
-                    drawingDate.add(Calendar.DATE, 1)
+                    drawingDate.add(DATE, 1)
                 }
                 paint.color = dateToColor(drawingDate)
                 canvas.drawRect(x, contentTop, x + cellWidth, contentBottom, paint)
@@ -304,7 +358,32 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
     }
 
     private fun drawContent(canvas: Canvas){
+        eventRects.clear()
+        val firstDrawableDate = getFirstDrawableDateTime()
+        val lastDrawableDate = getLastDrawableDateTime(firstDrawableDate)
 
+        val drawableEvents = events.filter {
+            (it.dateTime.time.after(firstDrawableDate.time) || it.dateTime.time == firstDrawableDate.time)
+            &&
+            it.dateTime.time.before(lastDrawableDate.time)
+        }
+        //Самый левый край первого дня
+        val leftEdge = contentLeft - (ceil(xScroll) - xScroll) * cellWidth
+        var x: Float
+        var diffDays: Long
+        for (event in drawableEvents){
+            //Опеределим область рисования события
+            diffDays = (event.dateTime.time.time - firstDrawableDate.time.time) / (24 * 60 * 60 * 1000)
+            x = leftEdge + diffDays * cellWidth
+            eventRect.left = x
+            eventRect.top = 0f
+            eventRect.right = x + cellWidth
+            eventRect.bottom = 0f
+            eventRects.add(RectF(eventRect))
+            event.dateTime
+
+            eventDrawer.draw(event, canvas, eventRect)
+        }
     }
 
     private fun prepareDaysHeaderPaint(paint: Paint): Paint {
@@ -364,18 +443,18 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
     @ColorInt
     private fun dateToColor(date: Calendar): Int {
         return when (date.get(Calendar.DAY_OF_WEEK)){
-            Calendar.MONDAY -> colorMon
-            Calendar.TUESDAY -> colorTue
-            Calendar.WEDNESDAY -> colorWed
-            Calendar.THURSDAY -> colorThu
-            Calendar.FRIDAY -> colorFri
-            Calendar.SATURDAY -> colorSat
-            Calendar.SUNDAY -> colorSun
+            MONDAY -> colorMon
+            TUESDAY -> colorTue
+            WEDNESDAY -> colorWed
+            THURSDAY -> colorThu
+            FRIDAY -> colorFri
+            SATURDAY -> colorSat
+            SUNDAY -> colorSun
             else -> throw IllegalArgumentException("Unknown day of week")
         }
     }
 
-    fun scrollToDate(date: LocalDate){
+    fun scrollToDate(date: Calendar){
 
     }
 
@@ -465,6 +544,13 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
             postInvalidate()
         }
     }
+
+    public fun setEventDrawer(eventDraswer: EventDrawer){
+        this.eventDrawer = eventDrawer
+    }
+
+    public fun getEventDrawer() = eventDrawer
+
 
     enum class HourFraction(val value: Int) {
         hf1(1), hf5(10), hf10(6), hf15(4), hf20(3), hf30(2);

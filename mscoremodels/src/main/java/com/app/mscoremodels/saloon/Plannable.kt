@@ -1,12 +1,12 @@
-package com.app.view_schedule.api
+package com.app.mscoremodels.saloon
 
-import java.time.LocalDateTime
+import java.util.*
 
 interface Plannable<M, E> {
     val id: String
     val who: M
     val what: E
-    val `when`: LocalDateTime
+    val dateTime: Calendar
     val description: String
     fun plan()
 }

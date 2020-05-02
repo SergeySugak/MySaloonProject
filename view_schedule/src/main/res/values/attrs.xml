@@ -32,5 +32,7 @@
         <attr name="daysHeaderTextColor" format="color"/>
         <attr name="hoursHeaderTextSize" format="dimension"/>
         <attr name="hoursHeaderTextColor" format="color"/>
+
+        <attr name="eventDrawer" format="string"/>
     </declare-styleable>
 </resources>

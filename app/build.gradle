@@ -17,6 +17,22 @@ android {
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled = true
     }
+    signingConfigs {
+        debug {
+            storeFile file("debug.jks")
+            storePassword '123456'
+            keyPassword '123456'
+            keyAlias 'MySaloon'
+            v2SigningEnabled true
+        }
+        release {
+            storeFile file("release.jks")
+            storePassword '123456'
+            keyPassword '123456'
+            keyAlias 'MySaloon'
+            v2SigningEnabled true
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
