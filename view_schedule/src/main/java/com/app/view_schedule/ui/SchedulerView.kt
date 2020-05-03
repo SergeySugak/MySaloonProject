@@ -21,13 +21,13 @@ import androidx.annotation.ColorInt
 import com.app.view_schedule.R
 import com.app.view_schedule.api.EventDrawer
 import com.app.view_schedule.api.DefaultEventDrawer
+import com.app.view_schedule.api.EventRect
 import com.app.view_schedule.api.SchedulerEvent
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.Calendar.*
 import kotlin.math.ceil
 import kotlin.math.floor
-import kotlin.math.round
 import kotlin.properties.ObservableProperty
 import kotlin.reflect.KProperty
 
@@ -108,9 +108,10 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
     private val gestureDetector = GestureDetector(context, gestureListener)
     private val scroller = Scroller(context, DecelerateInterpolator(DEF_DECELERATE_FACTOR))
 
-    var eventRect = RectF()
+    private val eventPaint = Paint()
+    private var eventRect = RectF()
     private val events = mutableListOf<SchedulerEvent>()
-    private val eventRects = mutableListOf<RectF>()
+    private val eventRects = mutableListOf<EventRect>()
     private lateinit var eventDrawer: EventDrawer
 
     constructor(context: Context): this(context, null, 0)
@@ -164,7 +165,7 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
             //Это будет порождать exception, если задать некорректное имя класса отрисовщика
             eventDrawer = Class.forName(eventDrawerClassName!!).newInstance() as EventDrawer
         }
-
+        yScroll = minHour.toFloat()
         attributes.recycle()
     }
 
@@ -263,7 +264,7 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
         with(result){
             time = startingDate.time
             add(DATE, -ceil(xScroll).toInt())
-            set(HOUR_OF_DAY, minHour - ceil(yScroll).toInt())
+            set(HOUR_OF_DAY, floor(yScroll).toInt())
             var minutes = floor(60 * (yScroll - floor(yScroll))).toInt()
             if (minutes != 0) minutes = 60 - minutes
             set(MINUTE, minutes)
@@ -277,7 +278,7 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
         val result = firstDrawableDate.clone() as Calendar
         with (result){
             add(DATE, fitDays - 1)
-            set(HOUR_OF_DAY, minHour - ceil(yScroll).toInt() + fitHours)
+            set(HOUR_OF_DAY, floor(yScroll).toInt() + fitHours)
             var minutes = floor(60 * (yScroll - floor(yScroll))).toInt()
             if (minutes != 0) minutes = 60 - minutes
             set(MINUTE, minutes)
@@ -330,20 +331,23 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
         val checkpoint = canvas.save()
         canvas.clipRect(leftPadding, contentTop, contentRight, contentBottom)
         try {
-            var y = contentTop + cellHeight + daySepWidth - (ceil(yScroll)- yScroll) * cellHeight
+            var y = contentTop + hourSepWidth - (yScroll - floor(yScroll)) * cellHeight
             //рисуем горизотнальные линии для отображения разделителей часов
-            val drawingHour = minHour - ceil(yScroll).toInt()
+            val drawingHour = floor(yScroll).toInt()
             for (i in 0 .. fitHours){
                 paint.color = hourSepColor
                 paint.strokeWidth = hourSepWidth.toFloat()
                 canvas.drawLine(leftPadding, y, contentRight, y, paint)
 
                 //определяем прямоугольник для рисования текста часов
-                textRect = getHourTextRect(i, contentTop, cellHeight, textRect)
+                textRect.left = 0f
+                textRect.top = y
+                textRect.right = hoursHeaderWidth.toFloat()
+                textRect.bottom = y + cellHeight
                 drawHoursHeaderText(canvas, prepareHoursHeaderPaint(textPaint),
                     textRect, "${drawingHour + i}:00")
 
-                y += (cellHeight + daySepWidth)
+                y += (cellHeight + hourSepWidth)
             }
         }
         finally {
@@ -357,32 +361,74 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
         canvas.drawLine(x, topPadding, x, height - bottomPadding, paint)
     }
 
-    private fun drawContent(canvas: Canvas){
+    private fun isEventVisible(event: SchedulerEvent,
+                               firstDrawableDate: Calendar,
+                               lastDrawableDate: Calendar): Boolean {
+        val minTime = firstDrawableDate.get(HOUR_OF_DAY) + firstDrawableDate.get(MINUTE) / 60
+        val maxTime = lastDrawableDate.get(HOUR_OF_DAY) + firstDrawableDate.get(MINUTE) / 60
+        val windowStart = firstDrawableDate.time
+        val windowFinish = lastDrawableDate.time
+        val eventStart = event.dateTimeStart.time
+        val eventFinish = event.dateTimeFinish.time
+        return  (
+                //начало события внутри окна
+                (((eventStart == windowStart || eventStart.after(windowStart)) &&
+                (eventStart == windowFinish || eventStart.before(windowFinish))) ||
+                //или конец события внутри окна
+                ((eventFinish == windowStart || eventFinish.after(windowStart)) &&
+                 (eventFinish == windowFinish || eventFinish.before(windowFinish))))
+                &&
+                //либо начало в пределах "окна"
+                ((event.dateTimeStart.get(HOUR_OF_DAY) + event.dateTimeStart.get(MINUTE) / 60 in minTime..maxTime) ||
+                 //либо конец в пределах "окна"
+                 (event.dateTimeFinish.get(HOUR_OF_DAY) + event.dateTimeFinish.get(MINUTE) / 60 in minTime..maxTime) ||
+                 //либо и начало и конец за пределами "окна"
+                 (event.dateTimeStart.get(HOUR_OF_DAY) + event.dateTimeStart.get(MINUTE) / 60 < minTime &&
+                  event.dateTimeFinish.get(HOUR_OF_DAY) + event.dateTimeFinish.get(MINUTE) / 60 > maxTime))) ||
+                 //или начало события меньше начала окна и конец события больше конца окна
+                 (eventStart.before(windowStart) && eventFinish.after(windowFinish))
+    }
+    
+    private fun prepareEventRects(){
         eventRects.clear()
         val firstDrawableDate = getFirstDrawableDateTime()
         val lastDrawableDate = getLastDrawableDateTime(firstDrawableDate)
 
-        val drawableEvents = events.filter {
-            (it.dateTime.time.after(firstDrawableDate.time) || it.dateTime.time == firstDrawableDate.time)
-            &&
-            it.dateTime.time.before(lastDrawableDate.time)
+        val drawableEvents = events.filter { isEventVisible(it, firstDrawableDate, lastDrawableDate) }
+        if (drawableEvents.isEmpty()) {
+            return
         }
         //Самый левый край первого дня
         val leftEdge = contentLeft - (ceil(xScroll) - xScroll) * cellWidth
-        var x: Float
         var diffDays: Long
+        var eventStartHour: Float
+        var eventFinishHour: Float
         for (event in drawableEvents){
             //Опеределим область рисования события
-            diffDays = (event.dateTime.time.time - firstDrawableDate.time.time) / (24 * 60 * 60 * 1000)
-            x = leftEdge + diffDays * cellWidth
-            eventRect.left = x
-            eventRect.top = 0f
-            eventRect.right = x + cellWidth
-            eventRect.bottom = 0f
-            eventRects.add(RectF(eventRect))
-            event.dateTime
+            diffDays = (event.dateTimeStart.time.time - firstDrawableDate.time.time) / (24 * 60 * 60 * 1000)
+            eventStartHour = event.dateTimeStart.get(HOUR_OF_DAY) + event.dateTimeStart.get(MINUTE) / 60f
+            eventFinishHour = event.dateTimeFinish.get(HOUR_OF_DAY) + event.dateTimeFinish.get(MINUTE) / 60f
+            eventRect.left = leftEdge + diffDays * cellWidth
+            eventRect.top = contentTop + (eventStartHour - yScroll) * cellHeight
+            eventRect.right = eventRect.left + cellWidth
+            eventRect.bottom = contentTop + (eventFinishHour - yScroll) * cellHeight
+            //запоминаем прямоугольники, в которые потом будем тыкать
+            eventRects.add(EventRect(event, RectF(eventRect)))
+            Log.d(javaClass.simpleName, "${eventRect.left}, ${eventRect.top}, ${eventRect.right}, ${eventRect.bottom}}")
+        }
+    }
 
-            eventDrawer.draw(event, canvas, eventRect)
+    private fun drawContent(canvas: Canvas){
+        prepareEventRects()
+        val checkpoint = canvas.save()
+        canvas.clipRect(contentLeft, contentTop, contentRight, contentBottom)
+        try {
+            for (eventRect in eventRects) {
+                eventDrawer.draw(eventRect.event, canvas, eventPaint, eventRect.rect)
+            }
+        }
+        finally {
+            canvas.restoreToCount(checkpoint)
         }
     }
 
@@ -418,16 +464,6 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
         } finally {
             canvas.restoreToCount(checkpoint)
         }
-    }
-
-    private fun getHourTextRect(index: Int, top: Float, height: Float, rect: RectF?): RectF {
-        val result = rect ?: RectF(0f, 0f, 0f, 0f)
-        val ceilScroll = ceil(yScroll)
-        result.left = paddingLeft.toFloat()
-        result.top = top + index * (height + hourSepWidth) - (ceilScroll - yScroll) * cellHeight
-        result.right = paddingLeft.toFloat() + hoursHeaderWidth
-        result.bottom = top + (index + 1) * (height + hourSepWidth) - (ceilScroll - yScroll) * cellHeight
-        return result
     }
 
     private fun getDayTextRect(index: Int, left: Float, width: Float, rect: RectF?): RectF {
@@ -475,20 +511,20 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
         return true
     }
 
+    fun normalizeYScroll(value: Float): Float {
+        if (value > 24)
+            return 24f
+        else {
+            if (value < 0)
+                return 0f
+        }
+        return value
+    }
+
     private inner class SchedulerViewGestureListener(): SimpleOnGestureListener() {
         var flinging = false
         var prevFlingX = 0
         var prevFlingY = 0
-
-        fun normalizeYScroll(value: Float): Float {
-            if (value > (25 - minHour - fitHours))
-                return (25 - minHour - fitHours).toFloat()
-            else {
-                if (value < -minHour)
-                    return -minHour.toFloat()
-            }
-            return value
-        }
 
         override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
             val prevScrollX = xScroll
@@ -497,13 +533,13 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
             //Причем, поскольку cellHeight имеет разное значение в разных ориентациях экрана, то
             //значение yScroll должно измеряться в долях часа (или иначе в cellHeight-ах).
             //Вначале мы располагаемся на minHour, что озачает,
-            //что мы как будто сделали scroll наверх на minHour часов.
-            //Таким образом yScroll не может быть меньше -minHour часов.
+            //что мы как будто сделали scroll на minHour часов.
+            //Таким образом yScroll не может быть меньше 0 часов.
             //Максимальное значение для часов 24. Следовательно yScroll не должен
-            //превышать значение 24 - minHour часов.
+            //превышать значение 24 часов.
             if (distanceY != 0f){
-                val newYScroll = distanceY / cellHeight - yScroll
-                yScroll = -normalizeYScroll (newYScroll)
+                yScroll += distanceY / cellHeight
+                yScroll = normalizeYScroll (yScroll)
             }
 
             //Скролл по горизонтали не имеет ограничений, поэтому
@@ -521,11 +557,11 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
             scroller.forceFinished(true)
             flinging = true
             prevFlingX = 0
-            prevFlingY = 0
-            scroller.fling(0, (-yScroll * cellHeight).toInt(),
+            prevFlingY = (yScroll * cellHeight).toInt()
+            scroller.fling(0, (yScroll * cellHeight).toInt(),
                 -velocityX.toInt(), -velocityY.toInt(),
                 Int.MIN_VALUE, Int.MAX_VALUE,
-                -minHour * cellHeight.toInt(),  (25 - minHour - fitHours) * cellHeight.toInt())
+                0,  (25 - fitHours) * cellHeight.toInt())
             invalidate()
             return true
         }
@@ -537,20 +573,25 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
             val currX = scroller.currX
             val currY = scroller.currY
             xScroll += (gestureListener.prevFlingX - currX) / cellWidth
-            yScroll = (currY - gestureListener.prevFlingY ) / cellHeight - yScroll
-            yScroll = -gestureListener.normalizeYScroll(yScroll)
+            yScroll += (currY - gestureListener.prevFlingY) / cellHeight
+            yScroll = normalizeYScroll (yScroll)
             gestureListener.prevFlingX = currX
             gestureListener.prevFlingY = currY
             postInvalidate()
         }
     }
 
-    public fun setEventDrawer(eventDraswer: EventDrawer){
+    fun setEventDrawer(eventDrawer: EventDrawer){
         this.eventDrawer = eventDrawer
     }
 
-    public fun getEventDrawer() = eventDrawer
+    fun getEventDrawer() = eventDrawer
 
+    fun setEvents(events: List<SchedulerEvent>){
+        this.events.clear()
+        this.events.addAll(events)
+        postInvalidate()
+    }
 
     enum class HourFraction(val value: Int) {
         hf1(1), hf5(10), hf10(6), hf15(4), hf20(3), hf30(2);
