@@ -34,5 +34,6 @@
         <attr name="hoursHeaderTextColor" format="color"/>
 
         <attr name="eventDrawer" format="string"/>
+        <attr name="eventMargin" format="dimension" />
     </declare-styleable>
 </resources>

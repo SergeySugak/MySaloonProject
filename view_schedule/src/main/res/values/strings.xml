@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="str_def_date_format">dd.MM.yyyy</string>
+    <string name="str_def_date_format">EEE, dd.MM.yy</string>
 </resources>

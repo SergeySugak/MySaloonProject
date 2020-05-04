@@ -1,5 +1,6 @@
 package com.app.feature_schedule.ui
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
@@ -42,8 +43,9 @@ class ScheduleFragment :  MSFragment<ScheduleViewModel>()  {
             override val id = "1"
             override val dateTimeStart = Calendar.getInstance().apply{set(Calendar.HOUR_OF_DAY, 9)}
             override val dateTimeFinish = (dateTimeStart.clone() as Calendar).apply{add(Calendar.HOUR_OF_DAY, 2)}
-            override val header = "test"
+            override val header = "long header text"
             override val text = "test descr"
+            override val color = getViewModel()?.eventColorizer?.getRandomColor(view.context) ?: Color.WHITE
         }))
     }
 

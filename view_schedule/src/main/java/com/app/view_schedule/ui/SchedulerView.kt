@@ -10,7 +10,6 @@ import android.os.Parcelable
 import android.text.TextPaint
 import android.text.TextUtils
 import android.util.AttributeSet
-import android.util.Log
 import android.view.GestureDetector
 import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
@@ -37,6 +36,8 @@ import kotlin.reflect.KProperty
 //либо задать его программно вызовом setEventDrawer.
 //Дефолтний рисователь событий - DefaultEventDrawer
 //eventDrawer должен самостоятельно сохранять свое состяние при переворотах
+//Для задания списка запланированных событий надо вызвать setEvents
+//В него передать свои реализации SchedulerEvent
 class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
     View(context, attrs, defStyleAttr) {
 
@@ -77,6 +78,13 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
     var daysHeaderTextColor: Int by InvalidationInitiatorProperty(DEF_DAYS_HEADER_TEXT_COLOR){onPropertyChanged()}
     var hoursHeaderTextSize: Int by InvalidationInitiatorProperty(DEF_HOURS_HEADER_TEXT_SIZE){onPropertyChanged()}
     var hoursHeaderTextColor: Int by InvalidationInitiatorProperty(DEF_HOURS_HEADER_TEXT_COLOR){onPropertyChanged()}
+    var eventMargin: Int by InvalidationInitiatorProperty(DEF_EVENT_MARGIN){onPropertyChanged()}
+
+    var dateFormat: String = context.getString(R.string.str_def_date_format)
+        set(value) {
+            dateFormatter.applyPattern(value)
+            postInvalidate()
+        }
 
     private var dateFormatter = SimpleDateFormat(context.getString(R.string.str_def_date_format), Locale.getDefault())
     var startingDate: Calendar = Calendar.getInstance()
@@ -141,10 +149,8 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
         hourSepWidth = attributes.getDimensionPixelSize(R.styleable.SchedulerView_hourSepWidth, hourSepWidth)
         daysHeaderHeight = attributes.getDimensionPixelSize(R.styleable.SchedulerView_daysHeaderHeight, daysHeaderHeight)
         hoursHeaderWidth = attributes.getDimensionPixelSize(R.styleable.SchedulerView_hoursHeaderWidth, hoursHeaderWidth)
-        val userDateFormat = attributes.getString(R.styleable.SchedulerView_dateFormat)
-        userDateFormat?.let{
-            dateFormatter.applyPattern(it)
-        }
+        dateFormat = attributes.getString(R.styleable.SchedulerView_dateFormat) ?: context.getString(R.string.str_def_date_format)
+        dateFormatter.applyPattern(dateFormat)
         val userStaringDate = attributes.getString(R.styleable.SchedulerView_startingDate)
         userStaringDate?.let{
             val date = dateFormatter.parse(it)
@@ -165,6 +171,8 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
             //Это будет порождать exception, если задать некорректное имя класса отрисовщика
             eventDrawer = Class.forName(eventDrawerClassName!!).newInstance() as EventDrawer
         }
+        eventMargin = attributes.getDimensionPixelSize(R.styleable.SchedulerView_hoursHeaderTextSize, eventMargin)
+
         yScroll = minHour.toFloat()
         attributes.recycle()
     }
@@ -193,6 +201,7 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
         state.daysHeaderTextColor = this.daysHeaderTextColor
         state.hoursHeaderTextSize = this.hoursHeaderTextSize
         state.hoursHeaderTextColor = this.hoursHeaderTextColor
+        state.eventMargin = this.eventMargin
         state.xScroll = this.xScroll
         state.yScroll = this.yScroll
         state.startingDate = this.startingDate
@@ -223,6 +232,7 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
         daysHeaderTextColor = savedState.daysHeaderTextColor
         hoursHeaderTextSize = savedState.hoursHeaderTextSize
         hoursHeaderTextColor = savedState.hoursHeaderTextColor
+        eventMargin = savedState.eventMargin
         xScroll = savedState.xScroll
         yScroll = savedState.yScroll
         startingDate = savedState.startingDate
@@ -265,8 +275,7 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
             time = startingDate.time
             add(DATE, -ceil(xScroll).toInt())
             set(HOUR_OF_DAY, floor(yScroll).toInt())
-            var minutes = floor(60 * (yScroll - floor(yScroll))).toInt()
-            if (minutes != 0) minutes = 60 - minutes
+            val minutes = floor(60 * (yScroll - floor(yScroll))).toInt()
             set(MINUTE, minutes)
             set(SECOND, 0)
             set(MILLISECOND, 0)
@@ -277,12 +286,8 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
     private fun getLastDrawableDateTime(firstDrawableDate: Calendar): Calendar{
         val result = firstDrawableDate.clone() as Calendar
         with (result){
-            add(DATE, fitDays - 1)
-            set(HOUR_OF_DAY, floor(yScroll).toInt() + fitHours)
-            var minutes = floor(60 * (yScroll - floor(yScroll))).toInt()
-            if (minutes != 0) minutes = 60 - minutes
-            set(MINUTE, minutes)
-            set(SECOND, 0)
+            add(DATE, fitDays)
+            add(HOUR_OF_DAY, fitHours)
             set(MILLISECOND, 999)
         }
         return result
@@ -331,7 +336,7 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
         val checkpoint = canvas.save()
         canvas.clipRect(leftPadding, contentTop, contentRight, contentBottom)
         try {
-            var y = contentTop + hourSepWidth - (yScroll - floor(yScroll)) * cellHeight
+            var y = contentTop - (yScroll - floor(yScroll)) * cellHeight
             //рисуем горизотнальные линии для отображения разделителей часов
             val drawingHour = floor(yScroll).toInt()
             for (i in 0 .. fitHours){
@@ -345,7 +350,7 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
                 textRect.right = hoursHeaderWidth.toFloat()
                 textRect.bottom = y + cellHeight
                 drawHoursHeaderText(canvas, prepareHoursHeaderPaint(textPaint),
-                    textRect, "${drawingHour + i}:00")
+                    textRect, "${drawingHour + i}:00".padStart(5, '0'))
 
                 y += (cellHeight + hourSepWidth)
             }
@@ -388,7 +393,9 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
                  //или начало события меньше начала окна и конец события больше конца окна
                  (eventStart.before(windowStart) && eventFinish.after(windowFinish))
     }
-    
+
+    private fun toSimpleDate(time: Long) = time - time % DAY_LENGTH
+
     private fun prepareEventRects(){
         eventRects.clear()
         val firstDrawableDate = getFirstDrawableDateTime()
@@ -398,23 +405,29 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
         if (drawableEvents.isEmpty()) {
             return
         }
+        else {
+            //Сортируем так, чтобы, если события перекрываются,
+            //то более короткие рисовались поверх более длинных
+            drawableEvents.sortedBy { schedulerEvent -> schedulerEvent.dateTimeFinish.time.time -
+                    schedulerEvent.dateTimeStart.time.time }
+        }
         //Самый левый край первого дня
-        val leftEdge = contentLeft - (ceil(xScroll) - xScroll) * cellWidth
+        val leftEdge = contentLeft + 1 - (ceil(xScroll) - xScroll) * cellWidth
         var diffDays: Long
         var eventStartHour: Float
         var eventFinishHour: Float
         for (event in drawableEvents){
             //Опеределим область рисования события
-            diffDays = (event.dateTimeStart.time.time - firstDrawableDate.time.time) / (24 * 60 * 60 * 1000)
+            diffDays = (toSimpleDate(event.dateTimeStart.time.time) -
+                        toSimpleDate (firstDrawableDate.time.time)) / DAY_LENGTH
             eventStartHour = event.dateTimeStart.get(HOUR_OF_DAY) + event.dateTimeStart.get(MINUTE) / 60f
             eventFinishHour = event.dateTimeFinish.get(HOUR_OF_DAY) + event.dateTimeFinish.get(MINUTE) / 60f
-            eventRect.left = leftEdge + diffDays * cellWidth
+            eventRect.left = leftEdge + diffDays * cellWidth + eventMargin
             eventRect.top = contentTop + (eventStartHour - yScroll) * cellHeight
-            eventRect.right = eventRect.left + cellWidth
+            eventRect.right = eventRect.left + cellWidth - 2 * eventMargin
             eventRect.bottom = contentTop + (eventFinishHour - yScroll) * cellHeight
             //запоминаем прямоугольники, в которые потом будем тыкать
             eventRects.add(EventRect(event, RectF(eventRect)))
-            Log.d(javaClass.simpleName, "${eventRect.left}, ${eventRect.top}, ${eventRect.right}, ${eventRect.bottom}}")
         }
     }
 
@@ -424,7 +437,7 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
         canvas.clipRect(contentLeft, contentTop, contentRight, contentBottom)
         try {
             for (eventRect in eventRects) {
-                eventDrawer.draw(eventRect.event, canvas, eventPaint, eventRect.rect)
+                eventDrawer.draw(context, eventRect.event, canvas, eventPaint, eventRect.rect)
             }
         }
         finally {
@@ -643,6 +656,7 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
         var daysHeaderTextColor: Int = DEF_DAYS_HEADER_TEXT_COLOR
         var hoursHeaderTextSize: Int = DEF_HOURS_HEADER_TEXT_SIZE
         var hoursHeaderTextColor: Int = DEF_HOURS_HEADER_TEXT_COLOR
+        var eventMargin: Int = DEF_EVENT_MARGIN
         var xScroll = 0f
         var yScroll = 0f
 
@@ -671,6 +685,7 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
             daysHeaderTextColor = parcel.readInt()
             hoursHeaderTextSize = parcel.readInt()
             hoursHeaderTextColor = parcel.readInt()
+            eventMargin = parcel.readInt()
             xScroll = parcel.readFloat()
             yScroll = parcel.readFloat()
             startingDate = parcel.readSerializable() as Calendar
@@ -700,6 +715,7 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
             parcel.writeInt(daysHeaderTextColor)
             parcel.writeInt(hoursHeaderTextSize)
             parcel.writeInt(hoursHeaderTextColor)
+            parcel.writeInt(eventMargin)
             parcel.writeFloat(xScroll)
             parcel.writeFloat(yScroll)
             parcel.writeSerializable(startingDate)
@@ -724,6 +740,7 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
     }
 
     companion object {
+        const val DAY_LENGTH = 24 * 60 * 60 * 1000
         const val DEF_FIT_DAYS = 5
         const val DEF_FIT_HOURS = 4
         const val DEF_MIN_HOUR: Int = 8
@@ -756,5 +773,6 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
         const val DEF_HOURS_HEADER_TEXT_SIZE: Int = 14
         const val DEF_HOURS_HEADER_TEXT_COLOR: Int = Color.BLACK
         const val DEF_DECELERATE_FACTOR = 2.5f
+        const val DEF_EVENT_MARGIN = 6
     }
 }

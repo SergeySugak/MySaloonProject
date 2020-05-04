@@ -8,4 +8,5 @@ interface SchedulerEvent {
     val dateTimeFinish: Calendar
     val header: String
     val text: String
+    val color: Int
 }
