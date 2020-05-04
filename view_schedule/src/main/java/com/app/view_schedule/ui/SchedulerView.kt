@@ -1,10 +1,7 @@
 package com.app.view_schedule.ui
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.RectF
+import android.graphics.*
 import android.os.Parcel
 import android.os.Parcelable
 import android.text.TextPaint
@@ -18,10 +15,7 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.Scroller
 import androidx.annotation.ColorInt
 import com.app.view_schedule.R
-import com.app.view_schedule.api.EventDrawer
-import com.app.view_schedule.api.DefaultEventDrawer
-import com.app.view_schedule.api.EventRect
-import com.app.view_schedule.api.SchedulerEvent
+import com.app.view_schedule.api.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.Calendar.*
@@ -50,41 +44,47 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
 
     private fun onPropertyChanged(){
         if (!delayInvalidation) {
-            invalidate()
+            postInvalidate()
+        }
+    }
+
+    private fun onHourSepColor(){
+        dashedPaint.color = hourSepColor
+    }
+
+    private fun onDateFormatChange(){
+        dateFormatter.applyPattern(dateFormat)
+        if (!delayInvalidation) {
+            postInvalidate()
         }
     }
 
     private val today = Calendar.getInstance()
     var delayInvalidation = false
-    var fitDays: Int by InvalidationInitiatorProperty(DEF_FIT_DAYS){onPropertyChanged()}
-    var fitHours: Int by InvalidationInitiatorProperty(DEF_FIT_HOURS){onPropertyChanged()}
-    var minHour: Int by InvalidationInitiatorProperty(DEF_MIN_HOUR){onPropertyChanged()}
-    var maxHour: Int by InvalidationInitiatorProperty(DEF_MAX_HOUR){onPropertyChanged()}
-    var hourFraction: HourFraction by InvalidationInitiatorProperty(HourFraction.fromInt(DEF_HOUR_FRACTION)){onPropertyChanged()}
-    var colorMon: Int by InvalidationInitiatorProperty(DEF_COLOR_MON){onPropertyChanged()}
-    var colorTue: Int by InvalidationInitiatorProperty(DEF_COLOR_TUE){onPropertyChanged()}
-    var colorWed: Int by InvalidationInitiatorProperty(DEF_COLOR_WED){onPropertyChanged()}
-    var colorThu: Int by InvalidationInitiatorProperty(DEF_COLOR_THU){onPropertyChanged()}
-    var colorFri: Int by InvalidationInitiatorProperty(DEF_COLOR_FRI){onPropertyChanged()}
-    var colorSat: Int by InvalidationInitiatorProperty(DEF_COLOR_SAT){onPropertyChanged()}
-    var colorSun: Int by InvalidationInitiatorProperty(DEF_COLOR_SUN){onPropertyChanged()}
-    var daySepColor: Int by InvalidationInitiatorProperty(DEF_DAY_SEP_COLOR){onPropertyChanged()}
-    var hourSepColor: Int by InvalidationInitiatorProperty(DEF_HOUR_SEP_COLOR){onPropertyChanged()}
-    var hoursHeaderWidth: Int by InvalidationInitiatorProperty(DEF_HOURS_HEADER_WIDTH){onPropertyChanged()}
-    var daysHeaderHeight: Int by InvalidationInitiatorProperty(DEF_DAYS_HEADER_HEIGHT){onPropertyChanged()}
-    var daySepWidth: Int by InvalidationInitiatorProperty(DEF_DAY_SEP_WIDTH){onPropertyChanged()}
-    var hourSepWidth: Int by InvalidationInitiatorProperty(DEF_HOUR_SEP_WIDTH){onPropertyChanged()}
-    var daysHeaderTextSize: Int by InvalidationInitiatorProperty(DEF_DAYS_HEADER_TEXT_SIZE){onPropertyChanged()}
-    var daysHeaderTextColor: Int by InvalidationInitiatorProperty(DEF_DAYS_HEADER_TEXT_COLOR){onPropertyChanged()}
-    var hoursHeaderTextSize: Int by InvalidationInitiatorProperty(DEF_HOURS_HEADER_TEXT_SIZE){onPropertyChanged()}
-    var hoursHeaderTextColor: Int by InvalidationInitiatorProperty(DEF_HOURS_HEADER_TEXT_COLOR){onPropertyChanged()}
-    var eventMargin: Int by InvalidationInitiatorProperty(DEF_EVENT_MARGIN){onPropertyChanged()}
-
-    var dateFormat: String = context.getString(R.string.str_def_date_format)
-        set(value) {
-            dateFormatter.applyPattern(value)
-            postInvalidate()
-        }
+    var fitDays: Int by AfterChangeInvalidationInitiatorProperty(DEF_FIT_DAYS){onPropertyChanged()}
+    var fitHours: Int by AfterChangeInvalidationInitiatorProperty(DEF_FIT_HOURS){onPropertyChanged()}
+    var minHour: Int by AfterChangeInvalidationInitiatorProperty(DEF_MIN_HOUR){onPropertyChanged()}
+    var maxHour: Int by AfterChangeInvalidationInitiatorProperty(DEF_MAX_HOUR){onPropertyChanged()}
+    var hourFraction: HourFraction by AfterChangeInvalidationInitiatorProperty(HourFraction.fromInt(DEF_HOUR_FRACTION)){onPropertyChanged()}
+    var colorMon: Int by AfterChangeInvalidationInitiatorProperty(DEF_COLOR_MON){onPropertyChanged()}
+    var colorTue: Int by AfterChangeInvalidationInitiatorProperty(DEF_COLOR_TUE){onPropertyChanged()}
+    var colorWed: Int by AfterChangeInvalidationInitiatorProperty(DEF_COLOR_WED){onPropertyChanged()}
+    var colorThu: Int by AfterChangeInvalidationInitiatorProperty(DEF_COLOR_THU){onPropertyChanged()}
+    var colorFri: Int by AfterChangeInvalidationInitiatorProperty(DEF_COLOR_FRI){onPropertyChanged()}
+    var colorSat: Int by AfterChangeInvalidationInitiatorProperty(DEF_COLOR_SAT){onPropertyChanged()}
+    var colorSun: Int by AfterChangeInvalidationInitiatorProperty(DEF_COLOR_SUN){onPropertyChanged()}
+    var daySepColor: Int by AfterChangeInvalidationInitiatorProperty(DEF_DAY_SEP_COLOR){onPropertyChanged()}
+    var hourSepColor: Int by BeforeChangeInvalidationInitiatorProperty(DEF_HOUR_SEP_COLOR){onHourSepColor()}
+    var hoursHeaderWidth: Int by AfterChangeInvalidationInitiatorProperty(DEF_HOURS_HEADER_WIDTH){onPropertyChanged()}
+    var daysHeaderHeight: Int by AfterChangeInvalidationInitiatorProperty(DEF_DAYS_HEADER_HEIGHT){onPropertyChanged()}
+    var daySepWidth: Int by AfterChangeInvalidationInitiatorProperty(DEF_DAY_SEP_WIDTH){onPropertyChanged()}
+    var hourSepWidth: Int by AfterChangeInvalidationInitiatorProperty(DEF_HOUR_SEP_WIDTH){onPropertyChanged()}
+    var daysHeaderTextSize: Int by AfterChangeInvalidationInitiatorProperty(DEF_DAYS_HEADER_TEXT_SIZE){onPropertyChanged()}
+    var daysHeaderTextColor: Int by AfterChangeInvalidationInitiatorProperty(DEF_DAYS_HEADER_TEXT_COLOR){onPropertyChanged()}
+    var hoursHeaderTextSize: Int by AfterChangeInvalidationInitiatorProperty(DEF_HOURS_HEADER_TEXT_SIZE){onPropertyChanged()}
+    var hoursHeaderTextColor: Int by AfterChangeInvalidationInitiatorProperty(DEF_HOURS_HEADER_TEXT_COLOR){onPropertyChanged()}
+    var eventMargin: Int by AfterChangeInvalidationInitiatorProperty(DEF_EVENT_MARGIN){onPropertyChanged()}
+    var dateFormat: String by AfterChangeInvalidationInitiatorProperty(context.getString(R.string.str_def_date_format)){onDateFormatChange()}
 
     private var dateFormatter = SimpleDateFormat(context.getString(R.string.str_def_date_format), Locale.getDefault())
     var startingDate: Calendar = Calendar.getInstance()
@@ -95,6 +95,8 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
         style = Paint.Style.FILL
         textAlign = Paint.Align.CENTER
     }
+    private val path = Path()
+    private val dashedPaint = Paint()
     var textRect = RectF()
 
     private var topPadding = 0f
@@ -122,6 +124,8 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
     private val eventRects = mutableListOf<EventRect>()
     private lateinit var eventDrawer: EventDrawer
 
+    private var eventClickListener: SchedulerEventClickListener? = null
+
     constructor(context: Context): this(context, null, 0)
 
     constructor(context: Context, attrs: AttributeSet): this(context, attrs, 0){
@@ -144,7 +148,7 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
         colorSun = attributes.getColor(R.styleable.SchedulerView_colorSun, colorSun)
         daySepColor = attributes.getColor(R.styleable.SchedulerView_daySepColor, daySepColor)
         hourSepColor = attributes.getColor(R.styleable.SchedulerView_hourSepColor, hourSepColor)
-        hourFraction = HourFraction.fromInt(attributes.getInt(R.styleable.SchedulerView_hourFraction, 1))
+        hourFraction = HourFraction.fromInt(attributes.getInt(R.styleable.SchedulerView_hourFraction, DEF_HOUR_FRACTION))
         daySepWidth = attributes.getDimensionPixelSize(R.styleable.SchedulerView_daySepWidth, daySepWidth)
         hourSepWidth = attributes.getDimensionPixelSize(R.styleable.SchedulerView_hourSepWidth, hourSepWidth)
         daysHeaderHeight = attributes.getDimensionPixelSize(R.styleable.SchedulerView_daysHeaderHeight, daysHeaderHeight)
@@ -164,12 +168,11 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
         hoursHeaderTextColor = attributes.getColor(R.styleable.SchedulerView_hoursHeaderTextColor, hoursHeaderTextColor)
 
         val eventDrawerClassName = attributes.getString(R.styleable.SchedulerView_eventDrawer)
-        if (TextUtils.isEmpty(eventDrawerClassName)){
-            eventDrawer = DefaultEventDrawer()
-        }
-        else {
+        eventDrawer = if (TextUtils.isEmpty(eventDrawerClassName)){
+            DefaultEventDrawer()
+        } else {
             //Это будет порождать exception, если задать некорректное имя класса отрисовщика
-            eventDrawer = Class.forName(eventDrawerClassName!!).newInstance() as EventDrawer
+            Class.forName(eventDrawerClassName!!).newInstance() as EventDrawer
         }
         eventMargin = attributes.getDimensionPixelSize(R.styleable.SchedulerView_hoursHeaderTextSize, eventMargin)
 
@@ -344,6 +347,19 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
                 paint.strokeWidth = hourSepWidth.toFloat()
                 canvas.drawLine(leftPadding, y, contentRight, y, paint)
 
+                if (hourFraction != HourFraction.hf1){
+                    val fractions = hourFraction.value - 1
+                    val fractionSize = cellHeight / hourFraction.value
+                    for (j in 0 .. fractions){
+                        path.reset()
+                        path.moveTo(contentLeft, y + j * fractionSize)
+                        path.lineTo(contentRight, y + j * fractionSize)
+                        canvas.drawPath(path, dashedPaint)
+//                        canvas.drawLine(contentLeft, y + j * fractionSize,
+//                            contentRight, y + j * fractionSize, dashedPaint)
+                    }
+                }
+
                 //определяем прямоугольник для рисования текста часов
                 textRect.left = 0f
                 textRect.top = y
@@ -401,15 +417,13 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
         val firstDrawableDate = getFirstDrawableDateTime()
         val lastDrawableDate = getLastDrawableDateTime(firstDrawableDate)
 
-        val drawableEvents = events.filter { isEventVisible(it, firstDrawableDate, lastDrawableDate) }
+        var drawableEvents = events.filter { isEventVisible(it, firstDrawableDate, lastDrawableDate) }
         if (drawableEvents.isEmpty()) {
             return
         }
         else {
-            //Сортируем так, чтобы, если события перекрываются,
-            //то более короткие рисовались поверх более длинных
-            drawableEvents.sortedBy { schedulerEvent -> schedulerEvent.dateTimeFinish.time.time -
-                    schedulerEvent.dateTimeStart.time.time }
+            //Сортируем так, чтобы более поздние события были поверх более ранних
+            drawableEvents = drawableEvents.sortedBy { schedulerEvent -> schedulerEvent.dateTimeStart }
         }
         //Самый левый край первого дня
         val leftEdge = contentLeft + 1 - (ceil(xScroll) - xScroll) * cellWidth
@@ -539,6 +553,26 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
         var prevFlingX = 0
         var prevFlingY = 0
 
+        override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+            val listener = eventClickListener
+            if (listener != null){
+                var result: EventRect? = null
+                //эти прямоугольники лежат в порядке, обратном требуемуму, т.к. рисуются в правильном
+                //поэтому придется перебрать все, чтобы найти самый верхний, содержащий точку касания
+                 for (eventRect in eventRects){
+                    if (eventRect.rect.contains(e.x, e.y)){
+                        result = eventRect
+                    }
+                }
+                if (result != null) {
+                    listener.onSchedulerEventClickListener(result.event)
+                }
+                return true
+            }
+            //путь, ведущий к onClick?
+            return super.onSingleTapConfirmed(e)
+        }
+
         override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
             val prevScrollX = xScroll
             val prevScrollY = yScroll
@@ -606,14 +640,23 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
         postInvalidate()
     }
 
+    fun setEventClickListener(eventClickListener: SchedulerEventClickListener){
+        this.eventClickListener = eventClickListener
+    }
+
     enum class HourFraction(val value: Int) {
-        hf1(1), hf5(10), hf10(6), hf15(4), hf20(3), hf30(2);
+        hf1(1), hf2(2), hf3(3), hf4(4), hf5(5), hf6(6), hf10(10), hf12(12), hf15(15), hf20(20), hf30(30);
 
         companion object {
             fun fromInt(value: Int): HourFraction {
                 return when (value) {
+                    2 -> hf2
+                    3 -> hf3
+                    4 -> hf4
                     5 -> hf5
+                    6 -> hf6
                     10 -> hf10
+                    12 -> hf12
                     15 -> hf15
                     20 -> hf20
                     30 -> hf30
@@ -732,10 +775,22 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
         }
     }
 
-    class InvalidationInitiatorProperty<T>(initialValue: T,
+    class BeforeChangeInvalidationInitiatorProperty<T>(initialValue: T,
                                            private val onChange: ()->Unit): ObservableProperty<T>(initialValue) {
+        override fun beforeChange(property: KProperty<*>, oldValue: T, newValue: T): Boolean {
+            if (oldValue != newValue) {
+                onChange()
+            }
+            return true
+        }
+    }
+
+    class AfterChangeInvalidationInitiatorProperty<T>(initialValue: T,
+                                                      private val onChange: ()->Unit): ObservableProperty<T>(initialValue) {
         override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) {
-            onChange()
+            if (oldValue != newValue) {
+                onChange()
+            }
         }
     }
 
@@ -745,7 +800,7 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
         const val DEF_FIT_HOURS = 4
         const val DEF_MIN_HOUR: Int = 8
         const val DEF_MAX_HOUR: Int = 22
-        const val DEF_HOUR_FRACTION = 1
+        const val DEF_HOUR_FRACTION = 2
         @ColorInt
         const val DEF_COLOR_MON: Int = Color.WHITE
         @ColorInt
@@ -774,5 +829,12 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
         const val DEF_HOURS_HEADER_TEXT_COLOR: Int = Color.BLACK
         const val DEF_DECELERATE_FACTOR = 2.5f
         const val DEF_EVENT_MARGIN = 6
+        const val DEF_DASH_SIZE = 10f
+    }
+
+    init {
+        dashedPaint.color = hourSepColor
+        dashedPaint.style = Paint.Style.STROKE
+        dashedPaint.pathEffect = DashPathEffect(floatArrayOf(DEF_DASH_SIZE, DEF_DASH_SIZE) , 0f)
     }
 }
