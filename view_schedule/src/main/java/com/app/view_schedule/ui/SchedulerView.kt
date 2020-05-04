@@ -11,6 +11,7 @@ import android.view.GestureDetector
 import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
 import android.view.View
+import android.view.View.MeasureSpec.EXACTLY
 import android.view.animation.DecelerateInterpolator
 import android.widget.Scroller
 import androidx.annotation.ColorInt
@@ -240,6 +241,31 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
         yScroll = savedState.yScroll
         startingDate = savedState.startingDate
     }
+
+//  С onMeasure всё как-то очень странно.
+//  1. Студия перестает рисовать (вероятно не понимает кто parent view)
+//  2. Как быть, если заданы заведомо кривые размеры (см. п. 3)
+//  3. При перевороте перестает ресовать вообще. Видимо, иэто логисно, onMeasure случается,
+//     когда размеры родительского view еще не известны. Но тогда на что ориентироваться,
+//     чтобы исправить заданные криво размеры?
+//  Итого: оставляем поведение View по умолчанию, т.к. оно вообще-то полностью устраивает.
+//    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+//        val suggestedW = getSuggestedMaxWidth()
+//        val suggestedH = getSuggestedMaxHeight()
+//        var w = getDefaultSize(suggestedW, widthMeasureSpec)
+//        var h = getDefaultSize(suggestedH, heightMeasureSpec)
+//        if (w > suggestedW) {
+//            w = suggestedW
+//        }
+//        if (h > suggestedH) {
+//            h = suggestedH
+//        }
+//        setMeasuredDimension(w, h)
+//    }
+//
+//    private fun getSuggestedMaxWidth() = (parent as View).width
+//
+//    private fun getSuggestedMaxHeight() = (parent as View).height
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
