@@ -39,7 +39,7 @@ abstract class MSDialogFragment<VM : MSFragmentViewModel> :
         super.onCreate(savedInstanceState)
         viewModel = createViewModel(savedInstanceState)
         if (layoutId != 0 && activity != null) {
-            val inflater = activity!!.layoutInflater
+            val inflater = requireActivity().layoutInflater
             inflater.inflate(layoutId, null, false)
         }
         onViewModelCreated(viewModel, savedInstanceState)
@@ -150,7 +150,7 @@ abstract class MSDialogFragment<VM : MSFragmentViewModel> :
         try {
             if (activity != null) {
                 val fm =
-                    activity!!.supportFragmentManager
+                    requireActivity().supportFragmentManager
                 val ft = fm.beginTransaction()
                 val prev = fm.findFragmentByTag(tag)
                 if (prev != null) ft.remove(prev)
@@ -158,7 +158,7 @@ abstract class MSDialogFragment<VM : MSFragmentViewModel> :
             }
         } catch (e: Throwable) {
             if (activity != null) {
-                MessageDialogFragment.showError(activity!!, e)
+                MessageDialogFragment.showError(this, e)
             }
         }
     }

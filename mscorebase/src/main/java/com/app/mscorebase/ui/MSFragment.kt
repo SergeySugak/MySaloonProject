@@ -50,7 +50,7 @@ abstract class MSFragment<VM : MSFragmentViewModel> :
         viewModel = createViewModel(savedInstanceState)
         onViewModelCreated(viewModel, savedInstanceState)
         if (activity != null) {
-            activity!!.invalidateOptionsMenu()
+            requireActivity().invalidateOptionsMenu()
         }
         return result
     }
@@ -229,7 +229,7 @@ abstract class MSFragment<VM : MSFragmentViewModel> :
         try {
             if (activity != null) {
                 val fm =
-                    activity!!.supportFragmentManager
+                    requireActivity().supportFragmentManager
                 val ft = fm.beginTransaction()
                 val prev = fm.findFragmentByTag(tag)
                 if (prev != null) ft.remove(prev)
@@ -237,7 +237,7 @@ abstract class MSFragment<VM : MSFragmentViewModel> :
             }
         } catch (e: Throwable) {
             if (activity != null) {
-                showError(activity!!, e)
+                showError(this, e)
             }
         }
     }

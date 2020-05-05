@@ -25,9 +25,9 @@ abstract class MSChoiceDialogFragment<C : ChoiceItem<out Serializable>, VM : MSC
     }
 
     override fun onBuildDialog(savedInstanceState: Bundle?): Dialog {
-        val builder = AlertDialog.Builder(activity!!)
+        val builder = AlertDialog.Builder(requireActivity())
         if (arguments != null) {
-            builder.setTitle(arguments!!.getString(ARGUMENT_TITLE))
+            builder.setTitle(requireArguments().getString(ARGUMENT_TITLE))
         }
         val vm = getViewModel() ?: throw IllegalStateException(getString(R.string.err_no_viewmodel))
 

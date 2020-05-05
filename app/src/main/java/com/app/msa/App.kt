@@ -6,7 +6,6 @@ import com.app.di.DaggerAppComponent
 import com.app.mscorebase.di.ComponentDependenciesProvider
 import com.app.mscorebase.di.HasComponentDependencies
 import javax.inject.Inject
-import javax.inject.Singleton
 
 class App: Application(), HasComponentDependencies {
     companion object {

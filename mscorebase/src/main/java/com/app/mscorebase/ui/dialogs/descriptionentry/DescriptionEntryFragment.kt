@@ -25,17 +25,17 @@ class DescriptionEntryFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         retainInstance = true
-        val inflater = activity!!.layoutInflater
+        val inflater = requireActivity().layoutInflater
         @SuppressLint("InflateParams")
         val view = inflater.inflate(R.layout.fragment_description_entry, null, false)
         descriptionEditText = view.findViewById(R.id.description)
         assert(arguments != null)
-        val descrText = arguments!!.getString(ARGUMENTS_DESCRIPTION)
+        val descrText = requireArguments().getString(ARGUMENTS_DESCRIPTION)
         if (savedInstanceState == null && !TextUtils.isEmpty(descrText)) {
             descriptionEditText?.setText(descrText)
             descriptionEditText?.setSelection(descrText!!.length)
         }
-        val builder = AlertDialog.Builder(activity!!)
+        val builder = AlertDialog.Builder(requireActivity())
         builder.setView(view)
         if (arguments!!.getInt(ARGUMENTS_TITLE_RES_ID) != 0) {
             builder.setTitle(arguments!!.getInt(ARGUMENTS_TITLE_RES_ID))

@@ -6,6 +6,8 @@ import android.text.TextUtils
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import com.app.feature_event_scheduler.ui.EventSchedulerFragment
+import com.app.feature_event_scheduler.ui.EventSchedulerFragment.Companion.ARG_EDIT_EVENT_ID
 import com.app.feature_master.ui.MasterFragment
 import com.app.feature_master.ui.MasterFragment.Companion.ARG_EDIT_MASTER_ID
 import com.app.feature_service.ui.ServiceFragment
@@ -54,6 +56,22 @@ class AppNavigatorImpl @Inject constructor(): AppNavigator {
             setTargetFragment(targetFragment, requestCode)
             if (!TextUtils.isEmpty(masterId)) {
                 arguments = bundleOf(Pair(ARG_EDIT_MASTER_ID, masterId))
+            }
+        }
+        showDialogFragment(targetFragment, newServiceFragment, tag)
+    }
+
+    override fun navigateToNewEventFragment(targetFragment: Fragment, requestCode: Int, tag: String?){
+        navigateToEditEventFragment(targetFragment, "", requestCode, tag)
+    }
+
+    override fun navigateToEditEventFragment(targetFragment: Fragment, eventId: String,
+                                    requestCode: Int, tag: String?){
+        val newServiceFragment = EventSchedulerFragment.newInstance().apply {
+            retainInstance = true
+            setTargetFragment(targetFragment, requestCode)
+            if (!TextUtils.isEmpty(eventId)) {
+                arguments = bundleOf(Pair(ARG_EDIT_EVENT_ID, eventId))
             }
         }
         showDialogFragment(targetFragment, newServiceFragment, tag)

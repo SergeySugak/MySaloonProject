@@ -37,9 +37,9 @@ class ServiceFragment : MSDialogFragment<ServiceViewModel>() {
     }
 
     override fun onBuildDialog(savedInstanceState: Bundle?): Dialog {
-        val inflater = activity!!.layoutInflater
+        val inflater = requireActivity().layoutInflater
         val view = inflater.inflate(layoutId, null)
-        val builder = AlertDialog.Builder(activity!!)
+        val builder = AlertDialog.Builder(requireActivity())
         builder.setView(view)
             .setTitle(R.string.title_fragment_edit_service)
             .setPositiveButton(getString(R.string.ok)) { _, _ -> }

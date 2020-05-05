@@ -16,7 +16,7 @@ import com.app.view_schedule.ui.SchedulerView
 import java.util.*
 import javax.inject.Inject
 
-class ScheduleFragment :  MSFragment<ScheduleViewModel>()  {
+class ScheduleFragment :  MSFragment<ScheduleViewModel>() {
 
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory

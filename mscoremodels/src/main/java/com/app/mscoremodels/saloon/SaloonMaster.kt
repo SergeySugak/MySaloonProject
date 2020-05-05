@@ -2,7 +2,6 @@ package com.app.mscoremodels.saloon
 
 import com.google.firebase.database.IgnoreExtraProperties
 
-@Suppress("ConvertSecondaryConstructorToPrimary")
 @IgnoreExtraProperties
 class SaloonMaster constructor() {
     var id: String = ""

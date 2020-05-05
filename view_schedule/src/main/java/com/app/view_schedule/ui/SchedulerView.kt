@@ -7,6 +7,7 @@ import android.os.Parcelable
 import android.text.TextPaint
 import android.text.TextUtils
 import android.util.AttributeSet
+import android.util.Log
 import android.view.GestureDetector
 import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
@@ -565,8 +566,8 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
     }
 
     fun normalizeYScroll(value: Float): Float {
-        if (value > 24)
-            return 24f
+        if (value > 24f - fitHours)
+            return 24f - fitHours
         else {
             if (value < 0)
                 return 0f
@@ -612,6 +613,7 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
             //превышать значение 24 часов.
             if (distanceY != 0f){
                 yScroll += distanceY / cellHeight
+                Log.d(javaClass.simpleName, "$yScroll")
                 yScroll = normalizeYScroll (yScroll)
             }
 
@@ -634,7 +636,7 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
             scroller.fling(0, (yScroll * cellHeight).toInt(),
                 -velocityX.toInt(), -velocityY.toInt(),
                 Int.MIN_VALUE, Int.MAX_VALUE,
-                0,  (25 - fitHours) * cellHeight.toInt())
+                0,  (24 - fitHours) * cellHeight.toInt())
             invalidate()
             return true
         }

@@ -12,4 +12,7 @@ interface AppNavigator {
     fun navigateToNewMasterFragment(targetFragment: Fragment, requestCode: Int, tag: String? = null)
     fun navigateToEditMasterFragment(targetFragment: Fragment, masterId: String,
                                       requestCode: Int, tag: String? = null)
+    fun navigateToNewEventFragment(targetFragment: Fragment, requestCode: Int, tag: String? = null)
+    fun navigateToEditEventFragment(targetFragment: Fragment, eventId: String,
+                                     requestCode: Int, tag: String? = null)
 }

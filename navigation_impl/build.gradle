@@ -54,6 +54,7 @@ dependencies {
     implementation project(':feature_main')
     implementation project(':feature_service')
     implementation project(':feature_master')
+    implementation project(':feature_event_scheduler')
 
     //jetbrains
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"

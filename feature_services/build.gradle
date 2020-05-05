@@ -73,7 +73,7 @@ dependencies {
 
     //google
     implementation 'com.google.android.material:material:1.1.0'
-    compileOnly 'com.google.firebase:firebase-database:19.2.1'
+    compileOnly 'com.google.firebase:firebase-database:19.3.0'
 
     //facebook
     implementation 'com.facebook.fresco:fresco:2.0.0'
