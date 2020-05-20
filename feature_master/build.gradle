@@ -50,6 +50,7 @@ dependencies {
     api project(':mscorebase')
     api project(':mscoremodels')
     api project(':scopes')
+    api project(':navigation_api')
     implementation project(':repository_db')
 
     //jetbrains

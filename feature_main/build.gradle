@@ -56,6 +56,7 @@ dependencies {
     implementation project(':feature_service')
     implementation project(':feature_schedule')
     implementation project(':feature_event_scheduler')
+    implementation project(':feature_select_services')
     implementation project(':repository_auth')
     implementation project(':repository_db')
 

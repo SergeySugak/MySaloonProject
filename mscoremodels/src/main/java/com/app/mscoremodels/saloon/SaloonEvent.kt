@@ -7,14 +7,14 @@ import java.util.*
 class SaloonEvent constructor() {
     var id: String = ""
     lateinit var who: SaloonMaster
-    lateinit var what: SaloonService
+    lateinit var what: List<SaloonService>
     lateinit var client: SaloonClient
     lateinit var whenStart: Calendar
     lateinit var whenFinish: Calendar
     var description: String = ""
     var state: SaloonEventState = SaloonEventState.esScheduled
 
-    constructor(id: String, who: SaloonMaster, what: SaloonService, client: SaloonClient,
+    constructor(id: String, who: SaloonMaster, what: List<SaloonService>, client: SaloonClient,
                 whenStart: Calendar, whenFinish: Calendar, description: String,
                 state: SaloonEventState): this(){
         this.id = id

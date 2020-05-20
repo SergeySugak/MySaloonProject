@@ -45,6 +45,8 @@ android {
 }
 
 dependencies {
+    api project(':mscorebase')
+    api project(':mscoremodels')
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     //jetbrains

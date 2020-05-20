@@ -1,7 +1,7 @@
-package com.app.feature_master.ui
+package com.app.feature_select_services.ui
 
 import androidx.lifecycle.viewModelScope
-import com.app.feature_master.models.MasterServicesAdapter
+import com.app.feature_select_services.adapters.ServicesAdapter
 import com.app.msa_db_repo.repository.db.DbRepository
 import com.app.mscorebase.appstate.AppStateManager
 import com.app.mscorebase.appstate.StateWriter
@@ -16,9 +16,9 @@ import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
 
-class MasterServicesSelectionDialogViewModel
+class ServicesSelectionDialogViewModel
     @Inject constructor(appState: AppStateManager,
-                        adapter: MasterServicesAdapter,
+                        adapter: ServicesAdapter,
                         private val dbRepository: DbRepository,
                         private val saloonFactory: SaloonFactory
     ): MSChoiceDialogFragmentViewModel<ChoosableSaloonService, String?>(appState, adapter) {

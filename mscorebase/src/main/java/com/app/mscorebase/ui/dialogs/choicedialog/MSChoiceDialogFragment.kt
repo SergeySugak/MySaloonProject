@@ -7,6 +7,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import com.app.mscorebase.R
 import com.app.mscorebase.ui.MSDialogFragment
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.Serializable
 
 abstract class MSChoiceDialogFragment<C : ChoiceItem<out Serializable>, VM : MSChoiceDialogFragmentViewModel<C, P>, P> :
@@ -17,15 +18,15 @@ abstract class MSChoiceDialogFragment<C : ChoiceItem<out Serializable>, VM : MSC
         get() = 0
 
     override fun onViewModelCreated(viewModel: VM, savedInstanceState: Bundle?) {
-        viewModel.setChoices(if (arguments != null && arguments!!.getParcelableArrayList<C>(ARGUMENT_CHOICES) != null)
-                                arguments!!.getParcelableArrayList(ARGUMENT_CHOICES)!!
+        viewModel.setChoices(if (arguments != null && requireArguments().getParcelableArrayList<C>(ARGUMENT_CHOICES) != null)
+                                requireArguments().getParcelableArrayList(ARGUMENT_CHOICES)!!
                             else emptyList())
         viewModel.resultListener = arguments?.getParcelable(ARGUMENT_RESULT_LISTENER)
         super.onViewModelCreated(viewModel, savedInstanceState)
     }
 
     override fun onBuildDialog(savedInstanceState: Bundle?): Dialog {
-        val builder = AlertDialog.Builder(requireActivity())
+        val builder = MaterialAlertDialogBuilder(requireActivity())
         if (arguments != null) {
             builder.setTitle(requireArguments().getString(ARGUMENT_TITLE))
         }
@@ -74,7 +75,7 @@ abstract class MSChoiceDialogFragment<C : ChoiceItem<out Serializable>, VM : MSC
         when (which) {
             DialogInterface.BUTTON_POSITIVE -> {
                 if (arguments != null) {
-                    val payLoad = arguments!!.get(ARGUMENT_PAYLOAD)
+                    val payLoad = requireArguments().get(ARGUMENT_PAYLOAD)
                     val listener = vm.resultListener
                     if (listener != null) {
                         listener.onChoiceItemsSelected(vm.selectedItems, payLoad as P?)
@@ -95,7 +96,7 @@ abstract class MSChoiceDialogFragment<C : ChoiceItem<out Serializable>, VM : MSC
             DialogInterface.BUTTON_NEGATIVE, DialogInterface.BUTTON_NEUTRAL -> {
                 if (arguments != null) {
                     if (vm.resultListener != null) {
-                        vm.resultListener?.onNoItemSelected(arguments!!.get(ARGUMENT_PAYLOAD) as P?)
+                        vm.resultListener?.onNoItemSelected(requireArguments().get(ARGUMENT_PAYLOAD) as P?)
                     } else {
                         if (targetFragment is OnChoiceItemsSelectedListener<*, *>) {
                             (targetFragment as OnChoiceItemsSelectedListener<C, P?>)

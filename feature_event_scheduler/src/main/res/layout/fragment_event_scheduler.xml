@@ -1,31 +1,189 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        tools:context=".ui.EventSchedulerFragment">
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-<!--    <LinearLayout-->
-<!--            android:orientation="vertical"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:padding="8dp"-->
-<!--            android:layout_height="match_parent">-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/dialog_content_padding"
+            tools:context=".ui.EventSchedulerFragment">
+            <TextView
+                    android:id="@+id/when"
+                    style="@style/TextAppearance.AppCompat.Large"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/str_when"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-<!--        <DatePicker-->
-<!--                android:id="@+id/date_picker"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:calendarViewShown="true"-->
-<!--                android:spinnersShown="false"-->
-<!--                android:layout_weight="4"-->
-<!--                android:layout_height="0dp" />-->
+            <View
+                    android:id="@+id/divider_when"
+                    style="@style/DividerLineH"
+                    android:layout_width="0dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/when_barrier"
+                    app:layout_constraintTop_toBottomOf="@+id/when" />
 
-<!--        <TimePicker-->
-<!--                android:id="@+id/time_picker"-->
-<!--                android:layout_weight="4"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="0dp"-->
-<!--                android:timePickerMode="spinner"/>-->
 
-<!--    </LinearLayout>-->
-</FrameLayout>
+        <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/date_time_wrap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@+id/when_barrier"
+                app:layout_constraintTop_toBottomOf="@+id/divider_when">
+
+            <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/date_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/list_item_spacing_half"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:hint="@string/str_date_and_time"
+                    android:inputType="none"
+                    android:singleLine="true"
+                    android:ems="15"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+                android:id="@+id/client"
+                style="@style/TextAppearance.AppCompat.Large"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/str_client"
+                android:layout_marginTop="@dimen/list_item_spacing"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/date_time_wrap" />
+
+        <View
+                android:id="@+id/divider_client"
+                style="@style/DividerLineH"
+                android:layout_width="0dp"
+                app:layout_constraintEnd_toEndOf="@+id/when_barrier"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/client" />
+
+        <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/client_name_wrap"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/when_barrier"
+                app:layout_constraintTop_toBottomOf="@+id/divider_client">
+            <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/client_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/list_item_spacing_half"
+                    android:inputType="textPersonName"
+                    android:singleLine="false"
+                    android:hint="@string/str_client_name"
+                    />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/client_phone_wrap"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/when_barrier"
+                app:layout_constraintTop_toBottomOf="@+id/client_name_wrap">
+            <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/client_phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/list_item_spacing_half"
+                    android:inputType="phone"
+                    android:singleLine="true"
+                    android:hint="@string/str_client_phone"
+                    />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/client_email_wrap"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/when_barrier"
+                app:layout_constraintTop_toBottomOf="@+id/client_phone_wrap">
+            <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/client_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/list_item_spacing_half"
+                    android:inputType="textEmailAddress"
+                    android:singleLine="true"
+                    android:hint="@string/str_client_email"
+                    />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+                android:id="@+id/who"
+                style="@style/TextAppearance.AppCompat.Large"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/str_who_what"
+                android:layout_marginTop="@dimen/list_item_spacing"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/client_email_wrap" />
+
+        <View
+                android:id="@+id/divider_who"
+                style="@style/DividerLineH"
+                android:layout_width="0dp"
+                app:layout_constraintEnd_toEndOf="@+id/when_barrier"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/who" />
+
+        <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/services_wrap"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/when_barrier"
+                app:layout_constraintTop_toBottomOf="@+id/divider_who">
+            <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/services"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/list_item_spacing_half"
+                    android:inputType="none|textMultiLine"
+                    android:singleLine="false"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:hint="@string/str_services"
+                    />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/master_wrap"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/when_barrier"
+                app:layout_constraintTop_toBottomOf="@+id/services_wrap">
+
+            <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/master"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/list_item_spacing_half"
+                    android:inputType="none"
+                    android:singleLine="true"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:hint="@string/str_master" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/when_barrier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="right"
+                app:constraint_referenced_ids="when,client,who"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

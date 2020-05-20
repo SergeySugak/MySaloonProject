@@ -2,6 +2,9 @@ package com.app.msa_nav_api.navigation
 
 import android.content.Context
 import androidx.fragment.app.Fragment
+import com.app.mscorebase.ui.dialogs.choicedialog.OnChoiceItemsSelectedListener
+import com.app.mscoremodels.saloon.ChoosableSaloonService
+import com.app.mscoremodels.saloon.SaloonService
 
 interface AppNavigator {
     fun navigateToAuthActivity(from: Context)
@@ -15,4 +18,9 @@ interface AppNavigator {
     fun navigateToNewEventFragment(targetFragment: Fragment, requestCode: Int, tag: String? = null)
     fun navigateToEditEventFragment(targetFragment: Fragment, eventId: String,
                                      requestCode: Int, tag: String? = null)
+    fun navigateToSelectServicesFragment(targetFragment: Fragment,
+                                         title: String,
+                                         payload: String?,
+                                         selectedItems: List<SaloonService>,
+                                         listener: OnChoiceItemsSelectedListener<ChoosableSaloonService, String?>)
 }

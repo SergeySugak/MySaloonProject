@@ -6,6 +6,8 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/design_default_color_error</item>
+        <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
+        <item name="dialogPreferredPadding">@dimen/dialog_content_padding</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -17,4 +19,51 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="AlertDialogTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="colorSurface">#FFFFFF</item>
+        <item name="materialAlertDialogTitlePanelStyle">@style/DialogTitlePaneStyle</item>
+        <item name="materialAlertDialogTitleTextStyle">@style/DialogTitleTextStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/DialogPositiveButtonStyle</item>
+        <item name="buttonBarNegativeButtonStyle">@style/DialogNegativeButtonStyle</item>
+        <item name="buttonBarNeutralButtonStyle">@style/DialogNeutralButtonStyle</item>
+    </style>
+
+    <style name="DialogTitlePaneStyle" parent="MaterialAlertDialog.MaterialComponents.Title.Panel">
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:paddingBottom">@dimen/abc_dialog_padding_top_material</item>
+    </style>
+
+    <style name="DialogTitleTextStyle" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Title</item>
+    </style>
+
+    <style name="DialogPositiveButtonStyle" parent="Widget.MaterialComponents.Button">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceButton</item>
+        <item name="android:layout_marginLeft">@dimen/dialog_button_left_margin</item>
+        <item name="android:layout_marginRight">@dimen/dialog_button_right_margin</item>
+        <item name="android:layout_marginTop">@dimen/dialog_button_top_margin</item>
+        <item name="android:layout_marginBottom">@dimen/dialog_button_bottom_margin</item>
+    </style>
+
+    <style name="DialogNegativeButtonStyle" parent="Widget.MaterialComponents.Button">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceButton</item>
+        <item name="android:layout_marginLeft">@dimen/dialog_button_left_margin</item>
+        <item name="android:layout_marginRight">@dimen/dialog_button_right_margin</item>
+        <item name="android:layout_marginTop">@dimen/dialog_button_top_margin</item>
+        <item name="android:layout_marginBottom">@dimen/dialog_button_bottom_margin</item>
+    </style>
+
+    <style name="DialogNeutralButtonStyle" parent="Widget.MaterialComponents.Button">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceButton</item>
+        <item name="android:layout_marginLeft">@dimen/dialog_button_left_margin</item>
+        <item name="android:layout_marginRight">@dimen/dialog_button_right_margin</item>
+        <item name="android:layout_marginTop">@dimen/dialog_button_top_margin</item>
+        <item name="android:layout_marginBottom">@dimen/dialog_button_bottom_margin</item>
+    </style>
 </resources>

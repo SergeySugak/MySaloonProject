@@ -18,6 +18,7 @@ import com.app.mscorebase.ui.MSDialogFragment
 import com.app.mscorebase.ui.dialogs.choicedialog.OnChoiceItemsSelectedListener
 import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
 import com.app.mscoremodels.saloon.ChoosableServiceDuration
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import javax.inject.Inject
 
 class ServiceFragment : MSDialogFragment<ServiceViewModel>() {
@@ -39,7 +40,7 @@ class ServiceFragment : MSDialogFragment<ServiceViewModel>() {
     override fun onBuildDialog(savedInstanceState: Bundle?): Dialog {
         val inflater = requireActivity().layoutInflater
         val view = inflater.inflate(layoutId, null)
-        val builder = AlertDialog.Builder(requireActivity())
+        val builder = MaterialAlertDialogBuilder(requireActivity())
         builder.setView(view)
             .setTitle(R.string.title_fragment_edit_service)
             .setPositiveButton(getString(R.string.ok)) { _, _ -> }

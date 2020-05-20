@@ -5,6 +5,7 @@ import com.app.feature_master.api.MasterFeatureDependencies
 import com.app.feature_masters.api.MastersFeatureDependencies
 import com.app.feature_service.api.ServiceFeatureDependencies
 import com.app.feature_schedule.api.ScheduleFeatureDependencies
+import com.app.feature_select_services.api.SelectServicesFeatureDependencies
 import com.app.feature_services.api.ServicesFeatureDependencies
 import com.app.msa_db_repo.repository.db.DbRepository
 import com.app.msa_db_repo.repository.di.DbRepositoryModule
@@ -26,7 +27,8 @@ interface MainFeatureComponent: MastersFeatureDependencies,
                                 ServicesFeatureDependencies,
                                 ScheduleFeatureDependencies,
                                 ServiceFeatureDependencies,
-                                EventSchedulerFeatureDependencies {
+                                EventSchedulerFeatureDependencies,
+                                SelectServicesFeatureDependencies {
     override fun appStateManager(): AppStateManager
     override fun dbRepository(): DbRepository
     override fun appNavigator(): AppNavigator

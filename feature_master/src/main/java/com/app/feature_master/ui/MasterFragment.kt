@@ -2,7 +2,6 @@ package com.app.feature_master.ui
 
 import android.app.Activity
 import android.app.Dialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.os.Parcel
@@ -13,18 +12,22 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.app.feature_master.R
 import com.app.feature_master.di.DaggerMasterFeatureComponent
+import com.app.msa_nav_api.navigation.AppNavigator
 import com.app.mscorebase.di.ViewModelProviderFactory
 import com.app.mscorebase.di.findComponentDependencies
 import com.app.mscorebase.ui.MSDialogFragment
 import com.app.mscorebase.ui.dialogs.choicedialog.OnChoiceItemsSelectedListener
 import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
 import com.app.mscoremodels.saloon.ChoosableSaloonService
-import com.app.mscoremodels.saloon.SaloonService
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import javax.inject.Inject
 
 class MasterFragment : MSDialogFragment<MasterFragmentViewModel>() {
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory
+        protected set
+    @Inject
+    lateinit var appNavigator: AppNavigator
         protected set
 
     private lateinit var masterServices: EditText
@@ -43,7 +46,7 @@ class MasterFragment : MSDialogFragment<MasterFragmentViewModel>() {
     override fun onBuildDialog(savedInstanceState: Bundle?): Dialog {
         val inflater = requireActivity().layoutInflater
         val view = inflater.inflate(layoutId, null)
-        val builder = AlertDialog.Builder(requireActivity())
+        val builder = MaterialAlertDialogBuilder(requireActivity())
         builder.setView(view)
             .setTitle(R.string.title_fragment_edit_master)
             .setPositiveButton(getString(R.string.ok)) { _, _ -> }
@@ -52,7 +55,9 @@ class MasterFragment : MSDialogFragment<MasterFragmentViewModel>() {
             }
         masterServices = view.findViewById(R.id.master_services)
         masterServices.setOnClickListener{
-            val fragment = MasterServicesSelectionDialog.newInstance(getString(R.string.str_master_services),
+            appNavigator.navigateToSelectServicesFragment(
+                this,
+                getString(R.string.str_master_services),
                 getViewModel()?.masterId,
                 getViewModel()?.masterServices?.value ?: emptyList(),
                 object: OnChoiceItemsSelectedListener<ChoosableSaloonService, String?> {
@@ -63,7 +68,6 @@ class MasterFragment : MSDialogFragment<MasterFragmentViewModel>() {
                     override fun writeToParcel(dest: Parcel?, flags: Int) {}
                     override fun describeContents(): Int {return 0}
                 })
-            showDialogFragment(fragment, "")
         }
         return builder.create()
     }

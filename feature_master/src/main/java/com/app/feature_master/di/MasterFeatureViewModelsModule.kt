@@ -1,7 +1,6 @@
 package com.app.feature_master.di
 
 import androidx.lifecycle.ViewModel
-import com.app.feature_master.ui.MasterServicesSelectionDialogViewModel
 import com.app.feature_master.ui.MasterFragmentViewModel
 import com.app.mscorebase.di.ViewModelKey
 import dagger.Binds
@@ -14,9 +13,4 @@ abstract class MasterFeatureViewModelsModule {
     @IntoMap
     @ViewModelKey(MasterFragmentViewModel::class)
     abstract fun bindNewServiceFragmentViewModel(viewModel: MasterFragmentViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(MasterServicesSelectionDialogViewModel::class)
-    abstract fun bindMasterServicesSelectionDialogViewModel(viewModel: MasterServicesSelectionDialogViewModel): ViewModel
 }

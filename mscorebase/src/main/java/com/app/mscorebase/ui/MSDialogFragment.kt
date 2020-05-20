@@ -4,10 +4,17 @@ import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.os.Handler
+import android.view.Gravity
 import android.view.Menu
 import android.view.MenuInflater
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.annotation.LayoutRes
 import androidx.annotation.MenuRes
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.DialogTitle
 import androidx.fragment.app.DialogFragment
 import com.app.mscorebase.ui.dialogs.DialogButtonClickListener
 import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter
@@ -52,6 +59,16 @@ abstract class MSDialogFragment<VM : MSFragmentViewModel> :
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = onBuildDialog(savedInstanceState)
+        val title = dialog.findViewById<DialogTitle>(android.R.id.title)
+        val icon = dialog.findViewById<AppCompatImageView>(android.R.id.icon)
+        val titleLp = title?.layoutParams
+        val iconLp = icon?.layoutParams
+        titleLp?.let{it.height = MATCH_PARENT
+            title.layoutParams = it}
+        iconLp?.let{it.height = MATCH_PARENT
+            icon.layoutParams = it
+        }
+
         dialog.setCancelable(false)
         dialog.setCanceledOnTouchOutside(false)
         return dialog

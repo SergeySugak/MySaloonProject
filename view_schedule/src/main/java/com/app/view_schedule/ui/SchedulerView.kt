@@ -7,12 +7,10 @@ import android.os.Parcelable
 import android.text.TextPaint
 import android.text.TextUtils
 import android.util.AttributeSet
-import android.util.Log
 import android.view.GestureDetector
 import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
 import android.view.View
-import android.view.View.MeasureSpec.EXACTLY
 import android.view.animation.DecelerateInterpolator
 import android.widget.Scroller
 import androidx.annotation.ColorInt
@@ -613,7 +611,6 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
             //превышать значение 24 часов.
             if (distanceY != 0f){
                 yScroll += distanceY / cellHeight
-                Log.d(javaClass.simpleName, "$yScroll")
                 yScroll = normalizeYScroll (yScroll)
             }
 
