@@ -1,55 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:padding="?attr/dialogPreferredPadding"
         tools:context=".ui.DateTimeSelectionFragment">
     <TextView
-            android:id="@+id/label_date"
-            style="@style/TextAppearance.AppCompat.Medium"
-            android:layout_width="wrap_content"
+            android:id="@+id/date_and_time"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/str_date"
-            app:layout_constraintBottom_toBottomOf="@+id/calendarView"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Display3"
+            android:gravity="center"
+            tools:text="01.01.2020 15:00"/>
+    <View
+            android:id="@+id/divider_when"
+            style="@style/DividerLineH"
+            android:layout_width="match_parent"/>
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/root"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <TextView
-            android:id="@+id/label_time"
-            style="@style/TextAppearance.AppCompat.Medium"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/str_time"
-            app:layout_constraintBottom_toBottomOf="@+id/timePicker"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/timePicker" />
+        <CalendarView
+                android:id="@+id/calendarView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible" />
 
-    <CalendarView
-            android:id="@+id/calendarView"
-            android:layout_width="0dp"
-            android:layout_height="300dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="@+id/when_barrier"
-            app:layout_constraintStart_toEndOf="@+id/label_date"
-            app:layout_constraintTop_toBottomOf="@+id/divider_when" />
-
-    <TimePicker
-            android:id="@+id/timePicker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:timePickerMode="spinner"
-            app:layout_constraintStart_toStartOf="@+id/calendarView"
-            app:layout_constraintTop_toBottomOf="@+id/calendarView"
-            tools:ignore="UnusedAttribute" />
-
-    <androidx.constraintlayout.widget.Barrier
-            android:id="@+id/when_barrier"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:barrierDirection="right"
-            app:constraint_referenced_ids="label_date,label_time"/>
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TimePicker
+                android:id="@+id/timePicker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:timePickerMode="spinner"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="UnusedAttribute"
+                tools:visibility="visible" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

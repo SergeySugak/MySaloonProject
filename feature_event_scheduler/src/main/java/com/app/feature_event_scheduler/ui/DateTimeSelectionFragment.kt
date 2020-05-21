@@ -1,60 +1,139 @@
 package com.app.feature_event_scheduler.ui
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ObjectAnimator
+import android.app.Dialog
+import android.content.DialogInterface
+import android.content.DialogInterface.BUTTON_NEUTRAL
+import android.content.DialogInterface.BUTTON_POSITIVE
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
+import android.view.View.*
 import android.view.ViewGroup
+import android.widget.CalendarView
+import android.widget.TimePicker
+import androidx.appcompat.app.AlertDialog
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.transition.Fade
+import androidx.transition.Scene
+import androidx.transition.Transition
+import androidx.transition.TransitionManager
 import com.app.feature_event_scheduler.R
+import com.app.feature_event_scheduler.di.DaggerEventSchedulerFeatureComponent
+import com.app.feature_event_scheduler.ui.DateTimeSelectionViewModel.Companion.MODE_DATE
+import com.app.feature_event_scheduler.ui.DateTimeSelectionViewModel.Companion.MODE_TIME
+import com.app.mscorebase.di.ViewModelProviderFactory
+import com.app.mscorebase.di.findComponentDependencies
+import com.app.mscorebase.ui.MSDialogFragment
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import javax.inject.Inject
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+class DateTimeSelectionFragment : MSDialogFragment<DateTimeSelectionViewModel>() {
 
-/**
- * A simple [Fragment] subclass.
- * Use the [DateTimeSelectionFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class DateTimeSelectionFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    @Inject
+    lateinit var providerFactory: ViewModelProviderFactory
+        protected set
+
+    private lateinit var root: ConstraintLayout
+    private lateinit var calendarView: CalendarView
+    private lateinit var timePicker: TimePicker
+
+    private val buttonTitleList = listOf(R.string.str_time, R.string.str_date)
+
+    override val layoutId = R.layout.fragment_date_time_selection
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        DaggerEventSchedulerFeatureComponent
+            .builder()
+            .eventSchedulerFeatureDependencies(findComponentDependencies())
+            .build()
+            .inject(this)
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    }
+
+    override fun createViewModel(savedInstanceState: Bundle?) =
+        ViewModelProvider(this, providerFactory).get(DateTimeSelectionViewModel::class.java)
+
+    override fun onBuildDialog(savedInstanceState: Bundle?): Dialog {
+        val inflater = requireActivity().layoutInflater
+        val view = inflater.inflate(layoutId, null)
+        root = view.findViewById(R.id.root)
+        calendarView = view.findViewById(R.id.calendarView)
+        timePicker = view.findViewById(R.id.timePicker)
+        val builder = MaterialAlertDialogBuilder(requireActivity())
+        builder.setView(view)
+            .setTitle(getString(R.string.title_edit_scheduler_event))
+            .setPositiveButton(getString(R.string.ok), null)
+            .setNegativeButton(getString(R.string.cancel)) { _, _ -> dialog?.dismiss() }
+            .setNeutralButton(getString(R.string.str_time), null)
+        return builder.create()
+    }
+
+    private fun runTransition(mode: Int) {
+        when (mode) {
+            MODE_TIME -> fromTo(calendarView, timePicker)
+            MODE_DATE -> fromTo(timePicker, calendarView)
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_date_time_selection, container, false)
+    private fun fromTo(v1: View, v2: View) {
+        v1.animate()
+            .alpha(0f)
+            .setDuration(ANIMATION_DURATION)
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    v1.visibility = INVISIBLE
+                }
+            })
+        v2.apply {
+            alpha = 0f
+            visibility = VISIBLE
+            animate()
+                .alpha(1f)
+                .setDuration(ANIMATION_DURATION)
+                .setListener(null)
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val dlg = dialog as AlertDialog?
+        if (dlg != null){
+            timePicker.setIs24HourView(true)
+            var button = dlg.getButton(BUTTON_POSITIVE)
+            button.setOnClickListener{ _ ->
+//                getViewModel()?.saveEventInfo(
+//                    dlg.findViewById<EditText>(R.id.master_name)?.text.toString(),
+//                    dlg.findViewById<EditText>(R.id.master_description)?.text.toString(),
+//                    dlg.findViewById<EditText>(R.id.master_portfolio_url)?.text.toString())
+            }
+            button = dlg.getButton(BUTTON_NEUTRAL)
+            button.setOnClickListener {
+                getViewModel()?.updateMode()
+            }
+        }
+
+    }
+
+    override fun onStartObservingViewModel(viewModel: DateTimeSelectionViewModel) {
+        viewModel.mode.observe(this, Observer { mode ->
+            if (!viewModel.mode.isHandled){
+                (dialog as AlertDialog)
+                    .getButton(DialogInterface.BUTTON_NEUTRAL)
+                    .setText(buttonTitleList[mode])
+                runTransition(mode)
+                viewModel.mode.isHandled = true
+            }
+        })
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment DateTimeSelectionFragment.
-         */
-        // TODO: Rename and change types and number of parameters
+        private const val ANIMATION_DURATION = 1000L
+
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            DateTimeSelectionFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+        fun newInstance() = DateTimeSelectionFragment()
     }
 }
