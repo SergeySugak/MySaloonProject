@@ -14,5 +14,23 @@ open class StatefulMutableLiveData<T> :
         super.setValue(value)
     }
 
-    public override fun postValue(value: T?) = super.postValue(value);
+    fun forceSetValue(value: T?){
+        isHandled = false
+        super.setValue(value)
+    }
+
+    public override fun postValue(value: T?) {
+        if (value != null && value != getValue() ||
+            getValue() != null && getValue() != value
+        ) {
+            isHandled = false
+        }
+
+        super.postValue(value)
+    }
+
+    fun forcePostValue(value: T?){
+        isHandled = false
+        super.postValue(value)
+    }
 }

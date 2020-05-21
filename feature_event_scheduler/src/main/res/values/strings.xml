@@ -16,4 +16,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="str_who_what">Кто / что</string>
     <string name="str_date_and_time">Дата и время</string>
+
+    <string name="str_date_format">EEE, dd.MM.yy hh:mm</string>
+
 </resources>

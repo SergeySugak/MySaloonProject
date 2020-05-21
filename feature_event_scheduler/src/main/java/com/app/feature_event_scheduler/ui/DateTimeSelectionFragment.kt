@@ -12,6 +12,8 @@ import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
 import android.widget.CalendarView
+import android.widget.EditText
+import android.widget.TextView
 import android.widget.TimePicker
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -29,6 +31,8 @@ import com.app.mscorebase.di.ViewModelProviderFactory
 import com.app.mscorebase.di.findComponentDependencies
 import com.app.mscorebase.ui.MSDialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 class DateTimeSelectionFragment : MSDialogFragment<DateTimeSelectionViewModel>() {
@@ -37,9 +41,10 @@ class DateTimeSelectionFragment : MSDialogFragment<DateTimeSelectionViewModel>()
     lateinit var providerFactory: ViewModelProviderFactory
         protected set
 
-    private lateinit var root: ConstraintLayout
-    private lateinit var calendarView: CalendarView
-    private lateinit var timePicker: TimePicker
+    private lateinit var dateFormatter: SimpleDateFormat
+    private val calendarView: CalendarView by lazy { dialog!!.findViewById<CalendarView>(R.id.calendarView) }
+    private val timePicker: TimePicker by lazy { dialog!!.findViewById<TimePicker>(R.id.timePicker) }
+    private val dateAndTime: TextView by lazy { dialog!!.findViewById<TextView>(R.id.date_and_time) }
 
     private val buttonTitleList = listOf(R.string.str_time, R.string.str_date)
 
@@ -60,9 +65,6 @@ class DateTimeSelectionFragment : MSDialogFragment<DateTimeSelectionViewModel>()
     override fun onBuildDialog(savedInstanceState: Bundle?): Dialog {
         val inflater = requireActivity().layoutInflater
         val view = inflater.inflate(layoutId, null)
-        root = view.findViewById(R.id.root)
-        calendarView = view.findViewById(R.id.calendarView)
-        timePicker = view.findViewById(R.id.timePicker)
         val builder = MaterialAlertDialogBuilder(requireActivity())
         builder.setView(view)
             .setTitle(getString(R.string.title_edit_scheduler_event))
@@ -114,24 +116,39 @@ class DateTimeSelectionFragment : MSDialogFragment<DateTimeSelectionViewModel>()
             button.setOnClickListener {
                 getViewModel()?.updateMode()
             }
+            calendarView.setOnDateChangeListener{ view, year, month, dayOfMonth ->
+                getViewModel()?.setDate(year, month, dayOfMonth)
+            }
+            timePicker.setOnTimeChangedListener{ view, hourOfDay, minute ->
+                getViewModel()?.setTime(hourOfDay, minute)
+            }
         }
-
     }
 
     override fun onStartObservingViewModel(viewModel: DateTimeSelectionViewModel) {
         viewModel.mode.observe(this, Observer { mode ->
             if (!viewModel.mode.isHandled){
                 (dialog as AlertDialog)
-                    .getButton(DialogInterface.BUTTON_NEUTRAL)
+                    .getButton(BUTTON_NEUTRAL)
                     .setText(buttonTitleList[mode])
                 runTransition(mode)
                 viewModel.mode.isHandled = true
             }
         })
+        viewModel.calendar.observe(this, Observer { calendar ->
+            if (!viewModel.calendar.isHandled){
+                if (!::dateFormatter.isInitialized){
+                    dateFormatter = SimpleDateFormat(requireContext().getString(R.string.str_date_format), Locale.getDefault())
+                }
+                dateAndTime.text = dateFormatter.format(calendar.time)
+                viewModel.calendar.isHandled = true
+            }
+        })
+
     }
 
     companion object {
-        private const val ANIMATION_DURATION = 1000L
+        private const val ANIMATION_DURATION = 350L
 
         @JvmStatic
         fun newInstance() = DateTimeSelectionFragment()
