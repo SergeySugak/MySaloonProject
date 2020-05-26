@@ -7,6 +7,7 @@ import dagger.Module
 
 @Module
 abstract class ScheduleFeatureBindsModule {
+
     @Binds
     abstract fun bindEventColorizer(eventColorizer: EventColorizer): Colorizer
 }

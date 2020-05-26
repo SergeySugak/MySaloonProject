@@ -9,6 +9,7 @@ import dagger.multibindings.IntoMap
 
 @Module
 abstract class ScheduleFeatureViewModelsModule {
+
     @Binds
     @IntoMap
     @ViewModelKey(ScheduleViewModel::class)

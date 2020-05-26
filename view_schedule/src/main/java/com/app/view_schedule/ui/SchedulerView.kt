@@ -24,6 +24,7 @@ import kotlin.math.floor
 import kotlin.properties.ObservableProperty
 import kotlin.reflect.KProperty
 
+
 //View для отображения планировщика событий
 //Для управления рисованием событий необходимо определить интерфейс EventDrawer
 //и либо указать его в xml в атрибуте eventDrawer

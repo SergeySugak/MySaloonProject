@@ -5,6 +5,7 @@ import com.app.mscorebase.appstate.AppStateManager
 import com.app.mscorebase.di.ComponentDependencies
 
 interface ScheduleFeatureDependencies : ComponentDependencies {
+
     fun appStateManager(): AppStateManager
     fun dbRepository(): DbRepository
 }
