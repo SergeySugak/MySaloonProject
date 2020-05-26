@@ -7,6 +7,7 @@ import android.text.TextUtils
 import java.util.*
 
 class DefaultEventDrawer: EventDrawer {
+
     private val textPaint = TextPaint()
 
     override fun draw(context: Context,

@@ -7,6 +7,7 @@ class ObservableProperty<T: Any, P: Any>(
     var propValue: P,
     private val changeSupport: PropertyChangeListener
 ) {
+
     operator fun getValue(p: T, prop: KProperty<*>): P = propValue
     operator fun setValue(p: T, prop: KProperty<*>, newValue: P) {
         val oldValue = propValue

@@ -10,5 +10,6 @@ import dagger.Component
     dependencies = [ScheduleFeatureDependencies::class])
 @FeatureScope
 interface ScheduleFeatureComponent {
+
     fun inject(scheduleFragment: ScheduleFragment)
 }

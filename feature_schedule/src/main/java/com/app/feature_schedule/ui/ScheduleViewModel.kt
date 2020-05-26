@@ -11,6 +11,7 @@ class ScheduleViewModel
     @Inject constructor(private val appState: AppStateManager,
                         val eventColorizer: Colorizer,
                         private val dbRepository: DbRepository) : MSFragmentViewModel(appState) {
+
     override fun restoreState(writer: StateWriter) {
 
     }
