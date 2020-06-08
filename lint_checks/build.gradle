@@ -1,0 +1,22 @@
+apply plugin: 'java-library'
+apply plugin: 'kotlin'
+
+def lintVer = "27.0.0"
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    compileOnly "com.android.tools.lint:lint-api:$lintVer"
+    compileOnly "com.android.tools.lint:lint-checks:$lintVer"
+    testImplementation "com.android.tools.lint:lint-tests:$lintVer"
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+jar{
+    manifest{
+        attributes 'Lint-Registry-V2': 'com.app.lint_checks.Registry'
+    }
+}
