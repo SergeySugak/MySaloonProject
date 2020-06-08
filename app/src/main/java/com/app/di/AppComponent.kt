@@ -1,6 +1,7 @@
 package com.app.di
 
 import android.content.Context
+import com.app.feature_event_scheduler.api.EventSchedulerFeatureDependencies
 import com.app.msa.App
 import com.app.msa_auth.api.AuthFeatureDependencies
 import com.app.msa_auth_repo.repository.di.AuthRepositoryModule
@@ -16,7 +17,8 @@ import javax.inject.Singleton
                         AuthRepositoryModule::class,
                         DbRepositoryModule::class,
                         ComponentDependenciesModule::class])
-interface AppComponent: AuthFeatureDependencies, MainFeatureDependencies {
+interface AppComponent: AuthFeatureDependencies, MainFeatureDependencies,
+    EventSchedulerFeatureDependencies {
 
     fun inject(app: App)
 

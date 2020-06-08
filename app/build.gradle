@@ -40,6 +40,8 @@ android {
         }
         lintOptions {
             disable "ResourceType"
+            ignoreTestSources true
+            checkDependencies true
             checkReleaseBuilds false
             abortOnError false
         }
@@ -81,6 +83,7 @@ dependencies {
     implementation project(':feature_services')
     implementation project(':feature_service')
     implementation project(':feature_schedule')
+    implementation project(':feature_event_scheduler')
     implementation project(':feature_auth')
     implementation project(':feature_main')
     implementation project(':navigation_impl')
@@ -120,7 +123,6 @@ dependencies {
 
     //facebook
     implementation 'com.facebook.fresco:fresco:2.0.0'
-
     //tests
 //    testImplementation 'junit:junit:4.13'
 //    androidTestImplementation 'androidx.test.ext:junit:1.1.1'

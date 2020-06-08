@@ -4,12 +4,13 @@ import com.app.mscorebase.appstate.AppStateManager
 import com.app.mscorebase.appstate.StateWriter
 import com.app.mscorebase.livedata.StatefulLiveData
 import com.app.mscorebase.livedata.StatefulMutableLiveData
+import com.app.mscorebase.ui.MSActivityViewModel
 import com.app.mscorebase.ui.MSFragmentViewModel
 import java.time.Year
 import java.util.*
 import javax.inject.Inject
 
-class DateTimeSelectionViewModel @Inject constructor(appState: AppStateManager): MSFragmentViewModel(appState)  {
+class DateTimeSelectionViewModel @Inject constructor(appState: AppStateManager): MSActivityViewModel(appState)  {
     private val intMode = StatefulMutableLiveData(MODE_DATE)
     val mode: StatefulLiveData<Int> = intMode
     private val intCalendar = StatefulMutableLiveData<Calendar>()

@@ -1,6 +1,7 @@
 package com.app.feature_event_scheduler.ui
 
 import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
 import android.os.Parcel
 import androidx.appcompat.app.AlertDialog
@@ -12,7 +13,6 @@ import com.app.mscorebase.di.ViewModelProviderFactory
 import com.app.mscorebase.di.findComponentDependencies
 import com.app.mscorebase.ui.MSDialogFragment
 import com.app.mscorebase.ui.dialogs.choicedialog.OnChoiceItemsSelectedListener
-import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenterImpl
 import com.app.mscoremodels.saloon.ChoosableSaloonService
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
@@ -67,11 +67,8 @@ class EventSchedulerFragment : MSDialogFragment<EventSchedulerViewModel>() {
         }
         val dateAndTime = view.findViewById<TextInputEditText>(R.id.date_and_time)
         dateAndTime.setOnClickListener {
-            val dateTimeSelectionDialog = DateTimeSelectionFragment.newInstance().apply {
-                setTargetFragment(this@EventSchedulerFragment, REQ_SET_DATE_AND_TIME)
-            }
-            DialogFragmentPresenterImpl.showDialogFragment(this, dateTimeSelectionDialog,
-                dateTimeSelectionDialog.javaClass.simpleName)
+            val intent = Intent(context, DateTimeSelectionActivity::class.java)
+            startActivityForResult(intent, REQ_SET_DATE_AND_TIME)
         }
         return builder.create()
     }

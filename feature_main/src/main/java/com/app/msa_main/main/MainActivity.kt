@@ -51,6 +51,8 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
     private lateinit var activeFragment: Fragment
     private val fab: FloatingActionButton by lazy {findViewById<FloatingActionButton>(R.id.fab)}
 
+    override val layoutId = R.layout.main_activity
+
     override fun onCreate(savedInstanceState: Bundle?) {
         injector.inject(this)
         super.onCreate(savedInstanceState)
@@ -136,8 +138,6 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
     override fun createViewModel(savedInstanceState: Bundle?): MSActivityViewModel {
         return ViewModelProvider(this, providerFactory).get(MainActivityViewModel::class.java)
     }
-
-    override fun getLayoutId() = R.layout.main_activity
 
     override fun onStartObservingViewModel(viewModel: MSActivityViewModel) {
 

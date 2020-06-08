@@ -21,6 +21,7 @@
             <option value="$PROJECT_DIR$/feature_select_services" />
             <option value="$PROJECT_DIR$/feature_service" />
             <option value="$PROJECT_DIR$/feature_services" />
+            <option value="$PROJECT_DIR$/lint_checks" />
             <option value="$PROJECT_DIR$/mscorebase" />
             <option value="$PROJECT_DIR$/mscoremodels" />
             <option value="$PROJECT_DIR$/navigation_api" />

@@ -2,6 +2,7 @@ package com.app.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.app.feature_event_scheduler.api.EventSchedulerFeatureDependencies
 import com.app.models.AuthManagerImpl
 import com.app.msa_auth.api.AuthFeatureDependencies
 import com.app.msa_db_repo.repository.db.DbRepository
@@ -74,4 +75,10 @@ abstract class ComponentDependenciesModule private constructor() {
     @IntoMap
     @ComponentDependenciesKey(MainFeatureDependencies::class)
     abstract fun provideMainFeatureDependencies(component: AppComponent): ComponentDependencies
+
+    @Binds
+    @IntoMap
+    @ComponentDependenciesKey(EventSchedulerFeatureDependencies::class)
+    abstract fun provideEventSchedulerFeatureDependencies(component: AppComponent): ComponentDependencies
+
 }

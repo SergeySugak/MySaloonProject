@@ -8,6 +8,7 @@
         <item name="colorAccent">@color/design_default_color_error</item>
         <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
         <item name="dialogPreferredPadding">@dimen/dialog_content_padding</item>
+        <item name="android:buttonStyle">@style/DialogPositiveButtonStyle</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -26,6 +27,8 @@
         <item name="buttonBarPositiveButtonStyle">@style/DialogPositiveButtonStyle</item>
         <item name="buttonBarNegativeButtonStyle">@style/DialogNegativeButtonStyle</item>
         <item name="buttonBarNeutralButtonStyle">@style/DialogNeutralButtonStyle</item>
+        <item name="android:windowMinWidthMajor">90%</item>
+        <item name="android:windowMinWidthMinor">90%</item>
     </style>
 
     <style name="DialogTitlePaneStyle" parent="MaterialAlertDialog.MaterialComponents.Title.Panel">

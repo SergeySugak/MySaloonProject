@@ -83,6 +83,13 @@ abstract class MSDialogFragment<VM : MSFragmentViewModel> :
         onStartObservingViewModel(viewModel)
     }
 
+    override fun onStart() {
+        super.onStart()
+        if (this is DialogFragmentPresenter.DialogShownListener){
+            onDialogShown()
+        }
+    }
+
     protected abstract fun onBuildDialog(savedInstanceState: Bundle?): Dialog
 
     /*

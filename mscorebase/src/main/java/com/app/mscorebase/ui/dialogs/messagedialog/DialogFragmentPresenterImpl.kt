@@ -60,7 +60,7 @@ class DialogFragmentPresenterImpl :
     }
 
     override fun getMessageDialogListener(dlgFragment: DialogFragment?): DialogButtonClickListener? {
-        if (dlgFragment!!.arguments!!.getBoolean(
+        if (dlgFragment!!.requireArguments().getBoolean(
                 DialogFragmentPresenter.ARGUMENT_FROM_FRAGMENT,
                 false
             )
@@ -80,11 +80,7 @@ class DialogFragmentPresenterImpl :
     }
 
     companion object {
-        fun showDialogFragment(
-            curFragment: Fragment,
-            newFragment: DialogFragment,
-            tag: String?
-        ) {
+        fun showDialogFragment(curFragment: Fragment, newFragment: DialogFragment, tag: String?) {
             newFragment.setTargetFragment(curFragment, 0)
             val fm = curFragment.parentFragmentManager
             val ft = fm.beginTransaction()

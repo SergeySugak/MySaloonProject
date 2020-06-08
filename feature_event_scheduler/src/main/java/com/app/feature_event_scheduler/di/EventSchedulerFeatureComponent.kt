@@ -1,7 +1,7 @@
 package com.app.feature_event_scheduler.di
 
 import com.app.feature_event_scheduler.api.EventSchedulerFeatureDependencies
-import com.app.feature_event_scheduler.ui.DateTimeSelectionFragment
+import com.app.feature_event_scheduler.ui.DateTimeSelectionActivity
 import com.app.feature_event_scheduler.ui.EventSchedulerFragment
 import com.app.msa_scopes.scopes.FeatureScope
 import dagger.Component
@@ -12,5 +12,5 @@ import dagger.Component
 @FeatureScope
 interface EventSchedulerFeatureComponent {
     fun inject(fragment: EventSchedulerFragment)
-    fun inject(fragment: DateTimeSelectionFragment)
+    fun inject(activity: DateTimeSelectionActivity)
 }

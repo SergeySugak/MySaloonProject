@@ -71,4 +71,8 @@ interface DialogFragmentPresenter {
         const val TWO_BUTTONS_YN = 4
         const val THREE_BUTTONS_YNC = 5
     }
+
+    interface DialogShownListener {
+        fun onDialogShown()
+    }
 }

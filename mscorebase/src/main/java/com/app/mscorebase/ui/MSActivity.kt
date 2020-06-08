@@ -41,11 +41,11 @@ abstract class MSActivity<VM : MSViewModel> :
      *
      * @return layout resource id
      */
-    @LayoutRes
-    abstract fun getLayoutId(): Int
+    @get:LayoutRes
+    abstract val layoutId: Int
 
     private fun bind(savedInstanceState: Bundle?) {
-        setContentView(getLayoutId())
+        setContentView(layoutId)
         viewModel = createViewModel(savedInstanceState)
         onViewModelCreated(viewModel, savedInstanceState)
         supportFragmentManager.addOnBackStackChangedListener(this)
