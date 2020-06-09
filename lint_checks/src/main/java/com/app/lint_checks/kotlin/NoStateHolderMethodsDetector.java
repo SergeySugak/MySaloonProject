@@ -73,8 +73,8 @@ public class NoStateHolderMethodsDetector extends Detector implements Detector.U
                 PsiClass cls = node.getContainingClass();
                 if (cls != null) {
                     boolean isStateHolder = evaluator.implementsInterface(cls, STATE_HOLDER, false);
-                    if (isStateHolder && node.getBody() != null) {
-                        if (node.getBody().isEmpty()) {
+                    if (isStateHolder && node.getJavaPsi().getBody() != null) {
+                        if (node.getJavaPsi().getBody().isEmpty()) {
                             context.report(ISSUE, context.getLocation(node), SHORT_DESCRIPTION);
                         }
                     }
