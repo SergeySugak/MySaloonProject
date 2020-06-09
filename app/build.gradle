@@ -123,6 +123,10 @@ dependencies {
 
     //facebook
     implementation 'com.facebook.fresco:fresco:2.0.0'
+
+    //lint
+    lintChecks project(':lint_checks')
+
     //tests
 //    testImplementation 'junit:junit:4.13'
 //    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
