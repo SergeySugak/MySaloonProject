@@ -27,6 +27,7 @@ interface DbRepository {
     suspend fun saveMasterInfo(master: SaloonMaster): Result<Boolean>
     suspend fun loadMasterInfo(masterId: String): Result<SaloonMaster?>
     suspend fun deleteMasterInfo(masterId: String): Result<Boolean>
+    suspend fun getMasters(requiredServices: List<SaloonService>?): Result<List<SaloonMaster>>
 
     fun startListenToMasters(onInsert: (master: SaloonMaster)->Unit,
                              onUpdate: (updatedMasterId: String, master: SaloonMaster)->Unit,

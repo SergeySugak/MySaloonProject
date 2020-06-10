@@ -9,180 +9,248 @@
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/dialog_content_padding"
+            android:padding="@dimen/std_content_padding"
             tools:context=".ui.EventSchedulerFragment">
-            <TextView
-                    android:id="@+id/when"
-                    style="@style/TextAppearance.AppCompat.Large"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/str_when"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
 
-            <View
-                    android:id="@+id/divider_when"
-                    style="@style/DividerLineH"
-                    android:layout_width="0dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="@+id/when_barrier"
-                    app:layout_constraintTop_toBottomOf="@+id/when" />
-
-        <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/date_time_wrap"
+        <TextView
+                android:id="@+id/when"
+                style="@style/TextAppearance.AppCompat.Large"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toEndOf="@+id/when_barrier"
-                app:layout_constraintTop_toBottomOf="@+id/divider_when">
+                android:text="@string/str_when"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/date_and_time"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/list_item_spacing_half"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"
-                    android:hint="@string/str_date_and_time"
-                    android:inputType="none"
-                    android:singleLine="true"
-                    android:ems="15"/>
-        </com.google.android.material.textfield.TextInputLayout>
+        <View
+                android:id="@+id/divider_1"
+                style="@style/DividerLineH"
+                android:layout_width="0dp"
+                android:layout_height="2dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/when" />
+
+        <TextView
+                android:id="@+id/label_date"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/list_item_spacing"
+                android:text="@string/str_date"
+                app:layout_constraintBaseline_toBaselineOf="@+id/date"
+                app:layout_constraintEnd_toStartOf="@+id/when_barrier"
+                />
+
+        <EditText
+                android:id="@+id/date"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/list_item_spacing_half"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:importantForAutofill="no"
+                android:inputType="none"
+                android:maxLength="10"
+                android:singleLine="true"
+                app:layout_constraintTop_toBottomOf="@+id/divider_1"
+                app:layout_constraintStart_toEndOf="@+id/when_barrier"
+                tools:ignore="TextFields"
+                tools:text="01.12.2020" />
+
+        <TextView
+                android:id="@+id/label_time"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/list_item_spacing"
+                android:text="@string/str_time"
+                app:layout_constraintBaseline_toBaselineOf="@+id/time"
+                app:layout_constraintEnd_toStartOf="@+id/when_barrier"
+                 />
+
+        <EditText
+                android:id="@+id/time"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/list_item_spacing_half"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:importantForAutofill="no"
+                android:inputType="none"
+                android:maxLength="5"
+                android:singleLine="true"
+                android:gravity="end"
+                app:layout_constraintStart_toEndOf="@+id/when_barrier"
+                app:layout_constraintEnd_toEndOf="@+id/date"
+                app:layout_constraintTop_toBottomOf="@+id/date"
+                tools:ignore="TextFields"
+                tools:text="15:15" />
 
         <TextView
                 android:id="@+id/client"
                 style="@style/TextAppearance.AppCompat.Large"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/str_client"
                 android:layout_marginTop="@dimen/list_item_spacing"
+                android:text="@string/str_who_what"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/date_time_wrap" />
+                app:layout_constraintTop_toBottomOf="@+id/time" />
 
         <View
-                android:id="@+id/divider_client"
+                android:id="@+id/divider_2"
                 style="@style/DividerLineH"
                 android:layout_width="0dp"
-                app:layout_constraintEnd_toEndOf="@+id/when_barrier"
+                android:layout_height="2dp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/client" />
 
-        <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/client_name_wrap"
-                android:layout_width="0dp"
+        <TextView
+                android:id="@+id/label_services"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/when_barrier"
-                app:layout_constraintTop_toBottomOf="@+id/divider_client">
-            <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/client_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/list_item_spacing_half"
-                    android:inputType="textPersonName"
-                    android:singleLine="false"
-                    android:hint="@string/str_client_name"
-                    />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:paddingEnd="@dimen/list_item_spacing"
+                android:layout_marginTop="@dimen/list_item_spacing"
+                android:text="@string/str_services"
+                app:layout_constraintBaseline_toBaselineOf="@+id/services"
+                app:layout_constraintEnd_toStartOf="@+id/when_barrier"
+                 />
 
-        <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/client_phone_wrap"
+        <EditText
+                android:id="@+id/services"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/list_item_spacing_half"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:inputType="none|textMultiLine"
+                android:singleLine="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/when_barrier"
-                app:layout_constraintTop_toBottomOf="@+id/client_name_wrap">
-            <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/client_phone"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/list_item_spacing_half"
-                    android:inputType="phone"
-                    android:singleLine="true"
-                    android:hint="@string/str_client_phone"
-                    />
-        </com.google.android.material.textfield.TextInputLayout>
+                app:layout_constraintTop_toBottomOf="@+id/divider_2" />
 
-        <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/client_email_wrap"
+        <TextView
+                android:id="@+id/label_master"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/list_item_spacing"
+                android:layout_marginTop="@dimen/list_item_spacing"
+                android:text="@string/str_master"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBaseline_toBaselineOf="@+id/master"
+                app:layout_constraintEnd_toStartOf="@+id/when_barrier"
+                 />
+
+        <EditText
+                android:id="@+id/master"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/list_item_spacing_half"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:inputType="none"
+                android:singleLine="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/when_barrier"
-                app:layout_constraintTop_toBottomOf="@+id/client_phone_wrap">
-            <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/client_email"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/list_item_spacing_half"
-                    android:inputType="textEmailAddress"
-                    android:singleLine="true"
-                    android:hint="@string/str_client_email"
-                    />
-        </com.google.android.material.textfield.TextInputLayout>
+                app:layout_constraintTop_toBottomOf="@+id/services" />
+
+        <TextView
+                android:id="@+id/label_email"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/list_item_spacing"
+                android:layout_marginTop="@dimen/list_item_spacing"
+                android:text="@string/str_client_email"
+                app:layout_constraintBaseline_toBaselineOf="@+id/client_email"
+                app:layout_constraintEnd_toStartOf="@+id/when_barrier"
+                 />
+
+        <EditText
+                android:id="@+id/client_email"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/list_item_spacing_half"
+                android:inputType="textEmailAddress"
+                android:singleLine="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/when_barrier"
+                app:layout_constraintTop_toBottomOf="@+id/client_phone" />
 
         <TextView
                 android:id="@+id/who"
                 style="@style/TextAppearance.AppCompat.Large"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/str_who_what"
                 android:layout_marginTop="@dimen/list_item_spacing"
+                android:text="@string/str_client"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/client_email_wrap" />
+                app:layout_constraintTop_toBottomOf="@+id/master" />
 
         <View
-                android:id="@+id/divider_who"
+                android:id="@+id/divider_3"
                 style="@style/DividerLineH"
                 android:layout_width="0dp"
-                app:layout_constraintEnd_toEndOf="@+id/when_barrier"
+                android:layout_height="2dp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/who" />
 
-        <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/services_wrap"
+        <TextView
+                android:id="@+id/label_name"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/list_item_spacing"
+                android:layout_marginTop="@dimen/list_item_spacing"
+                android:text="@string/str_client_name"
+                app:layout_constraintBaseline_toBaselineOf="@+id/client_name"
+                app:layout_constraintEnd_toStartOf="@+id/when_barrier"
+                 />
+
+        <EditText
+                android:id="@+id/client_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/list_item_spacing_half"
+                android:inputType="textPersonName"
+                android:singleLine="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/when_barrier"
-                app:layout_constraintTop_toBottomOf="@+id/divider_who">
-            <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/services"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/list_item_spacing_half"
-                    android:inputType="none|textMultiLine"
-                    android:singleLine="false"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"
-                    android:hint="@string/str_services"
-                    />
-        </com.google.android.material.textfield.TextInputLayout>
+                app:layout_constraintTop_toBottomOf="@+id/divider_3" />
 
-        <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/master_wrap"
+        <TextView
+                android:id="@+id/label_phone"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/list_item_spacing"
+                android:layout_marginTop="@dimen/list_item_spacing"
+                android:text="@string/str_client_phone"
+                app:layout_constraintBaseline_toBaselineOf="@+id/client_phone"
+                app:layout_constraintEnd_toStartOf="@+id/when_barrier"
+                 />
+
+        <EditText
+                android:id="@+id/client_phone"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/list_item_spacing_half"
+                android:inputType="phone"
+                android:singleLine="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/when_barrier"
-                app:layout_constraintTop_toBottomOf="@+id/services_wrap">
-
-            <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/master"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/list_item_spacing_half"
-                    android:inputType="none"
-                    android:singleLine="true"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"
-                    android:hint="@string/str_master" />
-        </com.google.android.material.textfield.TextInputLayout>
+                app:layout_constraintTop_toBottomOf="@+id/client_name" />
 
         <androidx.constraintlayout.widget.Barrier
                 android:id="@+id/when_barrier"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:barrierDirection="right"
-                app:constraint_referenced_ids="when,client,who"/>
+                app:constraint_referenced_ids="when,client,who,label_master" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

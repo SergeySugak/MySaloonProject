@@ -1,7 +1,7 @@
 package com.app.feature_event_scheduler.di
 
 import androidx.lifecycle.ViewModel
-import com.app.feature_event_scheduler.ui.DateTimeSelectionViewModel
+import com.app.feature_event_scheduler.ui.DateAndTimeSelectionViewModel
 import com.app.feature_event_scheduler.ui.EventSchedulerViewModel
 import com.app.mscorebase.di.ViewModelKey
 import dagger.Binds
@@ -17,6 +17,6 @@ abstract class EventSchedulerFeatureViewModelsModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(DateTimeSelectionViewModel::class)
-    abstract fun bindDateTimeSelectionViewModel(viewModel: DateTimeSelectionViewModel): ViewModel
+    @ViewModelKey(DateAndTimeSelectionViewModel::class)
+    abstract fun bindDateSelectionViewModel(viewModel: DateAndTimeSelectionViewModel): ViewModel
 }

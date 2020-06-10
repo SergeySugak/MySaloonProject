@@ -1,14 +1,24 @@
 package com.app.mscoremodels.saloon
 
+import android.os.Parcel
+import android.os.Parcelable
 import com.google.firebase.database.IgnoreExtraProperties
 
 @IgnoreExtraProperties
-class SaloonMaster constructor() {
+class SaloonMaster constructor(): Parcelable {
     var id: String = ""
     var name: String = ""
     var description: String = ""
     var portfolioUrl: String = ""
     var imageUrl: String = ""
+
+    constructor(parcel: Parcel) : this() {
+        id = parcel.readString() ?: ""
+        name = parcel.readString() ?: ""
+        description = parcel.readString() ?: ""
+        portfolioUrl = parcel.readString() ?: ""
+        imageUrl = parcel.readString() ?: ""
+    }
 
     constructor(id: String, name: String, description: String,
                 portfolioUrl: String = "", imageUrl: String = ""): this () {
@@ -41,5 +51,27 @@ class SaloonMaster constructor() {
         result = 31 * result + portfolioUrl.hashCode()
         result = 31 * result + imageUrl.hashCode()
         return result
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(id)
+        parcel.writeString(name)
+        parcel.writeString(description)
+        parcel.writeString(portfolioUrl)
+        parcel.writeString(imageUrl)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<SaloonMaster> {
+        override fun createFromParcel(parcel: Parcel): SaloonMaster {
+            return SaloonMaster(parcel)
+        }
+
+        override fun newArray(size: Int): Array<SaloonMaster?> {
+            return arrayOfNulls(size)
+        }
     }
 }

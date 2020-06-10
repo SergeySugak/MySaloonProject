@@ -8,7 +8,7 @@
     <string name="str_master">Исполнитель</string>
     <string name="str_required_services">Требуемые услуги</string>
     <string name="str_client">Клиент</string>
-    <string name="str_client_name">Имя клиента</string>
+    <string name="str_client_name">Имя</string>
     <string name="str_client_phone">Телефон</string>
     <string name="str_client_email">E-mail</string>
 
@@ -17,6 +17,9 @@
     <string name="str_who_what">Кто / что</string>
     <string name="str_date_and_time">Дата и время</string>
 
-    <string name="str_date_format">EEE, dd.MM.yy hh:mm</string>
+    <string name="str_date_format">dd.MM.yyyy</string>
+    <string name="str_time_format">hh:mm</string>
+    <string name="str_master_selection">Выбор мастера</string>
+
 
 </resources>

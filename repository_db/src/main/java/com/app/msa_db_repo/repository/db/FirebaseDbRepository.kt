@@ -198,6 +198,22 @@ class FirebaseDbRepository
         }
     }
 
+    override suspend fun getMasters(requiredServices: List<SaloonService>?): Result<List<SaloonMaster>> {
+        var result: Result<List<SaloonMaster>> = firebaseDb.getReference(mastersRoot).runSuspendGetListQuery()
+        if (result is Result.Success && requiredServices != null){
+            val masters = result.data.filter { master ->
+                val servicesQueryResult = getServices(master.id)
+                if (servicesQueryResult is Result.Error){
+                    return@getMasters servicesQueryResult
+                }
+                servicesQueryResult as Result.Success
+                servicesQueryResult.data.containsAll(requiredServices)
+            }
+            result = Result.Success(masters)
+        }
+        return result
+    }
+
     override suspend fun saveMasterServicesInfo(masterId: String, services: List<SaloonService>): Result<Boolean> {
         return try {
             val masterServices = convertSaloonServicesToMasterServices(masterId, services)

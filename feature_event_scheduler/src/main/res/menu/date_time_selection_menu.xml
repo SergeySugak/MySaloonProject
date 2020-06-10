@@ -2,6 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <item android:id="@+id/menu_cancel"
+            app:showAsAction="ifRoom"
+            android:icon="@drawable/ic_cancel"
+            android:title="@string/cancel"/>
+
     <item android:id="@+id/menu_ok"
         app:showAsAction="ifRoom"
         android:icon="@drawable/ic_ok"

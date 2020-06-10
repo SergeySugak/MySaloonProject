@@ -10,6 +10,7 @@ import com.app.feature_event_scheduler.ui.EventSchedulerFragment
 import com.app.feature_event_scheduler.ui.EventSchedulerFragment.Companion.ARG_EDIT_EVENT_ID
 import com.app.feature_master.ui.MasterFragment
 import com.app.feature_master.ui.MasterFragment.Companion.ARG_EDIT_MASTER_ID
+import com.app.feature_select_master.ui.MasterSelectionDialog
 import com.app.feature_select_services.ui.ServicesSelectionDialog
 import com.app.feature_service.ui.ServiceFragment
 import com.app.feature_service.ui.ServiceFragment.Companion.ARG_EDIT_SERVICE_ID
@@ -18,6 +19,7 @@ import com.app.msa_main.main.MainActivity
 import com.app.msa_nav_api.navigation.AppNavigator
 import com.app.mscorebase.ui.dialogs.choicedialog.OnChoiceItemsSelectedListener
 import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenterImpl.Companion.showDialogFragment
+import com.app.mscoremodels.saloon.ChoosableSaloonMaster
 import com.app.mscoremodels.saloon.ChoosableSaloonService
 import com.app.mscoremodels.saloon.SaloonService
 import javax.inject.Inject
@@ -86,6 +88,15 @@ class AppNavigatorImpl @Inject constructor(): AppNavigator {
                                                   selectedItems: List<SaloonService>,
                                                   listener: OnChoiceItemsSelectedListener<ChoosableSaloonService, String?>) {
         val fragment = ServicesSelectionDialog.newInstance(title, payload, selectedItems, listener)
+        showDialogFragment(targetFragment, fragment, "")
+    }
+
+    override fun navigateToSelectMasterFragment(targetFragment: Fragment,
+                                                title: String,
+                                                payload: String?,
+                                                requiredServices: List<SaloonService>,
+                                                listener: OnChoiceItemsSelectedListener<ChoosableSaloonMaster, String?>){
+        val fragment = MasterSelectionDialog.newInstance(title, payload, requiredServices, listener)
         showDialogFragment(targetFragment, fragment, "")
     }
 }
