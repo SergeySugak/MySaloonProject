@@ -3,10 +3,7 @@ import android.text.TextUtils
 import com.app.msa.repository_db.R
 import com.app.mscorebase.appstate.AppStateManager
 import com.app.mscorebase.common.Result
-import com.app.mscoremodels.saloon.SaloonFactory
-import com.app.mscoremodels.saloon.SaloonMaster
-import com.app.mscoremodels.saloon.SaloonService
-import com.app.mscoremodels.saloon.ServiceDuration
+import com.app.mscoremodels.saloon.*
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.database.*
 import java.util.*
@@ -27,6 +24,8 @@ class FirebaseDbRepository
     private lateinit var servicesRoot: String
     private lateinit var mastersRoot: String
     private lateinit var masterServicesRoot: String
+    private lateinit var eventsRoot: String
+    private lateinit var dateEventsRoot: String
     private val childListenersMap = mutableMapOf<String, ChildEventListener>()
     private val valueListenersMap = mutableMapOf<String, ValueEventListener>()
 
@@ -35,6 +34,8 @@ class FirebaseDbRepository
         saloonRoot = "$TBL_SALOONS/${appState.authManager.getUserId()}"
         servicesRoot = "$saloonRoot/${TBL_SERVICES}"
         mastersRoot = "$saloonRoot/${TBL_MASTERS}"
+        eventsRoot = "$saloonRoot/${TBL_EVENTS}"
+        dateEventsRoot = "$saloonRoot/${TBL_DATE_EVENTS}"
         masterServicesRoot = "$saloonRoot/${TBL_MASTER_SERVICES}"
     }
 
@@ -179,6 +180,139 @@ class FirebaseDbRepository
         stopListenToUpdates(mastersRoot, listenerId)
     }
     //endregion Masters
+
+    //region Events
+    override suspend fun loadEventInfo(eventId: String): Result<SaloonEvent?> {
+        val queryResult: Result<RepositoryEvent?> = firebaseDb
+            .getReference(eventsRoot)
+            .child(eventId)
+            .runSuspendGetValueQuery()
+        if (queryResult is Result.Error){
+            return Result.Error(queryResult.exception)
+        }
+        else {
+            val rEvent = (queryResult as Result.Success).data
+            val masterId = rEvent?.masterId ?: ""
+            val masterResult = loadMasterInfo(masterId)
+            val master: SaloonMaster
+            if (masterResult is Result.Error){
+                return Result.Error(masterResult.exception)
+            }
+            else {
+                master = (masterResult as Result.Success).data ?:
+                        saloonFactory.createSaloonMaster(masterId, "",  "")
+            }
+            val services = mutableListOf<SaloonService>()
+            rEvent?.serviceIds?.forEach { id ->
+                val serviceResult = loadServiceInfo(id)
+                if (serviceResult is Result.Success && serviceResult.data != null){
+                    services.add(serviceResult.data!!)
+                }
+            }
+            val client = rEvent?.client ?: saloonFactory.createSaloonClient("", "", "")
+            val whenStart = rEvent?.whenStart ?: Calendar.getInstance()
+            val whenFinish = rEvent?.whenFinish ?: Calendar.getInstance()
+            val description = rEvent?.description ?: ""
+            val state = rEvent?.state ?: SaloonEventState.esError
+            val event = saloonFactory.createSaloonEvent(rEvent?.id ?: "", master, services,
+                client, whenStart, whenFinish, description, state)
+            return Result.Success(event)
+        }
+    }
+
+    private fun indexEvent(event: SaloonEvent): Result<Boolean> {
+        try {
+            val dateEvents = firebaseDb
+                .getReference(dateEventsRoot)
+            val dateRoot = getDateRoot(event.whenStart)
+            val key = dateEvents.child(dateRoot).push().key!!
+            Tasks.await(dateEvents.child(dateRoot).child(key).setValue(event.id))
+            return Result.Success(true)
+        }
+        catch (ex: Exception){
+            return Result.Error(Exception(appState.context.getString(R.string.err_cant_update_data) + " ${TBL_DATE_EVENTS}\n" + ex.message))
+        }
+    }
+
+    override suspend fun saveEventInfo(event: SaloonEvent): Result<Boolean>{
+        val events = firebaseDb
+            .getReference(eventsRoot)
+        if (event.id == ""){
+            try {
+                event.id = events.push().key!!
+            }
+            catch (ex: Exception){
+                return Result.Error(Exception(appState.context.getString(R.string.err_cant_create_new_key) + " $TBL_EVENTS\n" + ex.message))
+            }
+        }
+        try {
+            Tasks.await(events.child(event.id).setValue(RepositoryEvent(event)))
+        }
+        catch (ex: Exception){
+            return Result.Error(Exception(appState.context.getString(R.string.err_cant_update_data) + " $TBL_EVENTS\n" + ex.message))
+        }
+        return indexEvent(event)
+    }
+
+    override suspend fun deleteEventInfo(eventId: String): Result<Boolean>{
+        return try {
+            Tasks.await(firebaseDb
+                .getReference(eventsRoot)
+                .child(eventId)
+                .setValue(null))
+            Result.Success(true)
+        } catch (ex: Exception){
+            Result.Error(ex)
+        }
+    }
+
+    private suspend fun loadDateEventIds(date: Calendar): Result<List<String>> {
+        val dateRoot = getDateRoot(date)
+        return firebaseDb
+            .getReference(dateEventsRoot)
+            .child(dateRoot)
+            .runSuspendGetListQuery()
+    }
+
+    private fun getDateRoot(date: Calendar) = "${date.get(Calendar.YEAR)}${date.get(Calendar.MONTH)}${date.get(Calendar.DATE)}"
+
+    override suspend fun getEvents(date: Calendar): Result<List<SaloonEvent>>{
+        val idsResult = loadDateEventIds(date)
+        if (idsResult is Result.Success){
+            val result = mutableListOf<SaloonEvent>()
+            var eventLoadResult: Result<SaloonEvent?>
+            var event: SaloonEvent?
+            idsResult.data.forEach{
+                eventLoadResult = loadEventInfo(it)
+                if (eventLoadResult is Result.Success){
+                    event = (eventLoadResult as Result.Success).data
+                    event?.let{ e -> result.add(e) }
+                }
+                else {
+                    return Result.Error((eventLoadResult as Result.Error).exception)
+                }
+            }
+            return Result.Success(result)
+        }
+        else {
+            idsResult as Result.Error
+            return Result.Error(idsResult.exception)
+        }
+    }
+
+
+
+    override fun startListenToEvents(onInsert: (event: SaloonEvent)->Unit,
+                            onUpdate: (updatedEventId: String, event: SaloonEvent)->Unit,
+                            onDelete: (deletedMasterId: String)->Unit,
+                            onError: (exception: Exception)->Unit): String{
+        return startListenToUpdates(eventsRoot, onInsert, onUpdate, onDelete, onError)
+    }
+
+    override fun stopListeningToEvents(listenerId: String){
+        stopListenToUpdates(eventsRoot, listenerId)
+    }
+    //endregion Events
 
     //region master services
     override suspend fun getServices(masterId: String?): Result<List<SaloonService>> {
@@ -370,6 +504,8 @@ class FirebaseDbRepository
         const val TBL_SALOONS = "Saloons"
         const val TBL_SERVICES = "Services"
         const val TBL_MASTERS = "Masters"
+        const val TBL_EVENTS = "Events"
+        const val TBL_DATE_EVENTS = "DateEvents"
         const val TBL_MASTER_SERVICES = "MasterServices"
     }
 }

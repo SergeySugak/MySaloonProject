@@ -2,6 +2,7 @@ package com.app.msa_db_repo.repository.db
 
 import com.app.mscorebase.common.Result
 import com.app.mscoremodels.saloon.*
+import java.util.*
 
 interface DbRepository {
     //Общие
@@ -38,4 +39,16 @@ interface DbRepository {
     //Мастер-Сервис
     suspend fun getServices(masterId: String? = null): Result<List<SaloonService>>
     suspend fun saveMasterServicesInfo(masterId: String, services: List<SaloonService>): Result<Boolean>
+
+    //события
+    suspend fun loadEventInfo(eventId: String): Result<SaloonEvent?>
+    suspend fun saveEventInfo(event: SaloonEvent): Result<Boolean>
+    suspend fun deleteEventInfo(eventId: String): Result<Boolean>
+    suspend fun getEvents(date: Calendar): Result<List<SaloonEvent>>
+
+    fun startListenToEvents(onInsert: (event: SaloonEvent)->Unit,
+                             onUpdate: (updatedEventId: String, event: SaloonEvent)->Unit,
+                             onDelete: (deletedMasterId: String)->Unit,
+                             onError: (exception: Exception)->Unit): String
+    fun stopListeningToEvents(listenerId: String)
 }

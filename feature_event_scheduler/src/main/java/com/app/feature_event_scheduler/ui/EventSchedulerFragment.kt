@@ -1,10 +1,13 @@
 package com.app.feature_event_scheduler.ui
 
+import android.app.Activity
 import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
 import android.os.Parcel
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
+import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.app.feature_event_scheduler.R
@@ -15,6 +18,7 @@ import com.app.mscorebase.di.ViewModelProviderFactory
 import com.app.mscorebase.di.findComponentDependencies
 import com.app.mscorebase.ui.MSDialogFragment
 import com.app.mscorebase.ui.dialogs.choicedialog.OnChoiceItemsSelectedListener
+import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
 import com.app.mscoremodels.saloon.ChoosableSaloonMaster
 import com.app.mscoremodels.saloon.ChoosableSaloonService
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -62,10 +66,10 @@ class EventSchedulerFragment : MSDialogFragment<EventSchedulerViewModel>(), Even
                 this,
                 getString(R.string.str_required_services),
                 getViewModel()?.masterId,
-                getViewModel()?.masterServices?.value ?: emptyList(),
+                getViewModel()?.services?.value ?: emptyList(),
                 object: OnChoiceItemsSelectedListener<ChoosableSaloonService, String?> {
                     override fun onChoiceItemsSelected(selections: List<ChoosableSaloonService>, payload: String?){
-                        getViewModel()?.setMasterServices(selections)
+                        getViewModel()?.setServices(selections)
                     }
                     override fun onNoItemSelected(payload: String?) {}
                     override fun writeToParcel(dest: Parcel?, flags: Int) {}
@@ -79,7 +83,7 @@ class EventSchedulerFragment : MSDialogFragment<EventSchedulerViewModel>(), Even
                 this,
                 getString(R.string.str_master_selection),
                 getViewModel()?.masterId,
-                getViewModel()?.masterServices?.value ?: emptyList(),
+                getViewModel()?.services?.value ?: emptyList(),
                 object: OnChoiceItemsSelectedListener<ChoosableSaloonMaster, String?> {
                     override fun onChoiceItemsSelected(selections: List<ChoosableSaloonMaster>, payload: String?){
                         getViewModel()?.setMaster(selections)
@@ -90,7 +94,6 @@ class EventSchedulerFragment : MSDialogFragment<EventSchedulerViewModel>(), Even
                 }
             )
         }
-
         date = view.findViewById(R.id.date)
         date.setOnClickListener {
             val dialog = DateSelectionDialog.newInstance(getViewModel()!!.calendar.value!!)
@@ -112,10 +115,12 @@ class EventSchedulerFragment : MSDialogFragment<EventSchedulerViewModel>(), Even
         if (dlg != null){
             val ok = dlg.getButton(Dialog.BUTTON_POSITIVE)
             ok.setOnClickListener{ _ ->
-//                getViewModel()?.saveEventInfo(
-//                    dlg.findViewById<EditText>(R.id.master_name)?.text.toString(),
-//                    dlg.findViewById<EditText>(R.id.master_description)?.text.toString(),
-//                    dlg.findViewById<EditText>(R.id.master_portfolio_url)?.text.toString())
+                val clientName = dlg.findViewById<EditText>(R.id.client_name)
+                val clientPhone = dlg.findViewById<EditText>(R.id.client_phone)
+                val clientEmail = dlg.findViewById<EditText>(R.id.client_email)
+                getViewModel()?.setClientInfo(clientName?.text.toString()?:"",
+                    clientPhone?.text.toString()?:"", clientEmail?.text.toString()?:"")
+                getViewModel()?.saveEventInfo(services.text.toString())
             }
         }
     }
@@ -123,7 +128,19 @@ class EventSchedulerFragment : MSDialogFragment<EventSchedulerViewModel>(), Even
     override fun createViewModel(savedInstanceState: Bundle?) =
         ViewModelProvider(this, providerFactory).get(EventSchedulerViewModel::class.java)
 
+    override fun onViewModelCreated(viewModel: EventSchedulerViewModel, savedInstanceState: Bundle?) {
+        super.onViewModelCreated(viewModel, savedInstanceState)
+        viewModel.loadEvent(requireArguments()[ARG_EDIT_EVENT_ID] as String)
+    }
+
     override fun onStartObservingViewModel(viewModel: EventSchedulerViewModel) {
+        viewModel.error.observe(this, Observer { error ->
+            if (!viewModel.error.isHandled){
+                MessageDialogFragment.showError(this, error, false)
+                viewModel.error.isHandled = true
+            }
+        })
+
         viewModel.calendar.observe(this, Observer { calendar ->
             val formatter = SimpleDateFormat(getString(R.string.str_date_format), Locale.getDefault())
             date.setText(formatter.format(calendar.time))
@@ -131,11 +148,11 @@ class EventSchedulerFragment : MSDialogFragment<EventSchedulerViewModel>(), Even
             time.setText(formatter.format(calendar.time))
         })
 
-        viewModel.masterServices.observe(this, Observer { items ->
-            if (!viewModel.masterServices.isHandled){
+        viewModel.services.observe(this, Observer { items ->
+            if (!viewModel.services.isHandled){
                 if (::services.isInitialized){
                     services.setText(items.joinToString())
-                    viewModel.masterServices.isHandled = true
+                    viewModel.services.isHandled = true
                 }
             }
         })
@@ -146,6 +163,17 @@ class EventSchedulerFragment : MSDialogFragment<EventSchedulerViewModel>(), Even
                     master.setText(item.name)
                     viewModel.master.isHandled = true
                 }
+            }
+        })
+
+        viewModel.eventInfoSaveState.observe(this, Observer {
+            if (!viewModel.eventInfoSaveState.isHandled) {
+                if (it) {
+                    val intent = Intent()
+                    targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
+                    dismiss()
+                }
+                viewModel.eventInfoSaveState.isHandled = true
             }
         })
     }
@@ -159,11 +187,14 @@ class EventSchedulerFragment : MSDialogFragment<EventSchedulerViewModel>(), Even
     }
 
     companion object {
-        fun newInstance() =
-            EventSchedulerFragment()
-
         const val ARG_EDIT_EVENT_ID = "ARG_EDIT_EVENT_ID"
         private const val REQ_SET_DATE = 10001
         private const val REQ_SET_TIME = 10002
+
+        fun newInstance(eventId: String): EventSchedulerFragment {
+            val result = EventSchedulerFragment()
+            result.arguments = bundleOf(Pair(ARG_EDIT_EVENT_ID, eventId))
+            return result
+        }
     }
 }

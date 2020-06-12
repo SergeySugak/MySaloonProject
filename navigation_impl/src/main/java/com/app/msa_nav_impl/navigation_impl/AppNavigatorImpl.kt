@@ -73,12 +73,9 @@ class AppNavigatorImpl @Inject constructor(): AppNavigator {
 
     override fun navigateToEditEventFragment(targetFragment: Fragment, eventId: String,
                                     requestCode: Int, tag: String?){
-        val newServiceFragment = EventSchedulerFragment.newInstance().apply {
+        val newServiceFragment = EventSchedulerFragment.newInstance(eventId).apply {
             retainInstance = true
             setTargetFragment(targetFragment, requestCode)
-            if (!TextUtils.isEmpty(eventId)) {
-                arguments = bundleOf(Pair(ARG_EDIT_EVENT_ID, eventId))
-            }
         }
         showDialogFragment(targetFragment, newServiceFragment, tag)
     }

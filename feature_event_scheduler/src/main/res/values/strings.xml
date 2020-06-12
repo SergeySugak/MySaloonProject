@@ -20,6 +20,9 @@
     <string name="str_date_format">dd.MM.yyyy</string>
     <string name="str_time_format">hh:mm</string>
     <string name="str_master_selection">Выбор мастера</string>
+    <string name="str_master_empty">Необходимо указать мастера</string>
+    <string name="str_services_empty">Необходимо указать требуемые услуги</string>
+    <string name="str_name_and_phone_empty">Необходимо указать имя или телефон клиента</string>
 
 
 </resources>

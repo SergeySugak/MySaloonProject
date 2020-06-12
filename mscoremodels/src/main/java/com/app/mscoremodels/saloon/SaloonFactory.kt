@@ -1,5 +1,6 @@
 package com.app.mscoremodels.saloon
 
+import java.util.*
 import javax.inject.Inject
 
 class SaloonFactory @Inject constructor() {
@@ -11,6 +12,15 @@ class SaloonFactory @Inject constructor() {
     fun createSaloonMaster(id: String, name: String, description: String,
                            portfolioUrl: String = "", imageUrl: String = "") =
         SaloonMaster(id, name, description, portfolioUrl, imageUrl)
+
+    fun createSaloonClient(name: String, phone: String, email: String) =
+        SaloonClient(name, phone, email)
+
+    fun createSaloonEvent(id: String, master: SaloonMaster,
+                          services: List<SaloonService>, client: SaloonClient,
+                          whenStart: Calendar, whenFinish: Calendar, description: String,
+                          state: SaloonEventState = SaloonEventState.esScheduled) =
+        SaloonEvent(id, master, services, client, whenStart, whenFinish, description, state)
 
     fun createServiceDuration(duration: Int?, name: String?) = ServiceDuration(duration, name)
     fun createServiceDuration(duration: ChoosableServiceDuration?) =

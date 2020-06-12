@@ -50,6 +50,7 @@
         <item name="android:layout_marginRight">@dimen/dialog_button_right_margin</item>
         <item name="android:layout_marginTop">@dimen/dialog_button_top_margin</item>
         <item name="android:layout_marginBottom">@dimen/dialog_button_bottom_margin</item>
+        <item name="backgroundTint">@color/btn_bg_color_selector</item>
     </style>
 
     <style name="DialogNegativeButtonStyle" parent="Widget.MaterialComponents.Button">
@@ -59,6 +60,7 @@
         <item name="android:layout_marginRight">@dimen/dialog_button_right_margin</item>
         <item name="android:layout_marginTop">@dimen/dialog_button_top_margin</item>
         <item name="android:layout_marginBottom">@dimen/dialog_button_bottom_margin</item>
+        <item name="backgroundTint">@color/btn_bg_color_selector</item>
     </style>
 
     <style name="DialogNeutralButtonStyle" parent="Widget.MaterialComponents.Button">
@@ -68,5 +70,6 @@
         <item name="android:layout_marginRight">@dimen/dialog_button_right_margin</item>
         <item name="android:layout_marginTop">@dimen/dialog_button_top_margin</item>
         <item name="android:layout_marginBottom">@dimen/dialog_button_bottom_margin</item>
+        <item name="backgroundTint">@color/btn_bg_color_selector</item>
     </style>
 </resources>
