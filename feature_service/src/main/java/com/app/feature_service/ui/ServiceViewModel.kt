@@ -9,18 +9,20 @@ import com.app.mscorebase.common.Result
 import com.app.mscorebase.livedata.StatefulLiveData
 import com.app.mscorebase.livedata.StatefulMutableLiveData
 import com.app.mscorebase.ui.MSFragmentViewModel
+import com.app.mscoremodels.saloon.ChoosableServiceDuration
 import com.app.mscoremodels.saloon.SaloonFactory
 import com.app.mscoremodels.saloon.SaloonService
-import com.app.mscoremodels.saloon.ChoosableServiceDuration
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Double.valueOf
 import javax.inject.Inject
 
 class ServiceViewModel
-    @Inject constructor(val appState: AppStateManager,
-                        private val saloonFactory: SaloonFactory,
-                        private val dbRepository: DbRepository): MSFragmentViewModel(appState) {
+@Inject constructor(
+    val appState: AppStateManager,
+    private val saloonFactory: SaloonFactory,
+    private val dbRepository: DbRepository
+) : MSFragmentViewModel(appState) {
 
     val intServiceInfoSaveState = StatefulMutableLiveData<Boolean>()
     val serviceInfoSaveState: StatefulLiveData<Boolean> = intServiceInfoSaveState
@@ -37,7 +39,12 @@ class ServiceViewModel
 
     }
 
-    fun saveServiceInfo(name: String, duration: ChoosableServiceDuration?, price: String, description: String) {
+    fun saveServiceInfo(
+        name: String,
+        duration: ChoosableServiceDuration?,
+        price: String,
+        description: String
+    ) {
         if (duration != null) {
             viewModelScope.launch(Dispatchers.IO) {
                 intServiceInfoSaveState.postValue(
@@ -58,8 +65,7 @@ class ServiceViewModel
                     }
                 )
             }
-        }
-        else {
+        } else {
             intError.postValue(Exception(appState.context.getString(R.string.err_fill_required_before_save)))
         }
     }
@@ -70,7 +76,8 @@ class ServiceViewModel
             val serviceResult = dbRepository.loadServiceInfo(serviceId)
             if (serviceResult is Result.Success) {
                 intServiceInfo.postValue(serviceResult.data)
-                serviceDuration = saloonFactory.createChoosableServiceDuration(serviceResult.data?.duration)
+                serviceDuration =
+                    saloonFactory.createChoosableServiceDuration(serviceResult.data?.duration)
             } else {
                 intError.postValue((serviceResult as Result.Error).exception)
             }

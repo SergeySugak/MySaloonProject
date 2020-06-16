@@ -4,13 +4,9 @@ import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.os.Handler
-import android.view.Gravity
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.annotation.LayoutRes
 import androidx.annotation.MenuRes
 import androidx.appcompat.widget.AppCompatImageView
@@ -63,9 +59,12 @@ abstract class MSDialogFragment<VM : MSFragmentViewModel> :
         val icon = dialog.findViewById<AppCompatImageView>(android.R.id.icon)
         val titleLp = title?.layoutParams
         val iconLp = icon?.layoutParams
-        titleLp?.let{it.height = MATCH_PARENT
-            title.layoutParams = it}
-        iconLp?.let{it.height = MATCH_PARENT
+        titleLp?.let {
+            it.height = MATCH_PARENT
+            title.layoutParams = it
+        }
+        iconLp?.let {
+            it.height = MATCH_PARENT
             icon.layoutParams = it
         }
 
@@ -85,7 +84,7 @@ abstract class MSDialogFragment<VM : MSFragmentViewModel> :
 
     override fun onStart() {
         super.onStart()
-        if (this is DialogFragmentPresenter.DialogShownListener){
+        if (this is DialogFragmentPresenter.DialogShownListener) {
             onDialogShown()
         }
     }
@@ -95,7 +94,7 @@ abstract class MSDialogFragment<VM : MSFragmentViewModel> :
     /*
     Реализация должна выглядеть как-нибудь типа
     viewModel.viewModelEventSender.observe(this, viewModelEvent -> {
-        if (viewModelEvent.isOneTimer()){
+        if (viewModelEvent.isOneTimer()) {
             if (viewModelEvent.isProcessed()) {
                 return;
             }
@@ -273,8 +272,8 @@ abstract class MSDialogFragment<VM : MSFragmentViewModel> :
 
     override fun clearViewModelInstanceState() {
         viewModel.clearInstanceState()
-        for (fragment in childFragmentManager.fragments){
-            if (fragment is ViewModelHolder<*>){
+        for (fragment in childFragmentManager.fragments) {
+            if (fragment is ViewModelHolder<*>) {
                 fragment.clearViewModelInstanceState()
             }
         }

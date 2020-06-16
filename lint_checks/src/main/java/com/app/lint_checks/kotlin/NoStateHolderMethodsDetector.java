@@ -36,11 +36,12 @@ public class NoStateHolderMethodsDetector extends Detector implements Detector.U
     public static Issue ISSUE = Issue.create(ID, SHORT_DESCRIPTION, EXPLANATION, Category.CORRECTNESS,
             6, Severity.WARNING, new Implementation(NoStateHolderMethodsDetector.class, Scope.JAVA_FILE_SCOPE));
 
-    public NoStateHolderMethodsDetector() {}
+    public NoStateHolderMethodsDetector() {
+    }
 
     @Override
     public List<String> getApplicableMethodNames() {
-        List<String> result =  new ArrayList<>();
+        List<String> result = new ArrayList<>();
         result.add(SAVE_STATE);
         result.add(RESTORE_STATE);
         return result;

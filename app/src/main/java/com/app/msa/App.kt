@@ -7,7 +7,7 @@ import com.app.mscorebase.di.ComponentDependenciesProvider
 import com.app.mscorebase.di.HasComponentDependencies
 import javax.inject.Inject
 
-class App: Application(), HasComponentDependencies {
+class App : Application(), HasComponentDependencies {
     companion object {
         private val TAG = App::class.java.simpleName
         lateinit var appComponent: AppComponent

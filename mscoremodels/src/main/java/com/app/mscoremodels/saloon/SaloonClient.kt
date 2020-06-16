@@ -5,7 +5,7 @@ import android.os.Parcelable
 import com.google.firebase.database.IgnoreExtraProperties
 
 @IgnoreExtraProperties
-class SaloonClient constructor(): Parcelable {
+class SaloonClient constructor() : Parcelable {
     var name: String = ""
     var phone: String = ""
     var email: String = ""
@@ -16,9 +16,11 @@ class SaloonClient constructor(): Parcelable {
         email = parcel.readString() ?: ""
     }
 
-    constructor(name: String,
-                phone: String,
-                email: String): this(){
+    constructor(
+        name: String,
+        phone: String,
+        email: String
+    ) : this() {
         this.name = name
         this.phone = phone
         this.email = email

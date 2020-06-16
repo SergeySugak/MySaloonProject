@@ -3,7 +3,7 @@ package com.app.view_schedule.api
 import kotlin.reflect.KProperty
 
 //T - класс, содержащий элемент типа P
-class ObservableProperty<T: Any, P: Any>(
+class ObservableProperty<T : Any, P : Any>(
     var propValue: P,
     private val changeSupport: PropertyChangeListener
 ) {
@@ -14,7 +14,7 @@ class ObservableProperty<T: Any, P: Any>(
         changeSupport.onPropertyChanged(prop.name, oldValue, newValue)
     }
 
-    interface PropertyChangeListener{
+    interface PropertyChangeListener {
         fun onPropertyChanged(prop: String, oldValue: Any?, newValue: Any?)
     }
 }

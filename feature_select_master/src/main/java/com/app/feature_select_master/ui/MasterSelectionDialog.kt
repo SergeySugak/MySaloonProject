@@ -13,7 +13,8 @@ import com.app.mscoremodels.saloon.ChoosableSaloonMaster
 import com.app.mscoremodels.saloon.SaloonService
 import javax.inject.Inject
 
-class MasterSelectionDialog: MSChoiceDialogFragment<ChoosableSaloonMaster, MasterSelectionDialogViewModel, String?>() {
+class MasterSelectionDialog :
+    MSChoiceDialogFragment<ChoosableSaloonMaster, MasterSelectionDialogViewModel, String?>() {
 
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory
@@ -29,7 +30,10 @@ class MasterSelectionDialog: MSChoiceDialogFragment<ChoosableSaloonMaster, Maste
     }
 
     override fun createViewModel(savedInstanceState: Bundle?): MasterSelectionDialogViewModel {
-        return ViewModelProvider(this, providerFactory).get(MasterSelectionDialogViewModel::class.java)
+        return ViewModelProvider(
+            this,
+            providerFactory
+        ).get(MasterSelectionDialogViewModel::class.java)
     }
 
     override fun onViewModelCreated(
@@ -39,8 +43,11 @@ class MasterSelectionDialog: MSChoiceDialogFragment<ChoosableSaloonMaster, Maste
         super.onViewModelCreated(viewModel, savedInstanceState)
         if (arguments != null) {
             viewModel.setSelectedMasterId(requireArguments().getString(ARGUMENT_PAYLOAD))
-            viewModel.setRequiredServices(requireArguments().getParcelableArrayList<SaloonService>(
-                ARGUMENT_REQUIRED_SERVICES)?.toList().orEmpty())
+            viewModel.setRequiredServices(
+                requireArguments().getParcelableArrayList<SaloonService>(
+                    ARGUMENT_REQUIRED_SERVICES
+                )?.toList().orEmpty()
+            )
         }
         viewModel.loadMasters()
     }
@@ -48,7 +55,7 @@ class MasterSelectionDialog: MSChoiceDialogFragment<ChoosableSaloonMaster, Maste
     override fun onStartObservingViewModel(viewModel: MasterSelectionDialogViewModel) {
         super.onStartObservingViewModel(viewModel)
         viewModel.error.observe(this, Observer { error ->
-            if (!viewModel.error.isHandled){
+            if (!viewModel.error.isHandled) {
                 MessageDialogFragment.showError(this, error, false)
                 viewModel.error.isHandled = true
             }
@@ -58,8 +65,10 @@ class MasterSelectionDialog: MSChoiceDialogFragment<ChoosableSaloonMaster, Maste
     companion object {
         const val ARGUMENT_REQUIRED_SERVICES = "required_services"
 
-        fun newInstance(title: String, payload: String?, requiredServices: List<SaloonService>,
-                        resultListener: OnChoiceItemsSelectedListener<ChoosableSaloonMaster, String?>): MasterSelectionDialog {
+        fun newInstance(
+            title: String, payload: String?, requiredServices: List<SaloonService>,
+            resultListener: OnChoiceItemsSelectedListener<ChoosableSaloonMaster, String?>
+        ): MasterSelectionDialog {
             val args = Bundle();
             val fragment =
                 MasterSelectionDialog()

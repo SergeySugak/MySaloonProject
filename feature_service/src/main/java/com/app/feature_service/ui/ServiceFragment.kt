@@ -48,18 +48,25 @@ class ServiceFragment : MSDialogFragment<ServiceViewModel>() {
                 dialog?.dismiss()
             }
         val serviceDuration = view.findViewById<EditText>(R.id.service_duration)
-        serviceDuration.setOnClickListener{
-            val fragment = ServiceDurationSelectionDialog.newInstance(getString(R.string.str_service_duration),
-                getViewModel()?.serviceDuration?.id,
-                object: OnChoiceItemsSelectedListener<ChoosableServiceDuration, Int?>{
-                    override fun onChoiceItemsSelected(selections: List<ChoosableServiceDuration>, payload: Int?){
-                        getViewModel()?.serviceDuration = selections[0]
-                        serviceDuration.setText(selections[0].serviceDuration?.description)
-                    }
-                    override fun onNoItemSelected(payload: Int?) {}
-                    override fun writeToParcel(dest: Parcel?, flags: Int) {}
-                    override fun describeContents(): Int {return 0}
-                })
+        serviceDuration.setOnClickListener {
+            val fragment =
+                ServiceDurationSelectionDialog.newInstance(getString(R.string.str_service_duration),
+                    getViewModel()?.serviceDuration?.id,
+                    object : OnChoiceItemsSelectedListener<ChoosableServiceDuration, Int?> {
+                        override fun onChoiceItemsSelected(
+                            selections: List<ChoosableServiceDuration>,
+                            payload: Int?
+                        ) {
+                            getViewModel()?.serviceDuration = selections[0]
+                            serviceDuration.setText(selections[0].serviceDuration?.description)
+                        }
+
+                        override fun onNoItemSelected(payload: Int?) {}
+                        override fun writeToParcel(dest: Parcel?, flags: Int) {}
+                        override fun describeContents(): Int {
+                            return 0
+                        }
+                    })
             showDialogFragment(fragment, "")
         }
         return builder.create()
@@ -68,14 +75,15 @@ class ServiceFragment : MSDialogFragment<ServiceViewModel>() {
     override fun onStart() {
         super.onStart()
         val dlg = dialog as AlertDialog?
-        if (dlg != null){
+        if (dlg != null) {
             val ok = dlg.getButton(Dialog.BUTTON_POSITIVE)
-            ok.setOnClickListener{ _ ->
+            ok.setOnClickListener { _ ->
                 getViewModel()?.saveServiceInfo(
                     dlg.findViewById<EditText>(R.id.service_name)?.text.toString(),
                     getViewModel()?.serviceDuration,
                     dlg.findViewById<EditText>(R.id.service_price)?.text.toString(),
-                    dlg.findViewById<EditText>(R.id.service_description)?.text.toString())
+                    dlg.findViewById<EditText>(R.id.service_description)?.text.toString()
+                )
             }
         }
     }
@@ -94,7 +102,7 @@ class ServiceFragment : MSDialogFragment<ServiceViewModel>() {
 
     override fun onStartObservingViewModel(viewModel: ServiceViewModel) {
         viewModel.error.observe(this, Observer { error ->
-            if (!viewModel.error.isHandled){
+            if (!viewModel.error.isHandled) {
                 MessageDialogFragment.showError(this, error, false)
                 viewModel.error.isHandled = true
             }
@@ -110,8 +118,9 @@ class ServiceFragment : MSDialogFragment<ServiceViewModel>() {
 
         viewModel.serviceInfo.observe(this, Observer { service ->
             dialog?.findViewById<EditText>(R.id.service_name)?.setText(service.name)
-            dialog?.findViewById<EditText>(R.id.service_duration)?.setText(getViewModel()?.
-                serviceDuration?.serviceDuration?.description)
+            dialog?.findViewById<EditText>(R.id.service_duration)?.setText(
+                getViewModel()?.serviceDuration?.serviceDuration?.description
+            )
             dialog?.findViewById<EditText>(R.id.service_price)?.setText(service.price.toString())
             dialog?.findViewById<EditText>(R.id.service_description)?.setText(service.description)
         })

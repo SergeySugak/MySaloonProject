@@ -5,13 +5,16 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 
-class SpacesItemDecoration(private val margin: Int,
-                           private val colCnt: Int,
-                           private val rowCnt: Int) : ItemDecoration() {
+class SpacesItemDecoration(
+    private val margin: Int,
+    private val colCnt: Int,
+    private val rowCnt: Int
+) : ItemDecoration() {
 
     override fun getItemOffsets(
         outRect: Rect, view: View,
-        parent: RecyclerView, state: RecyclerView.State) {
+        parent: RecyclerView, state: RecyclerView.State
+    ) {
         val position = parent.getChildLayoutPosition(view)
         val row = position / colCnt
         val col = position % colCnt

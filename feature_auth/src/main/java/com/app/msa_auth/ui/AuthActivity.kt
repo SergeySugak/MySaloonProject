@@ -12,19 +12,19 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.app.msa.auth.R
 import com.app.msa_auth.di.DaggerAuthComponent
-import com.app.mscorebase.common.Result
-import com.app.mscorebase.ui.MSActivity
-import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
-import com.app.mscorebase.utils.isOnline
 import com.app.msa_nav_api.navigation.AppNavigator
+import com.app.mscorebase.common.Result
 import com.app.mscorebase.di.ViewModelProviderFactory
 import com.app.mscorebase.di.findComponentDependencies
+import com.app.mscorebase.ui.MSActivity
+import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
 import javax.inject.Inject
 
 class AuthActivity : MSActivity<AuthActivityViewModel>() {
 
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory
+
     @Inject
     lateinit var appNavigator: AppNavigator
 
@@ -55,15 +55,19 @@ class AuthActivity : MSActivity<AuthActivityViewModel>() {
             setOnEditorActionListener { _, actionId, _ ->
                 when (actionId) {
                     EditorInfo.IME_ACTION_DONE ->
-                        viewModel.tryLogin(this@AuthActivity,
-                            username.text.toString(), password.text.toString())
+                        viewModel.tryLogin(
+                            this@AuthActivity,
+                            username.text.toString(), password.text.toString()
+                        )
                 }
                 false
             }
 
             login.setOnClickListener {
-                viewModel.tryLogin(this@AuthActivity,
-                    username.text.toString(), password.text.toString())
+                viewModel.tryLogin(
+                    this@AuthActivity,
+                    username.text.toString(), password.text.toString()
+                )
             }
         }
     }
@@ -86,8 +90,7 @@ class AuthActivity : MSActivity<AuthActivityViewModel>() {
             loading.visibility = View.GONE
             if (loginResult is Result.Error) {
                 showLoginFailed(loginResult.exception.message ?: getString(R.string.login_failed))
-            }
-            else {
+            } else {
                 setResult(Activity.RESULT_OK)
                 navigate()
                 finish()
@@ -99,9 +102,10 @@ class AuthActivity : MSActivity<AuthActivityViewModel>() {
 
             loading.visibility = View.GONE
             if (createAccountResult is Result.Error) {
-                showLoginFailed(createAccountResult.exception.message ?: getString(R.string.login_failed))
-            }
-            else {
+                showLoginFailed(
+                    createAccountResult.exception.message ?: getString(R.string.login_failed)
+                )
+            } else {
                 showConfirmEmailMessage()
             }
         })

@@ -41,7 +41,12 @@ object AppModule {
 
     @Provides
     @Singleton
-    internal fun provideAppState(context: Context, authManager: AuthManager, sharedPrefs: SharedPreferences, gson: Gson): AppStateManager {
+    internal fun provideAppState(
+        context: Context,
+        authManager: AuthManager,
+        sharedPrefs: SharedPreferences,
+        gson: Gson
+    ): AppStateManager {
         val appState = AppState(context, authManager, sharedPrefs, gson)
         //Тут добавляем StateManager-ы, которые существуют все время работы приложения
         appState.attachStateManager(authManager as StateHolder) // authManager = AuthManagerImpl = StateHolder

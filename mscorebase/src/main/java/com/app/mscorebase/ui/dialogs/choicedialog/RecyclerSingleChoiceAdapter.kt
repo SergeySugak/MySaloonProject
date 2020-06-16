@@ -7,7 +7,7 @@ import android.widget.CheckedTextView
 import androidx.recyclerview.widget.RecyclerView
 import java.io.Serializable
 
-abstract class RecyclerSingleChoiceAdapter<T: ChoiceItem<out Serializable>>:
+abstract class RecyclerSingleChoiceAdapter<T : ChoiceItem<out Serializable>> :
     BaseRecyclerChoiceAdapter<T, RecyclerSingleChoiceAdapter.ViewHolder>
         (ChoiceMode.cmSingle, android.R.layout.simple_list_item_single_choice) {
 
@@ -16,7 +16,7 @@ abstract class RecyclerSingleChoiceAdapter<T: ChoiceItem<out Serializable>>:
         return ViewHolder(view)
     }
 
-    class ViewHolder(val view: View): RecyclerView.ViewHolder(view) {
-        val checkedTextView: CheckedTextView by lazy {view.findViewById<CheckedTextView>(android.R.id.text1) }
+    class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+        val checkedTextView: CheckedTextView by lazy { view.findViewById<CheckedTextView>(android.R.id.text1) }
     }
 }

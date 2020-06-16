@@ -15,8 +15,8 @@ dependencies {
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
-jar{
-    manifest{
+jar {
+    manifest {
         attributes 'Lint-Registry-V2': 'com.app.lint_checks.Registry'
     }
 }

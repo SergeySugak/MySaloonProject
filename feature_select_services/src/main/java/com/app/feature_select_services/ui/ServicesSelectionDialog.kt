@@ -13,7 +13,8 @@ import com.app.mscoremodels.saloon.ChoosableSaloonService
 import com.app.mscoremodels.saloon.SaloonService
 import javax.inject.Inject
 
-class ServicesSelectionDialog: MSChoiceDialogFragment<ChoosableSaloonService, ServicesSelectionDialogViewModel, String?>() {
+class ServicesSelectionDialog :
+    MSChoiceDialogFragment<ChoosableSaloonService, ServicesSelectionDialogViewModel, String?>() {
 
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory
@@ -31,7 +32,10 @@ class ServicesSelectionDialog: MSChoiceDialogFragment<ChoosableSaloonService, Se
     }
 
     override fun createViewModel(savedInstanceState: Bundle?): ServicesSelectionDialogViewModel {
-        return ViewModelProvider(this, providerFactory).get(ServicesSelectionDialogViewModel::class.java)
+        return ViewModelProvider(
+            this,
+            providerFactory
+        ).get(ServicesSelectionDialogViewModel::class.java)
     }
 
     override fun onViewModelCreated(
@@ -46,7 +50,7 @@ class ServicesSelectionDialog: MSChoiceDialogFragment<ChoosableSaloonService, Se
     override fun onStartObservingViewModel(viewModel: ServicesSelectionDialogViewModel) {
         super.onStartObservingViewModel(viewModel)
         viewModel.error.observe(this, Observer { error ->
-            if (!viewModel.error.isHandled){
+            if (!viewModel.error.isHandled) {
                 MessageDialogFragment.showError(this, error, false)
                 viewModel.error.isHandled = true
             }
@@ -54,8 +58,10 @@ class ServicesSelectionDialog: MSChoiceDialogFragment<ChoosableSaloonService, Se
     }
 
     companion object {
-        fun newInstance(title: String, payload: String?, masterServices: List<SaloonService>,
-                        resultListener: OnChoiceItemsSelectedListener<ChoosableSaloonService, String?>): ServicesSelectionDialog {
+        fun newInstance(
+            title: String, payload: String?, masterServices: List<SaloonService>,
+            resultListener: OnChoiceItemsSelectedListener<ChoosableSaloonService, String?>
+        ): ServicesSelectionDialog {
             val args = Bundle();
             val fragment =
                 ServicesSelectionDialog()

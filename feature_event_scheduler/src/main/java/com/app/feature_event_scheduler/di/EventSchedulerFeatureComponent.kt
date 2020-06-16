@@ -7,9 +7,11 @@ import com.app.feature_event_scheduler.ui.TimeSelectionDialog
 import com.app.msa_scopes.scopes.FeatureScope
 import dagger.Component
 
-@Component(modules = [
-    EventSchedulerFeatureViewModelsModule::class],
-            dependencies = [EventSchedulerFeatureDependencies::class])
+@Component(
+    modules = [
+        EventSchedulerFeatureViewModelsModule::class],
+    dependencies = [EventSchedulerFeatureDependencies::class]
+)
 @FeatureScope
 interface EventSchedulerFeatureComponent {
     fun inject(fragment: EventSchedulerFragment)

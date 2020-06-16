@@ -3,10 +3,10 @@ package com.app.msa_main.di
 import com.app.feature_event_scheduler.api.EventSchedulerFeatureDependencies
 import com.app.feature_master.api.MasterFeatureDependencies
 import com.app.feature_masters.api.MastersFeatureDependencies
-import com.app.feature_service.api.ServiceFeatureDependencies
 import com.app.feature_schedule.api.ScheduleFeatureDependencies
 import com.app.feature_select_master.api.SelectMasterFeatureDependencies
 import com.app.feature_select_services.api.SelectServicesFeatureDependencies
+import com.app.feature_service.api.ServiceFeatureDependencies
 import com.app.feature_services.api.ServicesFeatureDependencies
 import com.app.mscorebase.di.ComponentDependencies
 import com.app.mscorebase.di.ComponentDependenciesKey

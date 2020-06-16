@@ -4,9 +4,9 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.app.msa_auth.models.AuthValidator
 import com.app.msa.auth.R
 import com.app.msa_auth.models.AuthFormState
+import com.app.msa_auth.models.AuthValidator
 import com.app.msa_auth_repo.repository.auth.AuthRepository
 import com.app.msa_db_repo.repository.db.DbRepository
 import com.app.mscorebase.appstate.AppStateManager
@@ -20,11 +20,12 @@ import java.util.*
 import javax.inject.Inject
 
 class AuthActivityViewModel
-    @Inject constructor(private val appState: AppStateManager,
-                        private val authRepository: AuthRepository,
-                        private val authValidator: AuthValidator,
-                        private val dbRepository: DbRepository
-    ): MSActivityViewModel(appState) {
+@Inject constructor(
+    private val appState: AppStateManager,
+    private val authRepository: AuthRepository,
+    private val authValidator: AuthValidator,
+    private val dbRepository: DbRepository
+) : MSActivityViewModel(appState) {
 
     private val _loginForm = MutableLiveData<AuthFormState>()
     val authFormState: LiveData<AuthFormState> = _loginForm
@@ -40,13 +41,14 @@ class AuthActivityViewModel
             //Пытаемся войти
             val loginActionResult = authRepository.login(username, password)
             //Если вход выполнен успешно обновляем статус и фиксируем userId
-            if (loginActionResult is Result.Success){
+            if (loginActionResult is Result.Success) {
                 //Проверяем, что для этого администратора создана ветка в базе
                 var checkResult = dbRepository.checkSaloonRoot(loginActionResult.data)
                 if (checkResult is Result.Success) {
                     //Если нет - создаем
                     if (!checkResult.data) {
-                        val createUserRootResult = dbRepository.createSaloonRoot(loginActionResult.data, username)
+                        val createUserRootResult =
+                            dbRepository.createSaloonRoot(loginActionResult.data, username)
                         //Если при создании ошибка, то работать нельзя
                         if (createUserRootResult is Result.Error) {
                             _loginResult.postValue(Result.Error(createUserRootResult.exception))
@@ -54,8 +56,7 @@ class AuthActivityViewModel
                         }
                     }
                     dbRepository.initialize(loginActionResult.data)
-                }
-                else {
+                } else {
                     //Если при проверке ошибка, то работать нельзя
                     _loginResult.postValue(Result.Error((checkResult as Result.Error).exception))
                     return@launch
@@ -63,25 +64,27 @@ class AuthActivityViewModel
                 //Если все нормально
                 _loginResult.postValue(loginActionResult)
                 appState.authManager.login(username, loginActionResult.data)
-            }
-            else {
+            } else {
                 //Проверяем зарегистрирован ли указанный email
                 val accountCheckResult = authRepository.isAccountRegistered(username)
                 //Если при проверке не было ошибок
-                if (accountCheckResult is Result.Success){
+                if (accountCheckResult is Result.Success) {
                     val accountExists = accountCheckResult.data
-                    if (accountExists){
+                    if (accountExists) {
                         //Если при этом не удалось войти, то что-то не так с e-mail-ом или паролем
                         //значит выдаем сообщение, полученное при попытке войти
                         _loginResult.postValue(loginActionResult)
-                    }
-                    else {
+                    } else {
                         //Если указанный email НЕ зарегистрирован - регистрируем, отправляем письмо
                         //и передаем обратно результат
-                        _createAccountResult.postValue(authRepository.createAccount(username, password))
+                        _createAccountResult.postValue(
+                            authRepository.createAccount(
+                                username,
+                                password
+                            )
+                        )
                     }
-                }
-                else {
+                } else {
                     //Если при проверке произошли ошибки, то выдаем их обратно
                     _loginResult.postValue(Result.Error((accountCheckResult as Result.Error).exception))
                 }
@@ -121,8 +124,7 @@ class AuthActivityViewModel
             if (isOnline(context)) {
                 intIsInProgress.value = true
                 login(username, password)
-            }
-            else {
+            } else {
                 intNoInternetConnectionError.value = R.string.err_no_internet
             }
         }

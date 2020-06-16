@@ -2,9 +2,9 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -38,8 +38,7 @@
                 android:paddingEnd="@dimen/list_item_spacing"
                 android:text="@string/str_date"
                 app:layout_constraintBaseline_toBaselineOf="@+id/date"
-                app:layout_constraintEnd_toStartOf="@+id/when_barrier"
-                />
+                app:layout_constraintEnd_toStartOf="@+id/when_barrier" />
 
         <EditText
                 android:id="@+id/date"
@@ -53,8 +52,8 @@
                 android:inputType="none"
                 android:maxLength="10"
                 android:singleLine="true"
-                app:layout_constraintTop_toBottomOf="@+id/divider_1"
                 app:layout_constraintStart_toEndOf="@+id/when_barrier"
+                app:layout_constraintTop_toBottomOf="@+id/divider_1"
                 tools:ignore="TextFields"
                 tools:text="01.12.2020" />
 
@@ -66,8 +65,7 @@
                 android:paddingEnd="@dimen/list_item_spacing"
                 android:text="@string/str_time"
                 app:layout_constraintBaseline_toBaselineOf="@+id/time"
-                app:layout_constraintEnd_toStartOf="@+id/when_barrier"
-                 />
+                app:layout_constraintEnd_toStartOf="@+id/when_barrier" />
 
         <EditText
                 android:id="@+id/time"
@@ -77,13 +75,13 @@
                 android:layout_marginTop="@dimen/list_item_spacing_half"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
+                android:gravity="end"
                 android:importantForAutofill="no"
                 android:inputType="none"
                 android:maxLength="5"
                 android:singleLine="true"
-                android:gravity="end"
-                app:layout_constraintStart_toEndOf="@+id/when_barrier"
                 app:layout_constraintEnd_toEndOf="@+id/date"
+                app:layout_constraintStart_toEndOf="@+id/when_barrier"
                 app:layout_constraintTop_toBottomOf="@+id/date"
                 tools:ignore="TextFields"
                 tools:text="15:15" />
@@ -112,12 +110,11 @@
                 style="@style/TextAppearance.AppCompat.Medium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingEnd="@dimen/list_item_spacing"
                 android:layout_marginTop="@dimen/list_item_spacing"
+                android:paddingEnd="@dimen/list_item_spacing"
                 android:text="@string/str_services"
                 app:layout_constraintBaseline_toBaselineOf="@+id/services"
-                app:layout_constraintEnd_toStartOf="@+id/when_barrier"
-                 />
+                app:layout_constraintEnd_toStartOf="@+id/when_barrier" />
 
         <EditText
                 android:id="@+id/services"
@@ -137,13 +134,12 @@
                 style="@style/TextAppearance.AppCompat.Medium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingEnd="@dimen/list_item_spacing"
                 android:layout_marginTop="@dimen/list_item_spacing"
+                android:paddingEnd="@dimen/list_item_spacing"
                 android:text="@string/str_master"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBaseline_toBaselineOf="@+id/master"
                 app:layout_constraintEnd_toStartOf="@+id/when_barrier"
-                 />
+                app:layout_constraintStart_toStartOf="parent" />
 
         <EditText
                 android:id="@+id/master"
@@ -163,12 +159,11 @@
                 style="@style/TextAppearance.AppCompat.Medium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingEnd="@dimen/list_item_spacing"
                 android:layout_marginTop="@dimen/list_item_spacing"
+                android:paddingEnd="@dimen/list_item_spacing"
                 android:text="@string/str_client_email"
                 app:layout_constraintBaseline_toBaselineOf="@+id/client_email"
-                app:layout_constraintEnd_toStartOf="@+id/when_barrier"
-                 />
+                app:layout_constraintEnd_toStartOf="@+id/when_barrier" />
 
         <EditText
                 android:id="@+id/client_email"
@@ -205,12 +200,11 @@
                 style="@style/TextAppearance.AppCompat.Medium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingEnd="@dimen/list_item_spacing"
                 android:layout_marginTop="@dimen/list_item_spacing"
+                android:paddingEnd="@dimen/list_item_spacing"
                 android:text="@string/str_client_name"
                 app:layout_constraintBaseline_toBaselineOf="@+id/client_name"
-                app:layout_constraintEnd_toStartOf="@+id/when_barrier"
-                 />
+                app:layout_constraintEnd_toStartOf="@+id/when_barrier" />
 
         <EditText
                 android:id="@+id/client_name"
@@ -228,12 +222,11 @@
                 style="@style/TextAppearance.AppCompat.Medium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingEnd="@dimen/list_item_spacing"
                 android:layout_marginTop="@dimen/list_item_spacing"
+                android:paddingEnd="@dimen/list_item_spacing"
                 android:text="@string/str_client_phone"
                 app:layout_constraintBaseline_toBaselineOf="@+id/client_phone"
-                app:layout_constraintEnd_toStartOf="@+id/when_barrier"
-                 />
+                app:layout_constraintEnd_toStartOf="@+id/when_barrier" />
 
         <EditText
                 android:id="@+id/client_phone"

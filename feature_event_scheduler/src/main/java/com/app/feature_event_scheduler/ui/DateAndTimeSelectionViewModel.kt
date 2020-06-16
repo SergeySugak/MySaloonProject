@@ -8,7 +8,8 @@ import com.app.mscorebase.ui.MSFragmentViewModel
 import java.util.*
 import javax.inject.Inject
 
-class DateAndTimeSelectionViewModel @Inject constructor(appState: AppStateManager): MSFragmentViewModel(appState)  {
+class DateAndTimeSelectionViewModel @Inject constructor(appState: AppStateManager) :
+    MSFragmentViewModel(appState) {
     private val intCalendar = StatefulMutableLiveData<Calendar>()
     val calendar: StatefulLiveData<Calendar> = intCalendar
 

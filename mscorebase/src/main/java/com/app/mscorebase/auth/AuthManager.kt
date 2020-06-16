@@ -4,6 +4,7 @@ interface AuthManager {
     enum class State {
         loggedIn, loggedOut
     }
+
     fun getState(): State
     fun getUserName(): String
     fun getUserId(): String

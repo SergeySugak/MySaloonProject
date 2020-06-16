@@ -1,7 +1,7 @@
 package com.app.ui
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.app.di.DaggerAppComponent
 
 class MainActivity : AppCompatActivity() {

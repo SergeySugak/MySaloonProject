@@ -14,8 +14,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class MastersViewModel
-    @Inject constructor(private val appState: AppStateManager,
-                        private val dbRepository: DbRepository) : MSFragmentViewModel(appState) {
+@Inject constructor(
+    private val appState: AppStateManager,
+    private val dbRepository: DbRepository
+) : MSFragmentViewModel(appState) {
 
     private val _masters = StatefulMutableLiveData<MutableList<SaloonMaster>>(mutableListOf())
     val masters: StatefulLiveData<MutableList<SaloonMaster>> = _masters
@@ -31,10 +33,10 @@ class MastersViewModel
     }
 
     fun deleteMaster(masterId: String?) {
-        masterId?.let{
+        masterId?.let {
             viewModelScope.launch(Dispatchers.IO) {
                 val result = dbRepository.deleteMasterInfo(masterId)
-                if (result is Result.Error){
+                if (result is Result.Error) {
                     intError.postValue(result.exception)
                 }
             }
@@ -46,7 +48,7 @@ class MastersViewModel
         super.onCleared()
     }
 
-    private fun onMasterInserted(master: SaloonMaster){
+    private fun onMasterInserted(master: SaloonMaster) {
         var masters = _masters.value
         if (masters == null) {
             masters = mutableListOf()
@@ -55,15 +57,14 @@ class MastersViewModel
         _masters.value = masters
     }
 
-    private fun onMasterUpdated(changedMasterId: String, Master: SaloonMaster){
+    private fun onMasterUpdated(changedMasterId: String, Master: SaloonMaster) {
         var masters = _masters.value
         if (masters == null) {
             masters = mutableListOf()
             masters.add(Master)
-        }
-        else {
-            for (curMaster in masters){
-                if (curMaster.id == changedMasterId){
+        } else {
+            for (curMaster in masters) {
+                if (curMaster.id == changedMasterId) {
                     val pos = masters.indexOf(curMaster)
                     masters[pos] = Master
                     break
@@ -73,11 +74,11 @@ class MastersViewModel
         _masters.value = masters
     }
 
-    private fun onMasterDeleted(deletedMasterId: String){
+    private fun onMasterDeleted(deletedMasterId: String) {
         val masters = _masters.value
         if (masters != null) {
-            for (curMaster in masters){
-                if (curMaster.id == deletedMasterId){
+            for (curMaster in masters) {
+                if (curMaster.id == deletedMasterId) {
                     val pos = masters.indexOf(curMaster)
                     masters.removeAt(pos)
                     break
@@ -87,12 +88,13 @@ class MastersViewModel
         _masters.value = masters
     }
 
-    private fun onDatabaseError(exception: Exception){
+    private fun onDatabaseError(exception: Exception) {
         intError.value = exception
     }
 
     init {
         listenerId = dbRepository.startListenToMasters(
-            ::onMasterInserted, ::onMasterUpdated, ::onMasterDeleted, ::onDatabaseError)
+            ::onMasterInserted, ::onMasterUpdated, ::onMasterDeleted, ::onDatabaseError
+        )
     }
 }

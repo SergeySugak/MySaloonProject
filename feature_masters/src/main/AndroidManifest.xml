@@ -1,2 +1,1 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.app.feature_masters"/>
+<manifest package="com.app.feature_masters" />

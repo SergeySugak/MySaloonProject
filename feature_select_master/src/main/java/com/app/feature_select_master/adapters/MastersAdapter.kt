@@ -5,4 +5,5 @@ import com.app.mscorebase.ui.dialogs.choicedialog.SimpleChoiceAdapter
 import com.app.mscoremodels.saloon.ChoosableSaloonMaster
 import javax.inject.Inject
 
-class MastersAdapter @Inject constructor(): SimpleChoiceAdapter<ChoosableSaloonMaster>(ChoiceMode.cmSingle)
+class MastersAdapter @Inject constructor() :
+    SimpleChoiceAdapter<ChoosableSaloonMaster>(ChoiceMode.cmSingle)

@@ -27,9 +27,9 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
 
     private val injector: DaggerMainFeatureComponent by lazy {
         DaggerMainFeatureComponent
-        .builder()
-        .mainFeatureDependencies(findComponentDependencies())
-        .build() as DaggerMainFeatureComponent //Без as DaggerMainFeatureComponent - орет
+            .builder()
+            .mainFeatureDependencies(findComponentDependencies())
+            .build() as DaggerMainFeatureComponent //Без as DaggerMainFeatureComponent - орет
     }
 
     //Зависимсоти, которые будут запрашивать фрагменты
@@ -40,16 +40,20 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory
         protected set
+
     @Inject
     lateinit var appNavigator: AppNavigator
+
     @Inject
     lateinit var mastersFragment: MastersFragment
+
     @Inject
     lateinit var servicesFragment: ServicesFragment
+
     @Inject
     lateinit var scheduleFragment: ScheduleFragment
     private lateinit var activeFragment: Fragment
-    private val fab: FloatingActionButton by lazy {findViewById<FloatingActionButton>(R.id.fab)}
+    private val fab: FloatingActionButton by lazy { findViewById<FloatingActionButton>(R.id.fab) }
 
     override val layoutId = R.layout.main_activity
 
@@ -61,16 +65,18 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
             installFragments()
         }
 
-        navView.setOnNavigationItemSelectedListener{ item ->
-            when (item.itemId){
-                R.id.navigation_masters  -> changeActiveFragment(mastersFragment)
+        navView.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navigation_masters -> changeActiveFragment(mastersFragment)
                 R.id.navigation_services -> changeActiveFragment(servicesFragment)
-                R.id.navigation_schedule ->  changeActiveFragment (scheduleFragment)
+                R.id.navigation_schedule -> changeActiveFragment(scheduleFragment)
                 else -> false
             }
         }
         changeActiveFragment(mastersFragment)
-        navView.selectedItemId = savedInstanceState?.getInt(ID_SELECTED_ITEM_ID, R.id.navigation_masters) ?: R.id.navigation_masters
+        navView.selectedItemId =
+            savedInstanceState?.getInt(ID_SELECTED_ITEM_ID, R.id.navigation_masters)
+                ?: R.id.navigation_masters
         setupActionBar()
     }
 
@@ -96,7 +102,7 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
             .commit();
     }
 
-    private fun changeActiveFragment(fragment: Fragment): Boolean{
+    private fun changeActiveFragment(fragment: Fragment): Boolean {
         return try {
             val tran = supportFragmentManager.beginTransaction()
             if (::activeFragment.isInitialized) {
@@ -106,8 +112,7 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
             activeFragment = fragment
             setFabBehaviour()
             true
-        }
-        catch (ex: Exception) {
+        } catch (ex: Exception) {
             MessageDialogFragment.showError(this, ex)
             false
         }
@@ -115,7 +120,7 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
 
     private fun setFabBehaviour() {
         fab.setOnClickListener {
-            when (activeFragment){
+            when (activeFragment) {
                 mastersFragment -> mastersFragmentFabAction()
                 servicesFragment -> servicesFragmentFabAction()
                 scheduleFragment -> scheduleFragmentFabAction()
@@ -124,15 +129,27 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
     }
 
     private fun mastersFragmentFabAction() {
-        appNavigator.navigateToNewMasterFragment(mastersFragment, REQ_NEW_MASTER, NEW_MASTER_FRAGMENT_TAG)
+        appNavigator.navigateToNewMasterFragment(
+            mastersFragment,
+            REQ_NEW_MASTER,
+            NEW_MASTER_FRAGMENT_TAG
+        )
     }
 
     private fun servicesFragmentFabAction() {
-        appNavigator.navigateToNewServiceFragment(servicesFragment, REQ_NEW_SERVICE, NEW_SERVICE_FRAGMENT_TAG)
+        appNavigator.navigateToNewServiceFragment(
+            servicesFragment,
+            REQ_NEW_SERVICE,
+            NEW_SERVICE_FRAGMENT_TAG
+        )
     }
 
     private fun scheduleFragmentFabAction() {
-        appNavigator.navigateToNewEventFragment(scheduleFragment, REQ_NEW_EVENT, NEW_EVENT_FRAGMENT_TAG)
+        appNavigator.navigateToNewEventFragment(
+            scheduleFragment,
+            REQ_NEW_EVENT,
+            NEW_EVENT_FRAGMENT_TAG
+        )
     }
 
     override fun createViewModel(savedInstanceState: Bundle?): MSActivityViewModel {

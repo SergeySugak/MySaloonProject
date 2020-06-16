@@ -7,14 +7,16 @@ import android.text.TextUtils
 import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import main.java.com.app.mscorebase.auth.AuthManager
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import main.java.com.app.mscorebase.auth.AuthManager
 
-class AppState(override val context: Context, //Application context
-               override val authManager: AuthManager,
-               private val appSharedPreferences: SharedPreferences,
-               private val gson: Gson) : AppStateManager {
+class AppState(
+    override val context: Context, //Application context
+    override val authManager: AuthManager,
+    private val appSharedPreferences: SharedPreferences,
+    private val gson: Gson
+) : AppStateManager {
 
     private val stateManagers: MutableMap<String, StateHolder> =
         ConcurrentHashMap()

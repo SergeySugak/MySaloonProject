@@ -17,23 +17,23 @@
         <attr name="hourSepColor" format="color" />
         <attr name="hourSepWidth" format="dimension" />
         <attr name="hourFraction" format="enum">
-            <enum name="none" value="1"/>
-            <enum name="each_5_min" value="12"/>
-            <enum name="each_10_min" value="6"/>
-            <enum name="each_15_min" value="4"/>
-            <enum name="each_20_min" value="3"/>
-            <enum name="each_30_min" value="2"/>
+            <enum name="none" value="1" />
+            <enum name="each_5_min" value="12" />
+            <enum name="each_10_min" value="6" />
+            <enum name="each_15_min" value="4" />
+            <enum name="each_20_min" value="3" />
+            <enum name="each_30_min" value="2" />
         </attr>
         <attr name="daysHeaderHeight" format="dimension" />
         <attr name="hoursHeaderWidth" format="dimension" />
-        <attr name="startingDate" format="string"/>
-        <attr name="dateFormat" format="string"/>
-        <attr name="daysHeaderTextSize" format="dimension"/>
-        <attr name="daysHeaderTextColor" format="color"/>
-        <attr name="hoursHeaderTextSize" format="dimension"/>
-        <attr name="hoursHeaderTextColor" format="color"/>
+        <attr name="startingDate" format="string" />
+        <attr name="dateFormat" format="string" />
+        <attr name="daysHeaderTextSize" format="dimension" />
+        <attr name="daysHeaderTextColor" format="color" />
+        <attr name="hoursHeaderTextSize" format="dimension" />
+        <attr name="hoursHeaderTextColor" format="color" />
 
-        <attr name="eventDrawer" format="string"/>
+        <attr name="eventDrawer" format="string" />
         <attr name="eventMargin" format="dimension" />
     </declare-styleable>
 </resources>

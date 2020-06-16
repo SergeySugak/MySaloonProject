@@ -5,8 +5,9 @@ import com.google.firebase.database.IgnoreExtraProperties
 @IgnoreExtraProperties
 class ServiceDuration(
     val duration: Int?,
-    val description: String?) {
-    constructor(): this(null, null)
+    val description: String?
+) {
+    constructor() : this(null, null)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

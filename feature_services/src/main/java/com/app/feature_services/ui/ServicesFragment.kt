@@ -51,14 +51,18 @@ class ServicesFragment : MSFragment<ServicesViewModel>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         servicesAdapter.setOnServiceClickListener { service ->
-            appNavigator.navigateToEditServiceFragment(this, service.id, REQ_EDIT_SERVICE,
-                EDIT_SERVICE_FRAGMENT_TAG)
+            appNavigator.navigateToEditServiceFragment(
+                this, service.id, REQ_EDIT_SERVICE,
+                EDIT_SERVICE_FRAGMENT_TAG
+            )
         }
         servicesAdapter.setOnServiceDeleteListener { service ->
-            MessageDialogFragment.showMessage(this, getString(R.string.title_warning),
+            MessageDialogFragment.showMessage(
+                this, getString(R.string.title_warning),
                 String.format(getString(R.string.str_delete_service), service.name),
                 ICON_WARNING, REQ_DELETE_SERVICE, TWO_BUTTONS_YN,
-                bundleOf(Pair(SERVICE_ID, service.id)))
+                bundleOf(Pair(SERVICE_ID, service.id))
+            )
         }
         servicesList = view.findViewById(R.id.services_list)
         servicesList.layoutManager = LinearLayoutManager(context)
@@ -82,7 +86,7 @@ class ServicesFragment : MSFragment<ServicesViewModel>() {
         params: Bundle?
     ) {
         if (requestCode == REQ_DELETE_SERVICE) {
-            if (whichButton == BUTTON_POSITIVE){
+            if (whichButton == BUTTON_POSITIVE) {
                 getViewModel()?.deleteService(params?.getString(SERVICE_ID))
             }
         }

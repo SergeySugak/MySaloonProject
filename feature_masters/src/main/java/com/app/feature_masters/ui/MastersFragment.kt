@@ -40,11 +40,14 @@ class MastersFragment : MSFragment<MastersViewModel>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mastersAdapter.setOnMasterClickListener { master ->
-            appNavigator.navigateToEditMasterFragment(this, master.id, REQ_EDIT_MASTER,
-                EDIT_MASTER_FRAGMENT_TAG)
+            appNavigator.navigateToEditMasterFragment(
+                this, master.id, REQ_EDIT_MASTER,
+                EDIT_MASTER_FRAGMENT_TAG
+            )
         }
         mastersAdapter.setOnMasterDeleteListener { master ->
-            MessageDialogFragment.showMessage(this, getString(R.string.title_warning),
+            MessageDialogFragment.showMessage(
+                this, getString(R.string.title_warning),
                 String.format(getString(R.string.str_delete_master), master.name),
                 DialogFragmentPresenter.ICON_WARNING, REQ_DELETE_MASTER,
                 DialogFragmentPresenter.TWO_BUTTONS_YN,
@@ -82,7 +85,7 @@ class MastersFragment : MSFragment<MastersViewModel>() {
         params: Bundle?
     ) {
         if (requestCode == REQ_DELETE_MASTER) {
-            if (whichButton == DialogInterface.BUTTON_POSITIVE){
+            if (whichButton == DialogInterface.BUTTON_POSITIVE) {
                 getViewModel()?.deleteMaster(params?.getString(MASTER_ID))
             }
         }

@@ -14,9 +14,11 @@ class SaloonEvent constructor() {
     var description: String = ""
     var state: SaloonEventState = SaloonEventState.esScheduled
 
-    constructor(id: String, master: SaloonMaster, services: List<SaloonService>, client: SaloonClient,
-                whenStart: Calendar, whenFinish: Calendar, description: String,
-                state: SaloonEventState): this(){
+    constructor(
+        id: String, master: SaloonMaster, services: List<SaloonService>, client: SaloonClient,
+        whenStart: Calendar, whenFinish: Calendar, description: String,
+        state: SaloonEventState
+    ) : this() {
         this.id = id
         this.master = master
         this.services = services

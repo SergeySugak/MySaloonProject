@@ -26,6 +26,7 @@ class MasterFragment : MSDialogFragment<MasterFragmentViewModel>() {
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory
         protected set
+
     @Inject
     lateinit var appNavigator: AppNavigator
         protected set
@@ -54,19 +55,25 @@ class MasterFragment : MSDialogFragment<MasterFragmentViewModel>() {
                 dialog?.dismiss()
             }
         masterServices = view.findViewById(R.id.master_services)
-        masterServices.setOnClickListener{
+        masterServices.setOnClickListener {
             appNavigator.navigateToSelectServicesFragment(
                 this,
                 getString(R.string.str_master_services),
                 getViewModel()?.masterId,
                 getViewModel()?.masterServices?.value ?: emptyList(),
-                object: OnChoiceItemsSelectedListener<ChoosableSaloonService, String?> {
-                    override fun onChoiceItemsSelected(selections: List<ChoosableSaloonService>, payload: String?){
+                object : OnChoiceItemsSelectedListener<ChoosableSaloonService, String?> {
+                    override fun onChoiceItemsSelected(
+                        selections: List<ChoosableSaloonService>,
+                        payload: String?
+                    ) {
                         getViewModel()?.setMasterServices(selections)
                     }
+
                     override fun onNoItemSelected(payload: String?) {}
                     override fun writeToParcel(dest: Parcel?, flags: Int) {}
-                    override fun describeContents(): Int {return 0}
+                    override fun describeContents(): Int {
+                        return 0
+                    }
                 })
         }
         return builder.create()
@@ -75,13 +82,14 @@ class MasterFragment : MSDialogFragment<MasterFragmentViewModel>() {
     override fun onStart() {
         super.onStart()
         val dlg = dialog as AlertDialog?
-        if (dlg != null){
+        if (dlg != null) {
             val ok = dlg.getButton(Dialog.BUTTON_POSITIVE)
-            ok.setOnClickListener{ _ ->
+            ok.setOnClickListener { _ ->
                 getViewModel()?.saveMasterInfo(
                     dlg.findViewById<EditText>(R.id.master_name)?.text.toString(),
                     dlg.findViewById<EditText>(R.id.master_description)?.text.toString(),
-                    dlg.findViewById<EditText>(R.id.master_portfolio_url)?.text.toString())
+                    dlg.findViewById<EditText>(R.id.master_portfolio_url)?.text.toString()
+                )
             }
         }
     }
@@ -90,7 +98,10 @@ class MasterFragment : MSDialogFragment<MasterFragmentViewModel>() {
         return ViewModelProvider(this, providerFactory).get(MasterFragmentViewModel::class.java)
     }
 
-    override fun onViewModelCreated(viewModel: MasterFragmentViewModel, savedInstanceState: Bundle?) {
+    override fun onViewModelCreated(
+        viewModel: MasterFragmentViewModel,
+        savedInstanceState: Bundle?
+    ) {
         super.onViewModelCreated(viewModel, savedInstanceState)
         val serviceId = arguments?.get(ARG_EDIT_MASTER_ID)?.toString()
         if (!TextUtils.isEmpty(serviceId)) {
@@ -100,7 +111,7 @@ class MasterFragment : MSDialogFragment<MasterFragmentViewModel>() {
 
     override fun onStartObservingViewModel(viewModel: MasterFragmentViewModel) {
         viewModel.error.observe(this, Observer { error ->
-            if (!viewModel.error.isHandled){
+            if (!viewModel.error.isHandled) {
                 MessageDialogFragment.showError(this, error, false)
                 viewModel.error.isHandled = true
             }
@@ -118,17 +129,19 @@ class MasterFragment : MSDialogFragment<MasterFragmentViewModel>() {
         })
 
         viewModel.masterInfo.observe(this, Observer { service ->
-            if (!viewModel.masterInfo.isHandled){
+            if (!viewModel.masterInfo.isHandled) {
                 dialog?.findViewById<EditText>(R.id.master_name)?.setText(service.name)
-                dialog?.findViewById<EditText>(R.id.master_description)?.setText(service.description)
-                dialog?.findViewById<EditText>(R.id.master_portfolio_url)?.setText(service.portfolioUrl)
+                dialog?.findViewById<EditText>(R.id.master_description)
+                    ?.setText(service.description)
+                dialog?.findViewById<EditText>(R.id.master_portfolio_url)
+                    ?.setText(service.portfolioUrl)
                 viewModel.masterInfo.isHandled = true
             }
         })
 
         viewModel.masterServices.observe(this, Observer { services ->
-            if (!viewModel.masterServices.isHandled){
-                if (::masterServices.isInitialized){
+            if (!viewModel.masterServices.isHandled) {
+                if (::masterServices.isInitialized) {
                     masterServices.setText(services.joinToString())
                     viewModel.masterServices.isHandled = true
                 }

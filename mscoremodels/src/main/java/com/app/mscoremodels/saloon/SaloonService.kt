@@ -5,7 +5,7 @@ import android.os.Parcelable
 import com.google.firebase.database.IgnoreExtraProperties
 
 @IgnoreExtraProperties
-class SaloonService constructor(): Parcelable {
+class SaloonService constructor() : Parcelable {
     var name: String = ""
     var id: String = ""
     var price: Double = 0.0
@@ -21,9 +21,11 @@ class SaloonService constructor(): Parcelable {
         imageUrl = parcel.readString() ?: ""
     }
 
-    constructor(id: String, name: String, price: Double,
-                duration: ServiceDuration?, description: String,
-                imageUrl: String): this() {
+    constructor(
+        id: String, name: String, price: Double,
+        duration: ServiceDuration?, description: String,
+        imageUrl: String
+    ) : this() {
         this.id = id
         this.name = name
         this.price = price

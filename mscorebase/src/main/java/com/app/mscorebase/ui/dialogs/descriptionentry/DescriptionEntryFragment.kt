@@ -26,6 +26,7 @@ class DescriptionEntryFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         retainInstance = true
         val inflater = requireActivity().layoutInflater
+
         @SuppressLint("InflateParams")
         val view = inflater.inflate(R.layout.fragment_description_entry, null, false)
         descriptionEditText = view.findViewById(R.id.description)
@@ -126,10 +127,10 @@ class DescriptionEntryFragment : DialogFragment() {
         dismiss()
         assert(arguments != null)
         if (targetFragment is OnDescriptionEnteredListener) {
-            if (arguments!!.getBoolean(ARGUMENTS_PAYLOAD_INST_OF_SERIALIZABLE,false))
-            (targetFragment as OnDescriptionEnteredListener).onDescriptionEntered(
+            if (arguments!!.getBoolean(ARGUMENTS_PAYLOAD_INST_OF_SERIALIZABLE, false))
+                (targetFragment as OnDescriptionEnteredListener).onDescriptionEntered(
                     descr,
-                    if (arguments!!.getBoolean(ARGUMENTS_PAYLOAD_INST_OF_SERIALIZABLE,false))
+                    if (arguments!!.getBoolean(ARGUMENTS_PAYLOAD_INST_OF_SERIALIZABLE, false))
                         arguments!!.getSerializable(ARGUMENTS_PAYLOAD)
                     else
                         arguments!!.getParcelable<Parcelable>(ARGUMENTS_PAYLOAD)
@@ -138,7 +139,7 @@ class DescriptionEntryFragment : DialogFragment() {
             if (activity is OnDescriptionEnteredListener) {
                 (activity as OnDescriptionEnteredListener).onDescriptionEntered(
                     descr,
-                    if (arguments!!.getBoolean(ARGUMENTS_PAYLOAD_INST_OF_SERIALIZABLE,false))
+                    if (arguments!!.getBoolean(ARGUMENTS_PAYLOAD_INST_OF_SERIALIZABLE, false))
                         arguments!!.getSerializable(ARGUMENTS_PAYLOAD)
                     else
                         arguments!!.getParcelable<Parcelable>(ARGUMENTS_PAYLOAD)
@@ -154,7 +155,7 @@ class DescriptionEntryFragment : DialogFragment() {
         if (targetFragment is OnDescriptionEnteredListener) {
             (targetFragment as OnDescriptionEnteredListener)
                 .onDescriptionNotEntered(
-                    if (arguments!!.getBoolean(ARGUMENTS_PAYLOAD_INST_OF_SERIALIZABLE,false))
+                    if (arguments!!.getBoolean(ARGUMENTS_PAYLOAD_INST_OF_SERIALIZABLE, false))
                         arguments!!.getSerializable(ARGUMENTS_PAYLOAD)
                     else
                         arguments!!.getParcelable<Parcelable>(ARGUMENTS_PAYLOAD)
@@ -162,7 +163,7 @@ class DescriptionEntryFragment : DialogFragment() {
         } else {
             if (activity is OnDescriptionEnteredListener) {
                 (activity as OnDescriptionEnteredListener).onDescriptionNotEntered(
-                    if (arguments!!.getBoolean(ARGUMENTS_PAYLOAD_INST_OF_SERIALIZABLE,false))
+                    if (arguments!!.getBoolean(ARGUMENTS_PAYLOAD_INST_OF_SERIALIZABLE, false))
                         arguments!!.getSerializable(ARGUMENTS_PAYLOAD)
                     else
                         arguments!!.getParcelable<Parcelable>(ARGUMENTS_PAYLOAD)

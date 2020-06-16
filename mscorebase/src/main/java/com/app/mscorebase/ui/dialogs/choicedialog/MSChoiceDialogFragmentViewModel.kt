@@ -36,10 +36,10 @@ open class MSChoiceDialogFragmentViewModel<C : ChoiceItem<out Serializable>, P>(
 
     fun setChoices(choiceItems: List<C>) {
         selectedItems.clear()
-        choiceItems.forEach{ item ->
+        choiceItems.forEach { item ->
             if (item.isSelected) {
                 selectedItems.add(item)
-                if (choiceMode === ChoiceMode.cmSingle){
+                if (choiceMode === ChoiceMode.cmSingle) {
                     singleChoicePosition = choiceItems.indexOf(item)
                     return@forEach
                 }
@@ -67,7 +67,7 @@ open class MSChoiceDialogFragmentViewModel<C : ChoiceItem<out Serializable>, P>(
                 choices[singleChoicePosition].isSelected = true
             } else {
                 val index = selectedItems.indexOf(choices[position])
-                if (index == -1){
+                if (index == -1) {
                     selectedItems.add(choices[position])
                     choices[position].isSelected = true
                 } else {

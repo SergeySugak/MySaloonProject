@@ -13,9 +13,10 @@ import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter
 import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-abstract class MSBottomSheetDialogFragment <VM : MSFragmentViewModel>: BottomSheetDialogFragment(), MSContext<VM>,
+abstract class MSBottomSheetDialogFragment<VM : MSFragmentViewModel> : BottomSheetDialogFragment(),
+    MSContext<VM>,
     ViewModelHolder<VM>,
-    DialogButtonClickListener, OnBackPressedListener  {
+    DialogButtonClickListener, OnBackPressedListener {
 
     private val TAG = javaClass.simpleName
     private lateinit var viewModel: VM
@@ -36,7 +37,11 @@ abstract class MSBottomSheetDialogFragment <VM : MSFragmentViewModel>: BottomShe
         onViewModelCreated(viewModel, savedInstanceState)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         if (layoutId != 0) {
             return inflater.inflate(layoutId, container, false)
         }
@@ -59,8 +64,11 @@ abstract class MSBottomSheetDialogFragment <VM : MSFragmentViewModel>: BottomShe
 
     protected abstract fun onStartObservingViewModel(viewModel: VM)
 
-    override fun onClickDialogButton(dialog: DialogInterface?, @DialogFragmentPresenter.WhichButton whichButton: Int,
-                                     requestCode: Int, params: Bundle?) {}
+    override fun onClickDialogButton(
+        dialog: DialogInterface?, @DialogFragmentPresenter.WhichButton whichButton: Int,
+        requestCode: Int, params: Bundle?
+    ) {
+    }
 
     override fun onDestroyView() {
         mainHandler.removeCallbacksAndMessages(null)
@@ -115,8 +123,8 @@ abstract class MSBottomSheetDialogFragment <VM : MSFragmentViewModel>: BottomShe
 
     override fun clearViewModelInstanceState() {
         viewModel.clearInstanceState()
-        for (fragment in childFragmentManager.fragments){
-            if (fragment is ViewModelHolder<*>){
+        for (fragment in childFragmentManager.fragments) {
+            if (fragment is ViewModelHolder<*>) {
                 fragment.clearViewModelInstanceState()
             }
         }

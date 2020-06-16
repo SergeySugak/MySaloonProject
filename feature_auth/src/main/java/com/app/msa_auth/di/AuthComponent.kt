@@ -7,10 +7,12 @@ import com.app.mscorebase.di.ViewModelFactoryModule
 import dagger.Component
 
 @FeatureScope
-@Component(modules = [AuthModule::class,
-                        ViewModelFactoryModule::class,
-                        AuthViewModelsModule::class],
-                        dependencies = [AuthFeatureDependencies::class])
+@Component(
+    modules = [AuthModule::class,
+        ViewModelFactoryModule::class,
+        AuthViewModelsModule::class],
+    dependencies = [AuthFeatureDependencies::class]
+)
 interface AuthComponent {
     fun inject(authActivity: AuthActivity)
 }

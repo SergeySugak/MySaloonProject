@@ -59,7 +59,7 @@ abstract class MSActivity<VM : MSViewModel> :
     /*
     Реализация должна выглядеть как-нибудь типа
     viewModel.viewModelEventSender.observe(this, viewModelEvent -> {
-        if (viewModelEvent.isOneTimer()){
+        if (viewModelEvent.isOneTimer()) {
             if (viewModelEvent.isProcessed()) {
                 return;
             }
@@ -147,7 +147,7 @@ abstract class MSActivity<VM : MSViewModel> :
         }
     }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //												User navigations												  //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     override fun onBackPressed() {
@@ -208,7 +208,7 @@ abstract class MSActivity<VM : MSViewModel> :
     }
 
     private fun clearFragmentsInstanceStates() {
-        for (fragment in supportFragmentManager.fragments){
+        for (fragment in supportFragmentManager.fragments) {
             if (fragment is ViewModelHolder<*>) {
                 fragment.clearViewModelInstanceState()
             }

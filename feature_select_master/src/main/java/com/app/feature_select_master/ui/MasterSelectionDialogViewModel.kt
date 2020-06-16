@@ -18,11 +18,12 @@ import java.util.*
 import javax.inject.Inject
 
 class MasterSelectionDialogViewModel
-    @Inject constructor(appState: AppStateManager,
-                        adapter: MastersAdapter,
-                        private val dbRepository: DbRepository,
-                        private val saloonFactory: SaloonFactory
-    ): MSChoiceDialogFragmentViewModel<ChoosableSaloonMaster, String?>(appState, adapter) {
+@Inject constructor(
+    appState: AppStateManager,
+    adapter: MastersAdapter,
+    private val dbRepository: DbRepository,
+    private val saloonFactory: SaloonFactory
+) : MSChoiceDialogFragmentViewModel<ChoosableSaloonMaster, String?>(appState, adapter) {
 
     private var requireServices = emptyList<SaloonService>()
     private var masterId: String? = null
@@ -32,16 +33,17 @@ class MasterSelectionDialogViewModel
             val allMastersResult = dbRepository.getMasters(requireServices)
             if (allMastersResult is Result.Success) {
                 val selectedMasters = mutableListOf<SaloonMaster>()
-                masterId?.let{
+                masterId?.let {
                     selectedMasters.addAll(allMastersResult.data.filter { master ->
                         master.id == it
                     })
                 }
-                val choosable = saloonFactory.createChoosableMasters(allMastersResult.data,
-                    selectedMasters)
-                    withContext(Dispatchers.Main){setChoices(choosable)}
-            }
-            else {
+                val choosable = saloonFactory.createChoosableMasters(
+                    allMastersResult.data,
+                    selectedMasters
+                )
+                withContext(Dispatchers.Main) { setChoices(choosable) }
+            } else {
                 intError.postValue((allMastersResult as Result.Error).exception)
             }
         }
@@ -58,7 +60,7 @@ class MasterSelectionDialogViewModel
         //read state
     }
 
-    fun setSelectedMasterId(masterId: String?){
+    fun setSelectedMasterId(masterId: String?) {
         this.masterId = masterId
     }
 

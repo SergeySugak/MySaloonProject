@@ -3,7 +3,7 @@ package com.app.msa_auth.models
 import android.util.Patterns
 import javax.inject.Inject
 
-open class AuthValidatorImpl @Inject constructor(): AuthValidator {
+open class AuthValidatorImpl @Inject constructor() : AuthValidator {
     override fun validateUserName(username: String?): Boolean {
         if (username == null) {
             return false
@@ -19,7 +19,7 @@ open class AuthValidatorImpl @Inject constructor(): AuthValidator {
         return password != null && password.trim { it <= ' ' }.length > MIN_PASSWORD_LEN
     }
 
-    companion object{
+    companion object {
         private const val MIN_PASSWORD_LEN = 5
     }
 }

@@ -4,11 +4,11 @@ import android.text.TextUtils
 import com.app.msa_auth_repo.repository.auth.AuthRepository
 import com.app.mscorebase.appstate.StateHolder
 import com.app.mscorebase.appstate.StateWriter
-import com.google.firebase.auth.FirebaseAuth
 import main.java.com.app.mscorebase.auth.AuthManager
 import javax.inject.Inject
 
-class AuthManagerImpl @Inject constructor(private val authRepository: AuthRepository): AuthManager, StateHolder {
+class AuthManagerImpl @Inject constructor(private val authRepository: AuthRepository) : AuthManager,
+    StateHolder {
     private var username = ""
 
     override fun getUserName() = username
@@ -50,6 +50,7 @@ class AuthManagerImpl @Inject constructor(private val authRepository: AuthReposi
     }
 
     companion object {
-        private val STATE_USER_NAME: String = AuthManagerImpl::class.java.simpleName + "_STATE_REGISTRATION_REQUEST_HTTP_ERROR"
+        private val STATE_USER_NAME: String =
+            AuthManagerImpl::class.java.simpleName + "_STATE_REGISTRATION_REQUEST_HTTP_ERROR"
     }
 }

@@ -14,7 +14,7 @@ open class StatefulMutableLiveData<T> :
         super.setValue(value)
     }
 
-    fun forceSetValue(value: T?){
+    fun forceSetValue(value: T?) {
         isHandled = false
         super.setValue(value)
     }
@@ -29,7 +29,7 @@ open class StatefulMutableLiveData<T> :
         super.postValue(value)
     }
 
-    fun forcePostValue(value: T?){
+    fun forcePostValue(value: T?) {
         isHandled = false
         super.postValue(value)
     }

@@ -20,7 +20,7 @@ class RepositoryEvent constructor() {
     constructor(event: SaloonEvent) : this() {
         this.id = event.id
         this.masterId = event.master.id
-        this.serviceIds = event.services.map{ s -> s.id }
+        this.serviceIds = event.services.map { s -> s.id }
         this.client = event.client
         this.whenStart = event.whenStart
         this.whenFinish = event.whenFinish

@@ -6,11 +6,13 @@ import android.text.TextPaint
 import android.text.TextUtils
 import java.util.*
 
-class DefaultEventDrawer: EventDrawer {
+class DefaultEventDrawer : EventDrawer {
     private val textPaint = TextPaint()
 
-    override fun draw(context: Context,
-                      event: SchedulerEvent, canvas: Canvas, paint: Paint, rect: RectF) {
+    override fun draw(
+        context: Context,
+        event: SchedulerEvent, canvas: Canvas, paint: Paint, rect: RectF
+    ) {
         //Рисуем обертку
         paint.style = Paint.Style.FILL;
         paint.color = event.color
@@ -58,13 +60,17 @@ class DefaultEventDrawer: EventDrawer {
         val finishTimeH = "${event.dateTimeFinish.get(Calendar.HOUR_OF_DAY)}".padStart(2, '0')
         val finishTimeM = "${event.dateTimeFinish.get(Calendar.MINUTE)}".padStart(2, '0')
 
-        canvas.drawText("$startTimeH:$startTimeM - $finishTimeH:$finishTimeM",
-            rect.left + DEF_HEADER_H_PADDING, rect.top + midY, paint)
+        canvas.drawText(
+            "$startTimeH:$startTimeM - $finishTimeH:$finishTimeM",
+            rect.left + DEF_HEADER_H_PADDING, rect.top + midY, paint
+        )
     }
 
     private fun drawEventText(event: SchedulerEvent, canvas: Canvas, rect: RectF) {
-        val text = TextUtils.ellipsize(event.header, textPaint, rect.width() - 2 * DEF_TEXT_V_PADDING,
-            TextUtils.TruncateAt.END).toString()
+        val text = TextUtils.ellipsize(
+            event.header, textPaint, rect.width() - 2 * DEF_TEXT_V_PADDING,
+            TextUtils.TruncateAt.END
+        ).toString()
         val textHeight = textPaint.descent() - textPaint.ascent()
         val textOffset = (textHeight / 2) - textPaint.descent()
         val midY = (2 * DEF_TEXT_V_PADDING + textHeight) / 2 + textOffset

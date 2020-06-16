@@ -14,10 +14,11 @@ import com.app.mscorebase.di.ViewModelProviderFactory
 import com.app.mscorebase.di.findComponentDependencies
 import com.app.mscorebase.ui.MSBottomSheetDialogFragment
 import java.util.*
-import java.util.Calendar.*
+import java.util.Calendar.HOUR_OF_DAY
+import java.util.Calendar.MINUTE
 import javax.inject.Inject
 
-class TimeSelectionDialog: MSBottomSheetDialogFragment<DateAndTimeSelectionViewModel>() {
+class TimeSelectionDialog : MSBottomSheetDialogFragment<DateAndTimeSelectionViewModel>() {
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory
         protected set
@@ -39,26 +40,26 @@ class TimeSelectionDialog: MSBottomSheetDialogFragment<DateAndTimeSelectionViewM
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         timePicker.setIs24HourView(true)
-        getViewModel()?.let{
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+        getViewModel()?.let {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 timePicker.hour = it.calendar.value!!.get(Calendar.HOUR_OF_DAY)
                 timePicker.minute = it.calendar.value!!.get(Calendar.MINUTE)
-            }
-            else {
+            } else {
                 timePicker.currentHour = it.calendar.value!!.get(Calendar.HOUR_OF_DAY)
                 timePicker.currentMinute = it.calendar.value!!.get(Calendar.MINUTE)
             }
         }
-        timePicker.setOnTimeChangedListener{ _, hourOfDay, minute ->
+        timePicker.setOnTimeChangedListener { _, hourOfDay, minute ->
             getViewModel()?.setTime(hourOfDay, minute)
         }
         toolBar.inflateMenu(R.menu.date_time_selection_menu)
         toolBar.menu.findItem(R.id.menu_ok).setOnMenuItemClickListener { _ ->
-            if (targetFragment is EventDateTimeReceiver){
+            if (targetFragment is EventDateTimeReceiver) {
                 (targetFragment as EventDateTimeReceiver)
                     .setEventTime(
                         getViewModel()!!.calendar.value!!.get(HOUR_OF_DAY),
-                        getViewModel()!!.calendar.value!!.get(MINUTE))
+                        getViewModel()!!.calendar.value!!.get(MINUTE)
+                    )
             }
             dismiss()
             true
@@ -70,16 +71,22 @@ class TimeSelectionDialog: MSBottomSheetDialogFragment<DateAndTimeSelectionViewM
     }
 
     override fun createViewModel(savedInstanceState: Bundle?) =
-        ViewModelProvider(requireActivity(), providerFactory).get(DateAndTimeSelectionViewModel::class.java)
+        ViewModelProvider(
+            requireActivity(),
+            providerFactory
+        ).get(DateAndTimeSelectionViewModel::class.java)
 
-    override fun onViewModelCreated(viewModel: DateAndTimeSelectionViewModel, savedInstanceState: Bundle?) {
+    override fun onViewModelCreated(
+        viewModel: DateAndTimeSelectionViewModel,
+        savedInstanceState: Bundle?
+    ) {
         val calendar = requireArguments()[CALENDAR] as Calendar
         viewModel.setTime(calendar.get(HOUR_OF_DAY), calendar.get(MINUTE))
     }
 
     override fun onStartObservingViewModel(viewModel: DateAndTimeSelectionViewModel) {}
 
-    companion object{
+    companion object {
         const val CALENDAR = "CALENDAR"
 
         fun newInstance(calendar: Calendar): TimeSelectionDialog {

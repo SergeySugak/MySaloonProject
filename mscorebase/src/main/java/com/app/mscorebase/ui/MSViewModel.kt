@@ -11,7 +11,7 @@ import com.app.mscorebase.livedata.StatefulLiveData
 import com.app.mscorebase.livedata.StatefulMutableLiveData
 import kotlinx.coroutines.Job
 
-abstract class MSViewModel (private val appState: AppStateManager) : ViewModel(), StateHolder {
+abstract class MSViewModel(private val appState: AppStateManager) : ViewModel(), StateHolder {
     internal val _title = MutableLiveData<String>()
     val title: LiveData<String> = _title
     internal val _subtitle = MutableLiveData<String>()
@@ -28,7 +28,7 @@ abstract class MSViewModel (private val appState: AppStateManager) : ViewModel()
 
     private val mCompositeJob = mutableListOf<Job>()
 
-    fun addJob(job: Job){
+    fun addJob(job: Job) {
         mCompositeJob.add(job)
     }
 
@@ -36,7 +36,7 @@ abstract class MSViewModel (private val appState: AppStateManager) : ViewModel()
         intIsInProgress.value = inProgress
     }
 
-    protected fun disposeJobs(){
+    protected fun disposeJobs() {
         for (job in mCompositeJob)
             if (!job.isCancelled) {
                 job.cancel()
@@ -44,7 +44,7 @@ abstract class MSViewModel (private val appState: AppStateManager) : ViewModel()
         mCompositeJob.clear()
     }
 
-    protected fun cancelJob(job: Job){
+    protected fun cancelJob(job: Job) {
         if (!job.isCancelled) {
             job.cancel()
         }

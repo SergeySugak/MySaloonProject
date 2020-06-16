@@ -8,20 +8,19 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.app.feature_services.R
 import com.app.msa_db_repo.repository.db.DbRepository
-import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
 import com.app.mscoremodels.saloon.SaloonService
 import java.util.*
 import javax.inject.Inject
 
 class ServicesAdapterImpl
-    @Inject constructor(private val dbRepository: DbRepository):
+@Inject constructor(private val dbRepository: DbRepository) :
     RecyclerView.Adapter<ServicesAdapterImpl.ViewHolder>(), ServicesAdapter {
 
     private val items = ArrayList<SaloonService>()
-    private var onServiceClick: (service: SaloonService)->Unit = {}
-    private var onDeleteService: (service: SaloonService)->Unit = {}
+    private var onServiceClick: (service: SaloonService) -> Unit = {}
+    private var onDeleteService: (service: SaloonService) -> Unit = {}
 
-    override fun setItems(items: List<SaloonService>){
+    override fun setItems(items: List<SaloonService>) {
         this.items.clear()
         this.items.addAll(items)
         notifyDataSetChanged()
@@ -48,9 +47,11 @@ class ServicesAdapterImpl
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        fun bind(service: SaloonService,
-                 onServiceClick: (service: SaloonService)->Unit,
-                 onDeleteService: (service: SaloonService)->Unit){
+        fun bind(
+            service: SaloonService,
+            onServiceClick: (service: SaloonService) -> Unit,
+            onDeleteService: (service: SaloonService) -> Unit
+        ) {
             val name = itemView.findViewById<TextView>(R.id.service_name)
             val duration = itemView.findViewById<TextView>(R.id.service_duration)
             val price = itemView.findViewById<TextView>(R.id.service_price)
@@ -60,10 +61,10 @@ class ServicesAdapterImpl
             duration.text = service.duration?.description
             price.text = service.price.toString()
             description.text = service.description
-            itemView.setOnClickListener{
+            itemView.setOnClickListener {
                 onServiceClick(service)
             }
-            deleteService.setOnClickListener{
+            deleteService.setOnClickListener {
                 onDeleteService(service)
             }
         }

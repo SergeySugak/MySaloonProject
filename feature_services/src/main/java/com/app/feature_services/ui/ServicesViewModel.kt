@@ -14,9 +14,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ServicesViewModel
-    @Inject constructor(
-        appState: AppStateManager,
-        private val dbRepository: DbRepository) : MSFragmentViewModel(appState) {
+@Inject constructor(
+    appState: AppStateManager,
+    private val dbRepository: DbRepository
+) : MSFragmentViewModel(appState) {
 
     private val _services = StatefulMutableLiveData<MutableList<SaloonService>>(mutableListOf())
     val services: StatefulLiveData<MutableList<SaloonService>> = _services
@@ -32,10 +33,10 @@ class ServicesViewModel
     }
 
     fun deleteService(serviceId: String?) {
-        serviceId?.let{
+        serviceId?.let {
             viewModelScope.launch(Dispatchers.IO) {
                 val result = dbRepository.deleteServiceInfo(serviceId)
-                if (result is Result.Error){
+                if (result is Result.Error) {
                     intError.postValue(result.exception)
                 }
             }
@@ -47,7 +48,7 @@ class ServicesViewModel
         super.onCleared()
     }
 
-    private fun onServiceInserted(service: SaloonService){
+    private fun onServiceInserted(service: SaloonService) {
         var services = _services.value
         if (services == null) {
             services = mutableListOf()
@@ -56,15 +57,14 @@ class ServicesViewModel
         _services.value = services
     }
 
-    private fun onServiceUpdated(changedServiceId: String, service: SaloonService){
+    private fun onServiceUpdated(changedServiceId: String, service: SaloonService) {
         var services = _services.value
         if (services == null) {
             services = mutableListOf()
             services.add(service)
-        }
-        else {
-            for (curService in services){
-                if (curService.id == changedServiceId){
+        } else {
+            for (curService in services) {
+                if (curService.id == changedServiceId) {
                     val pos = services.indexOf(curService)
                     services[pos] = service
                     break
@@ -74,11 +74,11 @@ class ServicesViewModel
         _services.value = services
     }
 
-    private fun onServiceDeleted(deletedServiceId: String){
+    private fun onServiceDeleted(deletedServiceId: String) {
         val services = _services.value
         if (services != null) {
-            for (curService in services){
-                if (curService.id == deletedServiceId){
+            for (curService in services) {
+                if (curService.id == deletedServiceId) {
                     val pos = services.indexOf(curService)
                     services.removeAt(pos)
                     break
@@ -88,12 +88,13 @@ class ServicesViewModel
         _services.value = services
     }
 
-    private fun onDatabaseError(exception: Exception){
+    private fun onDatabaseError(exception: Exception) {
         intError.value = exception
     }
 
     init {
         listenerId = dbRepository.startListenToServices(
-            ::onServiceInserted, ::onServiceUpdated, ::onServiceDeleted, ::onDatabaseError)
+            ::onServiceInserted, ::onServiceUpdated, ::onServiceDeleted, ::onDatabaseError
+        )
     }
 }

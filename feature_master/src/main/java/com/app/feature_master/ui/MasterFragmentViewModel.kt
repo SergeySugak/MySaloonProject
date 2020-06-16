@@ -18,9 +18,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class MasterFragmentViewModel
-    @Inject constructor(appState: AppStateManager,
-                        private val saloonFactory: SaloonFactory,
-                        private val dbRepository: DbRepository): MSFragmentViewModel(appState) {
+@Inject constructor(
+    appState: AppStateManager,
+    private val saloonFactory: SaloonFactory,
+    private val dbRepository: DbRepository
+) : MSFragmentViewModel(appState) {
 
     private val intMasterInfoSaveState = StatefulMutableLiveData<Boolean>()
     val masterInfoSaveState: StatefulLiveData<Boolean> = intMasterInfoSaveState
@@ -38,7 +40,7 @@ class MasterFragmentViewModel
 
     }
 
-    fun setMasterServices(services: List<ChoosableSaloonService>){
+    fun setMasterServices(services: List<ChoosableSaloonService>) {
         intMasterServices.value = saloonFactory.convertToSaloonServices(services)
     }
 
@@ -46,12 +48,15 @@ class MasterFragmentViewModel
         viewModelScope.launch(Dispatchers.IO) {
             intMasterInfoSaveState.postValue(
                 run {
-                    val master = saloonFactory.createSaloonMaster(masterId, name, description, portfolioUrl)
+                    val master =
+                        saloonFactory.createSaloonMaster(masterId, name, description, portfolioUrl)
                     val result = dbRepository.saveMasterInfo(master)
                     if (result is Result.Success) {
                         masterId = master.id
-                        dbRepository.saveMasterServicesInfo(master.id,
-                            intMasterServices.value ?: emptyList())
+                        dbRepository.saveMasterServicesInfo(
+                            master.id,
+                            intMasterServices.value ?: emptyList()
+                        )
                         result.data
                     } else {
                         intError.postValue((result as Result.Error).exception)
@@ -62,22 +67,21 @@ class MasterFragmentViewModel
         }
     }
 
-    private suspend fun loadMasterInfo(){
-            val masterResult = dbRepository.loadMasterInfo(masterId)
-            if (masterResult is Result.Success) {
-                intMasterInfo.postValue(masterResult.data)
-            } else {
-                intError.postValue((masterResult as Result.Error).exception)
-            }
+    private suspend fun loadMasterInfo() {
+        val masterResult = dbRepository.loadMasterInfo(masterId)
+        if (masterResult is Result.Success) {
+            intMasterInfo.postValue(masterResult.data)
+        } else {
+            intError.postValue((masterResult as Result.Error).exception)
+        }
     }
 
     private suspend fun loadMasterServices() {
         if (!TextUtils.isEmpty(masterId)) {
             val masterServicesResult = dbRepository.getServices(masterId)
-            if (masterServicesResult is Result.Success){
+            if (masterServicesResult is Result.Success) {
                 intMasterServices.postValue(masterServicesResult.data)
-            }
-            else {
+            } else {
                 intError.postValue((masterServicesResult as Result.Error).exception)
             }
         }

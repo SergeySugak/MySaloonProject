@@ -4,6 +4,6 @@ import com.app.mscoremodels.saloon.SaloonMaster
 
 interface MastersAdapter {
     fun setItems(items: List<SaloonMaster>)
-    fun setOnMasterClickListener(onMasterClick: (master: SaloonMaster)->Unit)
-    fun setOnMasterDeleteListener(onDeleteMaster: (master: SaloonMaster)->Unit)
+    fun setOnMasterClickListener(onMasterClick: (master: SaloonMaster) -> Unit)
+    fun setOnMasterDeleteListener(onDeleteMaster: (master: SaloonMaster) -> Unit)
 }

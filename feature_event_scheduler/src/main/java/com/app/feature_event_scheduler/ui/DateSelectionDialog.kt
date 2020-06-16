@@ -1,8 +1,6 @@
 package com.app.feature_event_scheduler.ui
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.View
 import android.widget.CalendarView
 import androidx.appcompat.widget.Toolbar
@@ -17,7 +15,7 @@ import com.app.mscorebase.ui.MSBottomSheetDialogFragment
 import java.util.*
 import javax.inject.Inject
 
-class DateSelectionDialog: MSBottomSheetDialogFragment<DateAndTimeSelectionViewModel>() {
+class DateSelectionDialog : MSBottomSheetDialogFragment<DateAndTimeSelectionViewModel>() {
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory
         protected set
@@ -39,20 +37,21 @@ class DateSelectionDialog: MSBottomSheetDialogFragment<DateAndTimeSelectionViewM
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getViewModel()?.let{
-            calendarView.setDate(it.calendar.value!!.timeInMillis, true,  true)
+        getViewModel()?.let {
+            calendarView.setDate(it.calendar.value!!.timeInMillis, true, true)
         }
-        calendarView.setOnDateChangeListener{ _, year, month, dayOfMonth ->
+        calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
             getViewModel()?.setDate(year, month, dayOfMonth)
         }
         toolBar.inflateMenu(R.menu.date_time_selection_menu)
         toolBar.menu.findItem(R.id.menu_ok).setOnMenuItemClickListener { _ ->
-            if (targetFragment is EventDateTimeReceiver){
+            if (targetFragment is EventDateTimeReceiver) {
                 (targetFragment as EventDateTimeReceiver)
                     .setEventDate(
                         getViewModel()!!.calendar.value!!.get(Calendar.YEAR),
                         getViewModel()!!.calendar.value!!.get(Calendar.MONTH),
-                        getViewModel()!!.calendar.value!!.get(Calendar.DAY_OF_MONTH))
+                        getViewModel()!!.calendar.value!!.get(Calendar.DAY_OF_MONTH)
+                    )
             }
             dismiss()
             true
@@ -64,18 +63,26 @@ class DateSelectionDialog: MSBottomSheetDialogFragment<DateAndTimeSelectionViewM
     }
 
     override fun createViewModel(savedInstanceState: Bundle?) =
-        ViewModelProvider(requireActivity(), providerFactory).get(DateAndTimeSelectionViewModel::class.java)
+        ViewModelProvider(
+            requireActivity(),
+            providerFactory
+        ).get(DateAndTimeSelectionViewModel::class.java)
 
-    override fun onViewModelCreated(viewModel: DateAndTimeSelectionViewModel, savedInstanceState: Bundle?) {
+    override fun onViewModelCreated(
+        viewModel: DateAndTimeSelectionViewModel,
+        savedInstanceState: Bundle?
+    ) {
         val calendar = requireArguments()[CALENDAR] as Calendar
-        viewModel.setDate(calendar.get(Calendar.YEAR),
+        viewModel.setDate(
+            calendar.get(Calendar.YEAR),
             calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH))
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
     }
 
     override fun onStartObservingViewModel(viewModel: DateAndTimeSelectionViewModel) {}
 
-    companion object{
+    companion object {
         const val CALENDAR = "CALENDAR"
 
         fun newInstance(calendar: Calendar): DateSelectionDialog {

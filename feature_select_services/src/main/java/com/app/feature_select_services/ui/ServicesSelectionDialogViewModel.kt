@@ -17,11 +17,12 @@ import java.util.*
 import javax.inject.Inject
 
 class ServicesSelectionDialogViewModel
-    @Inject constructor(appState: AppStateManager,
-                        adapter: ServicesAdapter,
-                        private val dbRepository: DbRepository,
-                        private val saloonFactory: SaloonFactory
-    ): MSChoiceDialogFragmentViewModel<ChoosableSaloonService, String?>(appState, adapter) {
+@Inject constructor(
+    appState: AppStateManager,
+    adapter: ServicesAdapter,
+    private val dbRepository: DbRepository,
+    private val saloonFactory: SaloonFactory
+) : MSChoiceDialogFragmentViewModel<ChoosableSaloonService, String?>(appState, adapter) {
 
     private var masterServices = emptyList<SaloonService>()
 
@@ -29,11 +30,12 @@ class ServicesSelectionDialogViewModel
         viewModelScope.launch(Dispatchers.IO) {
             val allServicesResult = dbRepository.getServices()
             if (allServicesResult is Result.Success) {
-                val choosable = saloonFactory.createChoosableServices(allServicesResult.data,
-                    masterServices)
-                    withContext(Dispatchers.Main){setChoices(choosable)}
-            }
-            else {
+                val choosable = saloonFactory.createChoosableServices(
+                    allServicesResult.data,
+                    masterServices
+                )
+                withContext(Dispatchers.Main) { setChoices(choosable) }
+            } else {
                 intError.postValue((allServicesResult as Result.Error).exception)
             }
         }

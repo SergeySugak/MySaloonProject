@@ -6,10 +6,12 @@ import com.app.msa_db_repo.repository.di.DbRepositoryModule
 import com.app.msa_scopes.scopes.FeatureScope
 import dagger.Component
 
-@Component(modules = [ServicesFeatureViewModelsModule::class,
-    ServicesFeatureModule::class,
-    DbRepositoryModule::class],
-    dependencies = [ServicesFeatureDependencies::class])
+@Component(
+    modules = [ServicesFeatureViewModelsModule::class,
+        ServicesFeatureModule::class,
+        DbRepositoryModule::class],
+    dependencies = [ServicesFeatureDependencies::class]
+)
 @FeatureScope
 interface ServicesFeatureComponent {
     fun inject(servicesFragment: ServicesFragment)

@@ -1,4 +1,5 @@
 package com.app.msa_auth_repo.repository.auth
+
 import com.app.mscorebase.common.Result
 
 interface AuthRepository {

@@ -72,7 +72,7 @@ abstract class MSFragment<VM : MSFragmentViewModel> :
     /*
     Реализация должна выглядеть как-нибудь типа
     viewModel.viewModelEventSender.observe(this, viewModelEvent -> {
-        if (viewModelEvent.isOneTimer()){
+        if (viewModelEvent.isOneTimer()) {
             if (viewModelEvent.isProcessed()) {
                 return;
             }
@@ -249,8 +249,8 @@ abstract class MSFragment<VM : MSFragmentViewModel> :
 
     override fun clearViewModelInstanceState() {
         viewModel.clearInstanceState()
-        for (fragment in childFragmentManager.fragments){
-            if (fragment is ViewModelHolder<*>){
+        for (fragment in childFragmentManager.fragments) {
+            if (fragment is ViewModelHolder<*>) {
                 fragment.clearViewModelInstanceState()
             }
         }

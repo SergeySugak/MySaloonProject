@@ -7,7 +7,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import com.app.feature_event_scheduler.ui.EventSchedulerFragment
-import com.app.feature_event_scheduler.ui.EventSchedulerFragment.Companion.ARG_EDIT_EVENT_ID
 import com.app.feature_master.ui.MasterFragment
 import com.app.feature_master.ui.MasterFragment.Companion.ARG_EDIT_MASTER_ID
 import com.app.feature_select_master.ui.MasterSelectionDialog
@@ -24,7 +23,7 @@ import com.app.mscoremodels.saloon.ChoosableSaloonService
 import com.app.mscoremodels.saloon.SaloonService
 import javax.inject.Inject
 
-class AppNavigatorImpl @Inject constructor(): AppNavigator {
+class AppNavigatorImpl @Inject constructor() : AppNavigator {
     override fun navigateToAuthActivity(from: Context) {
         val intent = Intent(from, AuthActivity::class.java)
         ContextCompat.startActivity(from, intent, bundleOf())
@@ -35,12 +34,18 @@ class AppNavigatorImpl @Inject constructor(): AppNavigator {
         ContextCompat.startActivity(from, intent, bundleOf())
     }
 
-    override fun navigateToNewServiceFragment(targetFragment: Fragment, requestCode: Int, tag: String?){
+    override fun navigateToNewServiceFragment(
+        targetFragment: Fragment,
+        requestCode: Int,
+        tag: String?
+    ) {
         navigateToEditServiceFragment(targetFragment, "", requestCode, tag)
     }
 
-    override fun navigateToEditServiceFragment(targetFragment: Fragment, serviceId: String,
-                                      requestCode: Int, tag: String?){
+    override fun navigateToEditServiceFragment(
+        targetFragment: Fragment, serviceId: String,
+        requestCode: Int, tag: String?
+    ) {
         val newServiceFragment = ServiceFragment.newInstance().apply {
             retainInstance = true
             setTargetFragment(targetFragment, requestCode)
@@ -51,12 +56,18 @@ class AppNavigatorImpl @Inject constructor(): AppNavigator {
         showDialogFragment(targetFragment, newServiceFragment, tag)
     }
 
-    override fun navigateToNewMasterFragment(targetFragment: Fragment, requestCode: Int, tag: String?){
+    override fun navigateToNewMasterFragment(
+        targetFragment: Fragment,
+        requestCode: Int,
+        tag: String?
+    ) {
         navigateToEditMasterFragment(targetFragment, "", requestCode, tag)
     }
 
-    override fun navigateToEditMasterFragment(targetFragment: Fragment, masterId: String,
-                                               requestCode: Int, tag: String?){
+    override fun navigateToEditMasterFragment(
+        targetFragment: Fragment, masterId: String,
+        requestCode: Int, tag: String?
+    ) {
         val newServiceFragment = MasterFragment.newInstance().apply {
             retainInstance = true
             setTargetFragment(targetFragment, requestCode)
@@ -67,12 +78,18 @@ class AppNavigatorImpl @Inject constructor(): AppNavigator {
         showDialogFragment(targetFragment, newServiceFragment, tag)
     }
 
-    override fun navigateToNewEventFragment(targetFragment: Fragment, requestCode: Int, tag: String?){
+    override fun navigateToNewEventFragment(
+        targetFragment: Fragment,
+        requestCode: Int,
+        tag: String?
+    ) {
         navigateToEditEventFragment(targetFragment, "", requestCode, tag)
     }
 
-    override fun navigateToEditEventFragment(targetFragment: Fragment, eventId: String,
-                                    requestCode: Int, tag: String?){
+    override fun navigateToEditEventFragment(
+        targetFragment: Fragment, eventId: String,
+        requestCode: Int, tag: String?
+    ) {
         val newServiceFragment = EventSchedulerFragment.newInstance(eventId).apply {
             retainInstance = true
             setTargetFragment(targetFragment, requestCode)
@@ -80,19 +97,23 @@ class AppNavigatorImpl @Inject constructor(): AppNavigator {
         showDialogFragment(targetFragment, newServiceFragment, tag)
     }
 
-    override fun navigateToSelectServicesFragment(targetFragment: Fragment,
-                                                  title: String, payload: String?,
-                                                  selectedItems: List<SaloonService>,
-                                                  listener: OnChoiceItemsSelectedListener<ChoosableSaloonService, String?>) {
+    override fun navigateToSelectServicesFragment(
+        targetFragment: Fragment,
+        title: String, payload: String?,
+        selectedItems: List<SaloonService>,
+        listener: OnChoiceItemsSelectedListener<ChoosableSaloonService, String?>
+    ) {
         val fragment = ServicesSelectionDialog.newInstance(title, payload, selectedItems, listener)
         showDialogFragment(targetFragment, fragment, "")
     }
 
-    override fun navigateToSelectMasterFragment(targetFragment: Fragment,
-                                                title: String,
-                                                payload: String?,
-                                                requiredServices: List<SaloonService>,
-                                                listener: OnChoiceItemsSelectedListener<ChoosableSaloonMaster, String?>){
+    override fun navigateToSelectMasterFragment(
+        targetFragment: Fragment,
+        title: String,
+        payload: String?,
+        requiredServices: List<SaloonService>,
+        listener: OnChoiceItemsSelectedListener<ChoosableSaloonMaster, String?>
+    ) {
         val fragment = MasterSelectionDialog.newInstance(title, payload, requiredServices, listener)
         showDialogFragment(targetFragment, fragment, "")
     }

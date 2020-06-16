@@ -12,7 +12,8 @@ import static com.app.lint_checks.kotlin.NoStateHolderMethodsDetector.ISSUE;
 
 public class Registry extends IssueRegistry {
 
-    public Registry() {}
+    public Registry() {
+    }
 
     @SuppressWarnings("UnstableApiUsage")
     @NotNull

@@ -6,7 +6,7 @@ import com.app.mscorebase.ui.MSActivityViewModel
 import javax.inject.Inject
 
 class MainActivityViewModel
-    @Inject constructor(appState: AppStateManager): MSActivityViewModel(appState){
+@Inject constructor(appState: AppStateManager) : MSActivityViewModel(appState) {
 
     override fun restoreState(writer: StateWriter) {
 

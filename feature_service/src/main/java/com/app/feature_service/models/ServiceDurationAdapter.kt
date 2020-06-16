@@ -5,4 +5,5 @@ import com.app.mscorebase.ui.dialogs.choicedialog.SimpleChoiceAdapter
 import com.app.mscoremodels.saloon.ChoosableServiceDuration
 import javax.inject.Inject
 
-class ServiceDurationAdapter @Inject constructor(): SimpleChoiceAdapter<ChoosableServiceDuration>(ChoiceMode.cmSingle)
+class ServiceDurationAdapter @Inject constructor() :
+    SimpleChoiceAdapter<ChoosableServiceDuration>(ChoiceMode.cmSingle)

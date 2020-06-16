@@ -8,16 +8,18 @@ import java.io.Serializable
 //Стандартные layout
 //android.R.layout.simple_list_item_single_choice
 //android.R.layout.simple_list_item_multiple_choice
-abstract class BaseRecyclerChoiceAdapter<T: ChoiceItem<out Serializable>,
-                                         H: RecyclerView.ViewHolder>
-    (val choiceMode: ChoiceMode,
-     @LayoutRes val layoutResId: Int): RecyclerView.Adapter<H>() {
+abstract class BaseRecyclerChoiceAdapter<T : ChoiceItem<out Serializable>,
+        H : RecyclerView.ViewHolder>
+    (
+    val choiceMode: ChoiceMode,
+    @LayoutRes val layoutResId: Int
+) : RecyclerView.Adapter<H>() {
 
     private val items = mutableListOf<T>()
     var checkedPosition = 0
         private set
 
-    fun setItems(newItems: List<T>){
+    fun setItems(newItems: List<T>) {
         this.items.clear()
         this.items.addAll(newItems)
         notifyDataSetChanged()

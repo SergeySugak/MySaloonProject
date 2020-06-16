@@ -72,9 +72,9 @@ def dagger_version = '2.28'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    api project( ':mscorebase')
+    api project(':mscorebase')
     api project(':mscoremodels')
-    api project( ':navigation_api')
+    api project(':navigation_api')
     implementation project(':repository_auth')
     implementation project(':repository_db')
     implementation project(':feature_main')

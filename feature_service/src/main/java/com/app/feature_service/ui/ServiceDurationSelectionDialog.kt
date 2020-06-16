@@ -12,7 +12,8 @@ import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
 import com.app.mscoremodels.saloon.ChoosableServiceDuration
 import javax.inject.Inject
 
-class ServiceDurationSelectionDialog: MSChoiceDialogFragment<ChoosableServiceDuration, ServiceDurationSelectionDialogViewModel, Int?>() {
+class ServiceDurationSelectionDialog :
+    MSChoiceDialogFragment<ChoosableServiceDuration, ServiceDurationSelectionDialogViewModel, Int?>() {
 
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory
@@ -28,7 +29,10 @@ class ServiceDurationSelectionDialog: MSChoiceDialogFragment<ChoosableServiceDur
     }
 
     override fun createViewModel(savedInstanceState: Bundle?): ServiceDurationSelectionDialogViewModel {
-        return ViewModelProvider(this, providerFactory).get(ServiceDurationSelectionDialogViewModel::class.java)
+        return ViewModelProvider(
+            this,
+            providerFactory
+        ).get(ServiceDurationSelectionDialogViewModel::class.java)
     }
 
     override fun onViewModelCreated(
@@ -42,7 +46,7 @@ class ServiceDurationSelectionDialog: MSChoiceDialogFragment<ChoosableServiceDur
     override fun onStartObservingViewModel(viewModel: ServiceDurationSelectionDialogViewModel) {
         super.onStartObservingViewModel(viewModel)
         viewModel.error.observe(this, Observer { error ->
-            if (!viewModel.error.isHandled){
+            if (!viewModel.error.isHandled) {
                 MessageDialogFragment.showError(this, error, false)
                 viewModel.error.isHandled = true
             }
@@ -50,8 +54,10 @@ class ServiceDurationSelectionDialog: MSChoiceDialogFragment<ChoosableServiceDur
     }
 
     companion object {
-        fun newInstance(title: String, durationId: Int?,
-                        resultListener: OnChoiceItemsSelectedListener<ChoosableServiceDuration, Int?>): ServiceDurationSelectionDialog {
+        fun newInstance(
+            title: String, durationId: Int?,
+            resultListener: OnChoiceItemsSelectedListener<ChoosableServiceDuration, Int?>
+        ): ServiceDurationSelectionDialog {
             val args = Bundle();
             val fragment = ServiceDurationSelectionDialog()
             fragment.retainInstance = true

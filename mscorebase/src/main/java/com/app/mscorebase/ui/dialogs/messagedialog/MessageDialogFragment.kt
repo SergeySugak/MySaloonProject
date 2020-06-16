@@ -12,10 +12,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import com.app.mscorebase.R
 import com.app.mscorebase.ui.dialogs.DialogButtonClickListener
 import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter.Buttons
-import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter.WhichButton
-import com.app.mscorebase.R
 import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter.Companion.ICON_ERROR
 import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter.Companion.ICON_INFO
 import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter.Companion.ICON_QUESTION
@@ -27,6 +26,7 @@ import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter.Compa
 import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter.Companion.THREE_BUTTONS_YNC
 import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter.Companion.TWO_BUTTONS
 import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter.Companion.TWO_BUTTONS_YN
+import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter.WhichButton
 import com.app.mscorebase.utils.getStackTraceAsString
 
 @SuppressLint("WrongConstant")
@@ -295,37 +295,37 @@ class MessageDialogFragment : DialogFragment(),
         fun display(from: Fragment, newFragment: MessageDialogFragment, tag: String?) {
             DialogFragmentPresenterImpl()
                 .display(
-                from,
-                newFragment,
-                if (TextUtils.isEmpty(tag)) FRAGMENT_TAG else tag
-            )
+                    from,
+                    newFragment,
+                    if (TextUtils.isEmpty(tag)) FRAGMENT_TAG else tag
+                )
         }
 
         fun display(from: Fragment, newFragment: MessageDialogFragment) {
             DialogFragmentPresenterImpl()
                 .display(
-                from,
-                newFragment,
+                    from,
+                    newFragment,
                     FRAGMENT_TAG
-            )
+                )
         }
 
         fun display(from: FragmentActivity, newFragment: MessageDialogFragment, tag: String?) {
             DialogFragmentPresenterImpl()
                 .display(
-                from,
-                newFragment,
-                if (TextUtils.isEmpty(tag)) FRAGMENT_TAG else tag
-            )
+                    from,
+                    newFragment,
+                    if (TextUtils.isEmpty(tag)) FRAGMENT_TAG else tag
+                )
         }
 
         fun display(from: FragmentActivity, newFragment: MessageDialogFragment) {
             DialogFragmentPresenterImpl()
                 .display(
-                from,
-                newFragment,
+                    from,
+                    newFragment,
                     FRAGMENT_TAG
-            )
+                )
         }
 
         fun hide(from: Fragment) {
@@ -733,20 +733,20 @@ class MessageDialogFragment : DialogFragment(),
             )
         }
 
-////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////
         fun showMessage(
             activity: FragmentActivity,
             titleResID: Int,
             messageResID: Int
         ) {
-    showMessage(
-        activity,
-        activity.getString(titleResID),
-        activity.getString(messageResID),
-        ICON_INFO,
-        REQUEST_CODE_NONE,
-        ONE_BUTTON
-    )
+            showMessage(
+                activity,
+                activity.getString(titleResID),
+                activity.getString(messageResID),
+                ICON_INFO,
+                REQUEST_CODE_NONE,
+                ONE_BUTTON
+            )
         }
 
         fun showMessage(

@@ -70,6 +70,6 @@
         <item name="min_7_15">435</item>
         <item name="min_7_30">450</item>
         <item name="min_7_45">465</item>
-        <item name="min_8_0">480 </item>
+        <item name="min_8_0">480</item>
     </integer-array>
 </resources>

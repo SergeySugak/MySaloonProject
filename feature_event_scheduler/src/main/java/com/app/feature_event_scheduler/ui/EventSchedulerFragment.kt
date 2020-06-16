@@ -30,6 +30,7 @@ class EventSchedulerFragment : MSDialogFragment<EventSchedulerViewModel>(), Even
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory
         protected set
+
     @Inject
     lateinit var appNavigator: AppNavigator
         protected set
@@ -61,19 +62,25 @@ class EventSchedulerFragment : MSDialogFragment<EventSchedulerViewModel>(), Even
                 dialog?.dismiss()
             }
         services = view.findViewById(R.id.services)
-        services.setOnClickListener{
+        services.setOnClickListener {
             appNavigator.navigateToSelectServicesFragment(
                 this,
                 getString(R.string.str_required_services),
                 getViewModel()?.masterId,
                 getViewModel()?.services?.value ?: emptyList(),
-                object: OnChoiceItemsSelectedListener<ChoosableSaloonService, String?> {
-                    override fun onChoiceItemsSelected(selections: List<ChoosableSaloonService>, payload: String?){
+                object : OnChoiceItemsSelectedListener<ChoosableSaloonService, String?> {
+                    override fun onChoiceItemsSelected(
+                        selections: List<ChoosableSaloonService>,
+                        payload: String?
+                    ) {
                         getViewModel()?.setServices(selections)
                     }
+
                     override fun onNoItemSelected(payload: String?) {}
                     override fun writeToParcel(dest: Parcel?, flags: Int) {}
-                    override fun describeContents(): Int {return 0}
+                    override fun describeContents(): Int {
+                        return 0
+                    }
                 }
             )
         }
@@ -84,13 +91,19 @@ class EventSchedulerFragment : MSDialogFragment<EventSchedulerViewModel>(), Even
                 getString(R.string.str_master_selection),
                 getViewModel()?.masterId,
                 getViewModel()?.services?.value ?: emptyList(),
-                object: OnChoiceItemsSelectedListener<ChoosableSaloonMaster, String?> {
-                    override fun onChoiceItemsSelected(selections: List<ChoosableSaloonMaster>, payload: String?){
+                object : OnChoiceItemsSelectedListener<ChoosableSaloonMaster, String?> {
+                    override fun onChoiceItemsSelected(
+                        selections: List<ChoosableSaloonMaster>,
+                        payload: String?
+                    ) {
                         getViewModel()?.setMaster(selections)
                     }
+
                     override fun onNoItemSelected(payload: String?) {}
                     override fun writeToParcel(dest: Parcel?, flags: Int) {}
-                    override fun describeContents(): Int {return 0}
+                    override fun describeContents(): Int {
+                        return 0
+                    }
                 }
             )
         }
@@ -112,14 +125,16 @@ class EventSchedulerFragment : MSDialogFragment<EventSchedulerViewModel>(), Even
     override fun onStart() {
         super.onStart()
         val dlg = dialog as AlertDialog?
-        if (dlg != null){
+        if (dlg != null) {
             val ok = dlg.getButton(Dialog.BUTTON_POSITIVE)
-            ok.setOnClickListener{ _ ->
+            ok.setOnClickListener { _ ->
                 val clientName = dlg.findViewById<EditText>(R.id.client_name)
                 val clientPhone = dlg.findViewById<EditText>(R.id.client_phone)
                 val clientEmail = dlg.findViewById<EditText>(R.id.client_email)
-                getViewModel()?.setClientInfo(clientName?.text.toString()?:"",
-                    clientPhone?.text.toString()?:"", clientEmail?.text.toString()?:"")
+                getViewModel()?.setClientInfo(
+                    clientName?.text.toString() ?: "",
+                    clientPhone?.text.toString() ?: "", clientEmail?.text.toString() ?: ""
+                )
                 getViewModel()?.saveEventInfo(services.text.toString())
             }
         }
@@ -128,29 +143,33 @@ class EventSchedulerFragment : MSDialogFragment<EventSchedulerViewModel>(), Even
     override fun createViewModel(savedInstanceState: Bundle?) =
         ViewModelProvider(this, providerFactory).get(EventSchedulerViewModel::class.java)
 
-    override fun onViewModelCreated(viewModel: EventSchedulerViewModel, savedInstanceState: Bundle?) {
+    override fun onViewModelCreated(
+        viewModel: EventSchedulerViewModel,
+        savedInstanceState: Bundle?
+    ) {
         super.onViewModelCreated(viewModel, savedInstanceState)
         viewModel.loadEvent(requireArguments()[ARG_EDIT_EVENT_ID] as String)
     }
 
     override fun onStartObservingViewModel(viewModel: EventSchedulerViewModel) {
         viewModel.error.observe(this, Observer { error ->
-            if (!viewModel.error.isHandled){
+            if (!viewModel.error.isHandled) {
                 MessageDialogFragment.showError(this, error, false)
                 viewModel.error.isHandled = true
             }
         })
 
         viewModel.calendar.observe(this, Observer { calendar ->
-            val formatter = SimpleDateFormat(getString(R.string.str_date_format), Locale.getDefault())
+            val formatter =
+                SimpleDateFormat(getString(R.string.str_date_format), Locale.getDefault())
             date.setText(formatter.format(calendar.time))
             formatter.applyPattern(getString(R.string.str_time_format))
             time.setText(formatter.format(calendar.time))
         })
 
         viewModel.services.observe(this, Observer { items ->
-            if (!viewModel.services.isHandled){
-                if (::services.isInitialized){
+            if (!viewModel.services.isHandled) {
+                if (::services.isInitialized) {
                     services.setText(items.joinToString())
                     viewModel.services.isHandled = true
                 }
@@ -158,8 +177,8 @@ class EventSchedulerFragment : MSDialogFragment<EventSchedulerViewModel>(), Even
         })
 
         viewModel.master.observe(this, Observer { item ->
-            if (!viewModel.master.isHandled){
-                if (::master.isInitialized){
+            if (!viewModel.master.isHandled) {
+                if (::master.isInitialized) {
                     master.setText(item.name)
                     viewModel.master.isHandled = true
                 }
