@@ -25,7 +25,8 @@ class ScheduleFragment : MSFragment<ScheduleViewModel>() {
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory
         protected set
-    private val loading: ProgressBar by lazy { requireActivity().findViewById<ProgressBar>(R.id.loading) }
+    private val loading: ProgressBar by lazy { requireView().findViewById<ProgressBar>(R.id.loading) }
+    private val schedulerView: SchedulerView by lazy { requireView().findViewById<SchedulerView>(R.id.schedule_view) }
 
     override val layoutId = R.layout.schedule_fragment
 
@@ -43,7 +44,6 @@ class ScheduleFragment : MSFragment<ScheduleViewModel>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val schedulerView = view.findViewById<SchedulerView>(R.id.schedule_view)
         schedulerView.setSchedulerViewListener(object : SchedulerViewListener {
             override fun onDateTimeRangeChanged(from: Calendar, to: Calendar) {
                 getViewModel()?.notifier?.onNext(Pair(from, to))
@@ -52,45 +52,6 @@ class ScheduleFragment : MSFragment<ScheduleViewModel>() {
         val fromDate = schedulerView.getFirstDrawableDateTime()
         val toDate = schedulerView.getLastDrawableDateTime(fromDate)
         getViewModel()?.loadData(fromDate, toDate)
-//        schedulerView.setEvents(listOf(object : SchedulerEvent {
-//            override val id = "1"
-//            override val dateTimeStart =
-//                Calendar.getInstance().apply { set(Calendar.HOUR_OF_DAY, 9) }
-//            override val dateTimeFinish =
-//                (dateTimeStart.clone() as Calendar).apply { add(Calendar.HOUR_OF_DAY, 2) }
-//            override val header = "long header text"
-//            override val text = "test descr"
-//            override val color =
-//                getViewModel()?.eventColorizer?.getRandomColor(view.context) ?: Color.WHITE
-//        },
-//            object : SchedulerEvent {
-//                override val id = "2"
-//                override val dateTimeStart = Calendar.getInstance().apply {
-//                    set(Calendar.HOUR_OF_DAY, 9)
-//                    set(Calendar.MINUTE, 30)
-//                }
-//                override val dateTimeFinish =
-//                    (dateTimeStart.clone() as Calendar).apply { add(Calendar.HOUR_OF_DAY, 1) }
-//                override val header = "header text"
-//                override val text = "test descr 2"
-//                override val color =
-//                    getViewModel()?.eventColorizer?.getRandomColor(view.context) ?: Color.WHITE
-//            },
-//            object : SchedulerEvent {
-//                override val id = "2"
-//                override val dateTimeStart = Calendar.getInstance().apply {
-//                    add(Calendar.DATE, 2)
-//                    set(Calendar.HOUR_OF_DAY, 11)
-//                    set(Calendar.MINUTE, 30)
-//                }
-//                override val dateTimeFinish =
-//                    (dateTimeStart.clone() as Calendar).apply { add(Calendar.HOUR_OF_DAY, 1) }
-//                override val header = "header text 3"
-//                override val text = "test descr 3"
-//                override val color =
-//                    getViewModel()?.eventColorizer?.getRandomColor(view.context) ?: Color.WHITE
-//            }
-//        ))
         schedulerView.setEventClickListener(object : SchedulerEventClickListener {
             override fun onSchedulerEventClickListener(event: SchedulerEvent) {
                 MessageDialogFragment.showMessage(
@@ -111,6 +72,13 @@ class ScheduleFragment : MSFragment<ScheduleViewModel>() {
 
         viewModel.isInProgress.observe(this, Observer {
             loading.visibility = if (it) View.VISIBLE else View.GONE
+        })
+
+        viewModel.newEventsLoaded.observe(this, Observer { events ->
+            if (!viewModel.newEventsLoaded.isHandled){
+                schedulerView.addEvents(events)
+                viewModel.newEventsLoaded.isHandled = true
+            }
         })
     }
 

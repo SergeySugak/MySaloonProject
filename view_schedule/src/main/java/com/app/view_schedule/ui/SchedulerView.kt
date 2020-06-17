@@ -757,6 +757,13 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
         postInvalidate()
     }
 
+    fun addEvents(events: List<SchedulerEvent>){
+        val list = events.toMutableList()
+        list.removeAll(this.events)
+        this.events.addAll(list)
+        postInvalidate()
+    }
+
     fun setEventClickListener(eventClickListener: SchedulerEventClickListener) {
         this.eventClickListener = eventClickListener
     }
