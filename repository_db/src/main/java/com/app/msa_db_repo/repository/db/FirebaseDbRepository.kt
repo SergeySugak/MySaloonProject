@@ -1,6 +1,7 @@
 package com.app.msa_db_repo.repository.db
 
 import android.text.TextUtils
+import android.util.Log
 import com.app.msa.repository_db.R
 import com.app.mscorebase.appstate.AppStateManager
 import com.app.mscorebase.common.Result
@@ -217,8 +218,10 @@ class FirebaseDbRepository
                 }
             }
             val client = rEvent?.client ?: saloonFactory.createSaloonClient("", "", "")
-            val whenStart = rEvent?.whenStart ?: Calendar.getInstance()
-            val whenFinish = rEvent?.whenFinish ?: Calendar.getInstance()
+            val whenStart = Calendar.getInstance()
+            whenStart.timeInMillis = rEvent?.whenStart ?: whenStart.timeInMillis
+            val whenFinish = Calendar.getInstance()
+            whenFinish.timeInMillis = rEvent?.whenFinish ?: whenFinish.timeInMillis
             val description = rEvent?.description ?: ""
             val state = rEvent?.state ?: SaloonEventState.esError
             val event = saloonFactory.createSaloonEvent(

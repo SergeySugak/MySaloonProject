@@ -12,8 +12,8 @@ class RepositoryEvent constructor() {
     lateinit var masterId: String
     lateinit var serviceIds: List<String>
     lateinit var client: SaloonClient
-    lateinit var whenStart: Calendar
-    lateinit var whenFinish: Calendar
+    var whenStart: Long = 0
+    var whenFinish: Long = 0
     var description: String = ""
     var state: SaloonEventState = SaloonEventState.esScheduled
 
@@ -22,8 +22,8 @@ class RepositoryEvent constructor() {
         this.masterId = event.master.id
         this.serviceIds = event.services.map { s -> s.id }
         this.client = event.client
-        this.whenStart = event.whenStart
-        this.whenFinish = event.whenFinish
+        this.whenStart = event.whenStart.timeInMillis
+        this.whenFinish = event.whenFinish.timeInMillis
         this.description = event.description
         this.state = event.state
     }

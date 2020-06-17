@@ -356,7 +356,7 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
     fun getLastDrawableDateTime(firstDrawableDate: Calendar): Calendar {
         val result = firstDrawableDate.clone() as Calendar
         with(result) {
-            add(DATE, fitDays)
+            add(DATE, fitDays) //Первый и последний день могут быть видны частично
             add(HOUR_OF_DAY, fitHours)
             set(MILLISECOND, 999)
         }

@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ProgressBar
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.app.feature_schedule.R
@@ -24,6 +25,7 @@ class ScheduleFragment : MSFragment<ScheduleViewModel>() {
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory
         protected set
+    private val loading: ProgressBar by lazy { requireActivity().findViewById<ProgressBar>(R.id.loading) }
 
     override val layoutId = R.layout.schedule_fragment
 
@@ -107,6 +109,9 @@ class ScheduleFragment : MSFragment<ScheduleViewModel>() {
             }
         })
 
+        viewModel.isInProgress.observe(this, Observer {
+            loading.visibility = if (it) View.VISIBLE else View.GONE
+        })
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
