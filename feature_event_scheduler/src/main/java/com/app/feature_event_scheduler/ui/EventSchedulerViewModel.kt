@@ -10,6 +10,7 @@ import com.app.mscorebase.appstate.StateWriter
 import com.app.mscorebase.common.Result
 import com.app.mscorebase.livedata.StatefulLiveData
 import com.app.mscorebase.livedata.StatefulMutableLiveData
+import com.app.mscorebase.ui.Colorizer
 import com.app.mscorebase.ui.MSFragmentViewModel
 import com.app.mscoremodels.saloon.*
 import kotlinx.coroutines.Dispatchers
@@ -20,8 +21,9 @@ import javax.inject.Inject
 class EventSchedulerViewModel @Inject constructor(
     private val appState: AppStateManager,
     private val saloonFactory: SaloonFactory,
-    private val dbRepository: DbRepository
-) : MSFragmentViewModel(appState) {
+    private val dbRepository: DbRepository,
+    private val eventColorizer: Colorizer
+    ) : MSFragmentViewModel(appState) {
 
     private val intCalendar = StatefulMutableLiveData<Calendar>()
     val calendar: LiveData<Calendar> = intCalendar
@@ -118,7 +120,8 @@ class EventSchedulerViewModel @Inject constructor(
                     val event = saloonFactory.createSaloonEvent(
                         eventId,
                         master.value!!, services.value!!, client,
-                        whenStart, whenFinish, description
+                        whenStart, whenFinish, description,
+                        eventColorizer.getRandomColor(appState.context)
                     )
                     val result = dbRepository.saveEventInfo(event)
                     if (result is Result.Success) {

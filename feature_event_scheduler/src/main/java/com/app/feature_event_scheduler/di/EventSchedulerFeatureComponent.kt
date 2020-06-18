@@ -8,7 +8,7 @@ import com.app.msa_scopes.scopes.FeatureScope
 import dagger.Component
 
 @Component(
-    modules = [
+    modules = [EventSchedulerFeatureBindsModule::class,
         EventSchedulerFeatureViewModelsModule::class],
     dependencies = [EventSchedulerFeatureDependencies::class]
 )

@@ -9,6 +9,12 @@ import com.app.feature_schedule.ui.ScheduleFragment
 import com.app.feature_services.ui.ServicesFragment
 import com.app.msa.main.R
 import com.app.msa_main.di.DaggerMainFeatureComponent
+import com.app.msa_main.di.MainFeatureModule.NEW_EVENT_FRAGMENT_TAG
+import com.app.msa_main.di.MainFeatureModule.NEW_MASTER_FRAGMENT_TAG
+import com.app.msa_main.di.MainFeatureModule.NEW_SERVICE_FRAGMENT_TAG
+import com.app.msa_main.di.MainFeatureModule.REQ_NEW_EVENT
+import com.app.msa_main.di.MainFeatureModule.REQ_NEW_MASTER
+import com.app.msa_main.di.MainFeatureModule.REQ_NEW_SERVICE
 import com.app.msa_nav_api.navigation.AppNavigator
 import com.app.mscorebase.di.ComponentDependenciesProvider
 import com.app.mscorebase.di.HasComponentDependencies
@@ -177,12 +183,6 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
     }
 
     companion object {
-        const val NEW_MASTER_FRAGMENT_TAG = "NewMasterDialogFragment"
-        const val NEW_SERVICE_FRAGMENT_TAG = "NewServiceDialogFragment"
-        const val NEW_EVENT_FRAGMENT_TAG = "NewEventDialogFragment"
-        const val REQ_NEW_MASTER = 10001
-        const val REQ_NEW_SERVICE = 10002
-        const val REQ_NEW_EVENT = 10003
         val ID_SELECTED_ITEM_ID = MainActivity::class.java.simpleName + "_ID_SELECTED_ITEM_ID"
     }
 }

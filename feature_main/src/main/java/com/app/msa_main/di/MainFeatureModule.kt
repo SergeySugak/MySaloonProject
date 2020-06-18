@@ -3,45 +3,56 @@ package com.app.msa_main.di
 import com.app.feature_masters.ui.MastersFragment
 import com.app.feature_schedule.ui.ScheduleFragment
 import com.app.feature_services.ui.ServicesFragment
+import com.app.msa_main.main.MainActivity
 import com.app.msa_scopes.scopes.FeatureScope
 import dagger.Module
 import dagger.Provides
 
 @Module
 object MainFeatureModule {
+    const val NEW_MASTER_FRAGMENT_TAG = "NewMasterDialogFragment"
+    const val NEW_SERVICE_FRAGMENT_TAG = "NewServiceDialogFragment"
+    const val NEW_EVENT_FRAGMENT_TAG = "NewEventDialogFragment"
+    const val REQ_NEW_MASTER = 10001
+    const val REQ_NEW_SERVICE = 10002
+    const val REQ_NEW_EVENT = 10003
+
     //Надо бы понять почему для scoped штук требуется
     //сохранять статические инстансы - почему это не происходит автоматически?
-    private lateinit var savedMastersFragment: MastersFragment
-    private lateinit var savedServicesFragment: ServicesFragment
-    private lateinit var savedScheduleFragment: ScheduleFragment
+    private var savedMastersFragment: MastersFragment? = null
+    private var savedServicesFragment: ServicesFragment? = null
+    private var savedScheduleFragment: ScheduleFragment? = null
+
+    fun reset() {
+        savedMastersFragment = null
+        savedServicesFragment = null
+        savedScheduleFragment = null
+    }
 
     @Provides
     @FeatureScope
     fun provideMastersFragment(): MastersFragment {
-        if (!::savedMastersFragment.isInitialized) {
+        if (savedMastersFragment == null) {
             savedMastersFragment = MastersFragment.newInstance()
-            savedMastersFragment.retainInstance = true
         }
-        return savedMastersFragment
+        return savedMastersFragment!!
     }
 
     @Provides
     @FeatureScope
     fun provideServicesFragment(): ServicesFragment {
-        if (!::savedServicesFragment.isInitialized) {
+        if (savedServicesFragment == null) {
             savedServicesFragment = ServicesFragment.newInstance()
-            savedServicesFragment.retainInstance = true
         }
-        return savedServicesFragment
+        return savedServicesFragment!!
     }
 
     @Provides
     @FeatureScope
     fun provideScheduleFragment(): ScheduleFragment {
-        if (!::savedScheduleFragment.isInitialized) {
+        if (savedScheduleFragment == null) {
             savedScheduleFragment = ScheduleFragment.newInstance()
-            savedScheduleFragment.retainInstance = true
         }
-        return savedScheduleFragment
+        return savedScheduleFragment!!
     }
 }

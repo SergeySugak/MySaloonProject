@@ -57,16 +57,16 @@ class MastersViewModel
         _masters.value = masters
     }
 
-    private fun onMasterUpdated(changedMasterId: String, Master: SaloonMaster) {
+    private fun onMasterUpdated(changedMasterId: String, master: SaloonMaster) {
         var masters = _masters.value
         if (masters == null) {
             masters = mutableListOf()
-            masters.add(Master)
+            masters.add(master)
         } else {
             for (curMaster in masters) {
                 if (curMaster.id == changedMasterId) {
                     val pos = masters.indexOf(curMaster)
-                    masters[pos] = Master
+                    masters[pos] = master
                     break
                 }
             }

@@ -6,7 +6,7 @@ import com.app.msa_scopes.scopes.FeatureScope
 import dagger.Component
 
 @Component(
-    modules = [ScheduleFeatureBindsModule::class,
+    modules = [
         ScheduleFeatureViewModelsModule::class],
     dependencies = [ScheduleFeatureDependencies::class]
 )

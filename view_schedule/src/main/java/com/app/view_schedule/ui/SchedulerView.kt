@@ -752,6 +752,8 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
         postInvalidate()
     }
 
+    fun getEvents(): List<SchedulerEvent> = events
+
     fun removeEvent(event: SchedulerEvent){
         events.remove(event)
         postInvalidate()

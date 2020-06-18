@@ -8,7 +8,6 @@ import com.app.mscorebase.appstate.StateWriter
 import com.app.mscorebase.common.Result
 import com.app.mscorebase.livedata.StatefulLiveData
 import com.app.mscorebase.livedata.StatefulMutableLiveData
-import com.app.mscorebase.ui.Colorizer
 import com.app.mscorebase.ui.MSFragmentViewModel
 import com.app.mscoremodels.saloon.SaloonEvent
 import com.app.view_schedule.api.SchedulerEvent
@@ -16,34 +15,38 @@ import com.google.gson.Gson
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.PublishSubject
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import kotlinx.coroutines.*
 
 class ScheduleViewModel
 @Inject constructor(
     private val appState: AppStateManager,
-    val eventColorizer: Colorizer,
     private val dbRepository: DbRepository,
     private val gson: Gson
 ) : MSFragmentViewModel(appState) {
+    private val listenerId: String
     private val eventsMap = ConcurrentHashMap<String, MutableList<SaloonEvent>>()
     private var subscription: Disposable
     private val dateFormatter = SimpleDateFormat(KEY_FORMAT, Locale.getDefault())
     val notifier: PublishSubject<Pair<Calendar, Calendar>> = PublishSubject.create()
     private val intNewEventsLoaded = StatefulMutableLiveData<List<SchedulerEvent>>()
     val newEventsLoaded: StatefulLiveData<List<SchedulerEvent>> = intNewEventsLoaded
+    private val intEventDeleted = StatefulMutableLiveData<String>()
+    val eventDeleted: StatefulLiveData<String> = intEventDeleted
+
+    private fun getKey(date: Calendar) = dateFormatter.format(date.time)
+
+    private fun daysBetween(from: Calendar, to: Calendar) =
+        TimeUnit.DAYS.convert(to.time.time - from.time.time, TimeUnit.MILLISECONDS).toInt()
 
     fun loadData(from: Calendar, to: Calendar, force: Boolean = false) {
-        val daysBetween = TimeUnit.DAYS.convert(to.time.time - from.time.time, TimeUnit.MILLISECONDS).toInt()
         setInProgress(true)
         val newEvents = mutableListOf<SchedulerEvent>()
+        val daysBetween = daysBetween(from, to)
         val jobs = mutableListOf<Deferred<*>>()
         viewModelScope.launch(Dispatchers.IO){
             for (i in 0 .. daysBetween){
@@ -51,7 +54,7 @@ class ScheduleViewModel
                     val date = from.clone() as Calendar
                     date.add(Calendar.DATE, i)
                     val events: MutableList<SaloonEvent>
-                    val key = dateFormatter.format(date.time)
+                    val key = getKey(date)
                     if (!eventsMap.containsKey(key) || force) {
                         val requestResult = dbRepository.getEvents(date)
                         if (requestResult is Result.Success){
@@ -74,7 +77,7 @@ class ScheduleViewModel
                                             override val dateTimeFinish = event.whenFinish
                                             override val header = event.master.name
                                             override val text = event.services.joinToString()
-                                            override val color = eventColorizer.getRandomColor(appState.context)
+                                            override val color = event.color
                                         }
                                     })
                                 }
@@ -102,7 +105,36 @@ class ScheduleViewModel
         }
     }
 
+    private fun onEventInserted(event: SaloonEvent) {
+        loadData(event.whenStart, event.whenStart, true)
+    }
+
+    private fun onEventUpdated(changedEventId: String, event: SaloonEvent) {
+        val key = getKey(event.whenStart)
+        if (eventsMap.contains(key)){
+            eventsMap[key] = mutableListOf()
+        }
+        loadData(event.whenStart, event.whenStart, true)
+    }
+
+    private fun onEventDeleted(deletedEventId: String) {
+        eventsMap.forEach{(_, v) ->
+            v.forEach{ event ->
+                if (event.id == deletedEventId){
+                    v.remove(event)
+                    intEventDeleted.value = deletedEventId
+                    return@onEventDeleted
+                }
+            }
+        }
+    }
+
+    private fun onDatabaseError(exception: Exception) {
+        intError.value = exception
+    }
+
     override fun onCleared() {
+        dbRepository.stopListeningToEvents(listenerId)
         subscription.dispose()
         super.onCleared()
     }
@@ -131,5 +163,8 @@ class ScheduleViewModel
                         },
                         { t -> intError.value = t}
             )
+        listenerId = dbRepository.startListenToEvents(
+            ::onEventInserted, ::onEventUpdated, ::onEventDeleted, ::onDatabaseError
+        )
     }
 }

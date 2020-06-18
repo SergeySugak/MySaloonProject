@@ -1,5 +1,6 @@
 package com.app.mscoremodels.saloon
 
+import androidx.annotation.ColorInt
 import java.util.*
 import javax.inject.Inject
 
@@ -23,10 +24,10 @@ class SaloonFactory @Inject constructor() {
     fun createSaloonEvent(
         id: String, master: SaloonMaster,
         services: List<SaloonService>, client: SaloonClient,
-        whenStart: Calendar, whenFinish: Calendar, description: String,
+        whenStart: Calendar, whenFinish: Calendar, description: String, @ColorInt color: Int,
         state: SaloonEventState = SaloonEventState.esScheduled
     ) =
-        SaloonEvent(id, master, services, client, whenStart, whenFinish, description, state)
+        SaloonEvent(id, master, services, client, whenStart, whenFinish, description, color, state)
 
     fun createServiceDuration(duration: Int?, name: String?) = ServiceDuration(duration, name)
     fun createServiceDuration(duration: ChoosableServiceDuration?) =

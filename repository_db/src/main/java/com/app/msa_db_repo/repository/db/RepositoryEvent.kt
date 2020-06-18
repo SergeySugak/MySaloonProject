@@ -1,8 +1,8 @@
 package com.app.msa_db_repo.repository.db
 
-import com.app.mscoremodels.saloon.SaloonClient
-import com.app.mscoremodels.saloon.SaloonEvent
-import com.app.mscoremodels.saloon.SaloonEventState
+import android.graphics.Color
+import androidx.annotation.ColorInt
+import com.app.mscoremodels.saloon.*
 import com.google.firebase.database.IgnoreExtraProperties
 import java.util.*
 
@@ -15,6 +15,7 @@ class RepositoryEvent constructor() {
     var whenStart: Long = 0
     var whenFinish: Long = 0
     var description: String = ""
+    @ColorInt var color: Int = Color.WHITE
     var state: SaloonEventState = SaloonEventState.esScheduled
 
     constructor(event: SaloonEvent) : this() {
@@ -25,6 +26,7 @@ class RepositoryEvent constructor() {
         this.whenStart = event.whenStart.timeInMillis
         this.whenFinish = event.whenFinish.timeInMillis
         this.description = event.description
+        this.color = event.color
         this.state = event.state
     }
 
@@ -41,6 +43,7 @@ class RepositoryEvent constructor() {
         if (whenStart != other.whenStart) return false
         if (whenFinish != other.whenFinish) return false
         if (description != other.description) return false
+        if (color != other.color) return false
         if (state != other.state) return false
 
         return true
@@ -54,6 +57,7 @@ class RepositoryEvent constructor() {
         result = 31 * result + whenStart.hashCode()
         result = 31 * result + whenFinish.hashCode()
         result = 31 * result + description.hashCode()
+        result = 31 * result + color.hashCode()
         result = 31 * result + state.hashCode()
         return result
     }

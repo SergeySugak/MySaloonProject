@@ -1,7 +1,7 @@
 package com.app.msa_db_repo.repository.db
 
+import android.graphics.Color
 import android.text.TextUtils
-import android.util.Log
 import com.app.msa.repository_db.R
 import com.app.mscorebase.appstate.AppStateManager
 import com.app.mscorebase.common.Result
@@ -10,6 +10,7 @@ import com.google.android.gms.tasks.Tasks
 import com.google.firebase.database.*
 import java.util.*
 import javax.inject.Inject
+import kotlinx.coroutines.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -126,7 +127,7 @@ class FirebaseDbRepository
         onDelete: (deletedServiceId: String) -> Unit,
         onError: (exception: Exception) -> Unit
     ): String {
-        return startListenToUpdates(servicesRoot, onInsert, onUpdate, onDelete, onError)
+        return startListenToUpdates<SaloonService, Unit>(servicesRoot, onInsert, onUpdate, onDelete, onError)
     }
 
     override fun stopListeningToServices(listenerId: String) {
@@ -180,7 +181,7 @@ class FirebaseDbRepository
         onDelete: (deletedMasterId: String) -> Unit,
         onError: (exception: Exception) -> Unit
     ): String {
-        return startListenToUpdates(mastersRoot, onInsert, onUpdate, onDelete, onError)
+        return startListenToUpdates<SaloonMaster, Unit>(mastersRoot, onInsert, onUpdate, onDelete, onError)
     }
 
     override fun stopListeningToMasters(listenerId: String) {
@@ -197,39 +198,40 @@ class FirebaseDbRepository
         if (queryResult is Result.Error) {
             return Result.Error(queryResult.exception)
         } else {
-            val rEvent = (queryResult as Result.Success).data
-            val masterId = rEvent?.masterId ?: ""
-            val masterResult = loadMasterInfo(masterId)
-            val master: SaloonMaster
-            if (masterResult is Result.Error) {
-                return Result.Error(masterResult.exception)
-            } else {
-                master = (masterResult as Result.Success).data ?: saloonFactory.createSaloonMaster(
-                    masterId,
-                    "",
-                    ""
-                )
-            }
-            val services = mutableListOf<SaloonService>()
-            rEvent?.serviceIds?.forEach { id ->
-                val serviceResult = loadServiceInfo(id)
-                if (serviceResult is Result.Success && serviceResult.data != null) {
-                    services.add(serviceResult.data!!)
-                }
-            }
-            val client = rEvent?.client ?: saloonFactory.createSaloonClient("", "", "")
-            val whenStart = Calendar.getInstance()
-            whenStart.timeInMillis = rEvent?.whenStart ?: whenStart.timeInMillis
-            val whenFinish = Calendar.getInstance()
-            whenFinish.timeInMillis = rEvent?.whenFinish ?: whenFinish.timeInMillis
-            val description = rEvent?.description ?: ""
-            val state = rEvent?.state ?: SaloonEventState.esError
-            val event = saloonFactory.createSaloonEvent(
-                rEvent?.id ?: "", master, services,
-                client, whenStart, whenFinish, description, state
-            )
-            return Result.Success(event)
+            return repositoryEventToSaloonEvent((queryResult as Result.Success).data)
         }
+    }
+
+    private suspend fun repositoryEventToSaloonEvent(event: RepositoryEvent?): Result<SaloonEvent?> {
+        val masterId = event?.masterId ?: ""
+        val masterResult = loadMasterInfo(masterId)
+        val master: SaloonMaster
+        if (masterResult is Result.Error) {
+            return Result.Error(masterResult.exception)
+        } else {
+            master = (masterResult as Result.Success).data ?: saloonFactory.createSaloonMaster(
+                masterId,
+                "",
+                ""
+            )
+        }
+        val services = mutableListOf<SaloonService>()
+        event?.serviceIds?.forEach { id ->
+            val serviceResult = loadServiceInfo(id)
+            if (serviceResult is Result.Success && serviceResult.data != null) {
+                services.add(serviceResult.data!!)
+            }
+        }
+        val client = event?.client ?: saloonFactory.createSaloonClient("", "", "")
+        val whenStart = Calendar.getInstance()
+        whenStart.timeInMillis = event?.whenStart ?: whenStart.timeInMillis
+        val whenFinish = Calendar.getInstance()
+        whenFinish.timeInMillis = event?.whenFinish ?: whenFinish.timeInMillis
+        val description = event?.description ?: ""
+        val color = event?.color ?: Color.WHITE
+        val state = event?.state ?: SaloonEventState.esError
+        return Result.Success(saloonFactory.createSaloonEvent(event?.id ?: "", master, services,
+            client, whenStart, whenFinish, description, color, state))
     }
 
     private fun indexEvent(event: SaloonEvent): Result<Boolean> {
@@ -310,6 +312,34 @@ class FirebaseDbRepository
         }
     }
 
+    suspend fun firstNumber(): Int {
+        delay(3_000) // 3 seconds delay
+        return 5
+    }
+
+    private fun onInsertRepositoryTransformer(event: RepositoryEvent, onInsert: (SaloonEvent) -> Unit): Unit {
+        CoroutineScope(Dispatchers.IO).launch {
+            val result = repositoryEventToSaloonEvent(event)
+            if (result is Result.Success){
+                withContext(Dispatchers.Main){onInsert(result.data!!)}
+            }
+            else {
+                throw (result as Result.Error).exception
+            }
+        }
+    }
+
+    private fun onUpdateRepositoryTransformer(event: RepositoryEvent, key: String, onUpdate: (String, SaloonEvent) -> Unit): Unit {
+        CoroutineScope(Dispatchers.IO).launch {
+            val result = repositoryEventToSaloonEvent(event)
+            if (result is Result.Success){
+                withContext(Dispatchers.Main){onUpdate(key, result.data!!)}
+            }
+            else {
+                throw (result as Result.Error).exception
+            }
+        }
+    }
 
     override fun startListenToEvents(
         onInsert: (event: SaloonEvent) -> Unit,
@@ -317,7 +347,8 @@ class FirebaseDbRepository
         onDelete: (deletedMasterId: String) -> Unit,
         onError: (exception: Exception) -> Unit
     ): String {
-        return startListenToUpdates(eventsRoot, onInsert, onUpdate, onDelete, onError)
+        return startListenToUpdates(eventsRoot, onInsert, onUpdate, onDelete, onError,
+            ::onInsertRepositoryTransformer, ::onUpdateRepositoryTransformer)
     }
 
     override fun stopListeningToEvents(listenerId: String) {
@@ -410,13 +441,15 @@ class FirebaseDbRepository
     //endregion
 
     //region helpers
-    private inline fun <reified T : Any>
+    private inline fun <reified T : Any, reified T2 : Any>
             startListenToUpdates(
         path: String,
-        crossinline onInsert: (item: T) -> Unit,
-        crossinline onUpdate: (updatedItemId: String, item: T) -> Unit,
-        crossinline onDelete: (deletedItemId: String) -> Unit,
-        crossinline onError: (exception: Exception) -> Unit
+        noinline onInsert: (item: T) -> Unit,
+        noinline onUpdate: (updatedItemId: String, item: T) -> Unit,
+        noinline onDelete: (deletedItemId: String) -> Unit,
+        noinline onError: (exception: Exception) -> Unit,
+        noinline onInsertTransformer: ((item: T2, (T) -> Unit) -> Unit)? = null,
+        noinline onUpdateTransformer: ((item: T2, String, (String, T) -> Unit) -> Unit)? = null
     ): String {
         val data = firebaseDb.getReference(path)
         val listenerId = UUID.randomUUID().toString()
@@ -425,15 +458,33 @@ class FirebaseDbRepository
             }
 
             override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
-                val item = dataSnapshot.getValue(T::class.java)
-                item?.let { onInsert(it) }
+                if (onInsertTransformer == null){
+                    val item = dataSnapshot.getValue(T::class.java)
+                    item?.let { onInsert(it) }
+                }
+                else {
+                    val item = dataSnapshot.getValue(T2::class.java)
+                    item?.let {
+                        onInsertTransformer(it, onInsert)
+                    }
+                }
             }
 
             override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
-                val item = dataSnapshot.getValue(T::class.java)
-                dataSnapshot.key?.let { key ->
-                    item?.let { item ->
-                        onUpdate(key, item)
+                if (onUpdateTransformer == null){
+                    val item = dataSnapshot.getValue(T::class.java)
+                    dataSnapshot.key?.let { key ->
+                        item?.let { item ->
+                            onUpdate(key, item)
+                        }
+                    }
+                }
+                else {
+                    val item = dataSnapshot.getValue(T2::class.java)
+                    dataSnapshot.key?.let { key ->
+                        item?.let { item ->
+                            onUpdateTransformer(item, key, onUpdate)
+                        }
                     }
                 }
             }

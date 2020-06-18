@@ -18,7 +18,7 @@
     <string name="str_date_and_time">Дата и время</string>
 
     <string name="str_date_format">dd.MM.yyyy</string>
-    <string name="str_time_format">hh:mm</string>
+    <string name="str_time_format">HH:mm</string>
     <string name="str_master_selection">Выбор мастера</string>
     <string name="str_master_empty">Необходимо указать мастера</string>
     <string name="str_services_empty">Необходимо указать требуемые услуги</string>

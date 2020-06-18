@@ -1,8 +1,6 @@
 package com.app.feature_schedule.ui
 
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.ProgressBar
 import androidx.lifecycle.Observer
@@ -78,6 +76,19 @@ class ScheduleFragment : MSFragment<ScheduleViewModel>() {
             if (!viewModel.newEventsLoaded.isHandled){
                 schedulerView.addEvents(events)
                 viewModel.newEventsLoaded.isHandled = true
+            }
+        })
+
+        viewModel.eventDeleted.observe(this, Observer { deletedEventId ->
+            if (!viewModel.eventDeleted.isHandled){
+                val events = schedulerView.getEvents()
+                events.forEach{ event ->
+                    if (event.id == deletedEventId){
+                        schedulerView.removeEvent(event)
+                        return@forEach
+                    }
+                }
+                viewModel.eventDeleted.isHandled = true
             }
         })
     }
