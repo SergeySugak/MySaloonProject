@@ -28,7 +28,6 @@ class ScheduleViewModel
     private val dbRepository: DbRepository,
     private val gson: Gson
 ) : MSFragmentViewModel(appState) {
-    private val listenerId: String
     private val eventsMap = ConcurrentHashMap<String, MutableList<SaloonEvent>>()
     private var subscription: Disposable
     private val dateFormatter = SimpleDateFormat(KEY_FORMAT, Locale.getDefault())
@@ -105,11 +104,11 @@ class ScheduleViewModel
         }
     }
 
-    private fun onEventInserted(event: SaloonEvent) {
+    fun onEventInserted(event: SaloonEvent) {
         loadData(event.whenStart, event.whenStart, true)
     }
 
-    private fun onEventUpdated(changedEventId: String, event: SaloonEvent) {
+    fun onEventUpdated(changedEventId: String, event: SaloonEvent) {
         val key = getKey(event.whenStart)
         if (eventsMap.contains(key)){
             eventsMap[key] = mutableListOf()
@@ -117,7 +116,7 @@ class ScheduleViewModel
         loadData(event.whenStart, event.whenStart, true)
     }
 
-    private fun onEventDeleted(deletedEventId: String) {
+    fun onEventDeleted(deletedEventId: String) {
         eventsMap.forEach{(_, v) ->
             v.forEach{ event ->
                 if (event.id == deletedEventId){
@@ -129,24 +128,14 @@ class ScheduleViewModel
         }
     }
 
-    private fun onDatabaseError(exception: Exception) {
-        intError.value = exception
-    }
-
     override fun onCleared() {
-        dbRepository.stopListeningToEvents(listenerId)
         subscription.dispose()
         super.onCleared()
     }
 
-    override fun restoreState(writer: StateWriter) {
-//        val state: Map<String, String?> = writer.readState(this)
-    }
+    override fun restoreState(writer: StateWriter) {}
 
-    override fun saveState(writer: StateWriter) {
-//        val state: MutableMap<String, String> = HashMap()
-//        writer.writeState(this, state)
-    }
+    override fun saveState(writer: StateWriter) {}
 
     companion object {
         private const val KEY_FORMAT = "dd.MM.yyyy"
@@ -163,8 +152,5 @@ class ScheduleViewModel
                         },
                         { t -> intError.value = t}
             )
-        listenerId = dbRepository.startListenToEvents(
-            ::onEventInserted, ::onEventUpdated, ::onEventDeleted, ::onDatabaseError
-        )
     }
 }

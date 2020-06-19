@@ -1,12 +1,15 @@
 package com.app.mscoremodels.saloon
 
 import android.graphics.Color
+import android.os.Parcel
+import android.os.Parcelable
 import androidx.annotation.ColorInt
 import com.google.firebase.database.IgnoreExtraProperties
+import kotlinx.android.parcel.Parcelize
 import java.util.*
 
 @IgnoreExtraProperties
-class SaloonEvent constructor() {
+class SaloonEvent constructor(): Parcelable {
     var id: String = ""
     lateinit var master: SaloonMaster
     lateinit var services: List<SaloonService>
@@ -67,5 +70,39 @@ class SaloonEvent constructor() {
 
     override fun toString(): String {
         return "SaloonEvent $description"
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(id)
+        parcel.writeParcelable(master, flags)
+        parcel.writeTypedList(services)
+        parcel.writeParcelable(client, flags)
+        parcel.writeString(description)
+        parcel.writeInt(color)
+        parcel.writeString(state.name)
+    }
+
+    constructor(parcel: Parcel) : this() {
+        id = parcel.readString()!!
+        master = parcel.readParcelable(SaloonMaster::class.java.classLoader)!!
+        services = parcel.createTypedArrayList(SaloonService)!!
+        client = parcel.readParcelable(SaloonClient::class.java.classLoader)!!
+        description = parcel.readString()!!
+        color = parcel.readInt()
+        state = SaloonEventState.valueOf(parcel.readString()!!)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<SaloonEvent> {
+        override fun createFromParcel(parcel: Parcel): SaloonEvent {
+            return SaloonEvent(parcel)
+        }
+
+        override fun newArray(size: Int): Array<SaloonEvent?> {
+            return arrayOfNulls(size)
+        }
     }
 }

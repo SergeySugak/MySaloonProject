@@ -51,10 +51,7 @@ class ServicesFragment : MSFragment<ServicesViewModel>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         servicesAdapter.setOnServiceClickListener { service ->
-            appNavigator.navigateToEditServiceFragment(
-                this, service.id, REQ_EDIT_SERVICE,
-                EDIT_SERVICE_FRAGMENT_TAG
-            )
+            appNavigator.navigateToEditServiceFragment(this, service.id)
         }
         servicesAdapter.setOnServiceDeleteListener { service ->
             MessageDialogFragment.showMessage(

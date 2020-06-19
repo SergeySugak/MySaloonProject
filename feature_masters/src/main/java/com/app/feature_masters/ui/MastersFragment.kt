@@ -40,10 +40,7 @@ class MastersFragment : MSFragment<MastersViewModel>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mastersAdapter.setOnMasterClickListener { master ->
-            appNavigator.navigateToEditMasterFragment(
-                this, master.id, REQ_EDIT_MASTER,
-                EDIT_MASTER_FRAGMENT_TAG
-            )
+            appNavigator.navigateToEditMasterFragment(this, master.id)
         }
         mastersAdapter.setOnMasterDeleteListener { master ->
             MessageDialogFragment.showMessage(

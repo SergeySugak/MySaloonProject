@@ -7,10 +7,12 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.app.feature_schedule.R
 import com.app.feature_schedule.di.DaggerScheduleFeatureComponent
+import com.app.msa_nav_api.navigation.AppNavigator
 import com.app.mscorebase.di.ViewModelProviderFactory
 import com.app.mscorebase.di.findComponentDependencies
 import com.app.mscorebase.ui.MSFragment
 import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
+import com.app.mscoremodels.saloon.SaloonEvent
 import com.app.view_schedule.api.SchedulerEvent
 import com.app.view_schedule.api.SchedulerEventClickListener
 import com.app.view_schedule.api.SchedulerViewListener
@@ -23,8 +25,25 @@ class ScheduleFragment : MSFragment<ScheduleViewModel>() {
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory
         protected set
+    @Inject
+    lateinit var appNavigator: AppNavigator
+
     private val loading: ProgressBar by lazy { requireView().findViewById<ProgressBar>(R.id.loading) }
     private val schedulerView: SchedulerView by lazy { requireView().findViewById<SchedulerView>(R.id.schedule_view) }
+
+    val eventSchedulerListener = object : AppNavigator.EventSchedulerListener{
+        override fun onAdded(event: SaloonEvent) {
+            getViewModel()?.onEventInserted(event)
+        }
+
+        override fun onUpdated(event: SaloonEvent) {
+            getViewModel()?.onEventUpdated(event.id, event)
+        }
+
+        override fun onDeleted(event: SaloonEvent) {
+            getViewModel()?.onEventDeleted(event.id)
+        }
+    }
 
     override val layoutId = R.layout.schedule_fragment
 
@@ -52,10 +71,8 @@ class ScheduleFragment : MSFragment<ScheduleViewModel>() {
         getViewModel()?.loadData(fromDate, toDate)
         schedulerView.setEventClickListener(object : SchedulerEventClickListener {
             override fun onSchedulerEventClickListener(event: SchedulerEvent) {
-                MessageDialogFragment.showMessage(
-                    this@ScheduleFragment,
-                    getString(R.string.title_information), event.header
-                )
+                appNavigator.navigateToEditEventFragment(this@ScheduleFragment, event.id,
+                    eventSchedulerListener)
             }
         })
     }

@@ -15,6 +15,7 @@ import com.app.mscorebase.ui.MSFragmentViewModel
 import com.app.mscoremodels.saloon.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
 
@@ -33,8 +34,8 @@ class EventSchedulerViewModel @Inject constructor(
     val services: StatefulLiveData<List<SaloonService>> = intServices
     private val intEventInfo = StatefulMutableLiveData<SaloonEvent>()
     val eventInfo: StatefulLiveData<SaloonEvent> = intEventInfo
-    private val intEventInfoSaveState = StatefulMutableLiveData<Boolean>()
-    val eventInfoSaveState: StatefulLiveData<Boolean> = intEventInfoSaveState
+    private val intEventInfoSaveState = StatefulMutableLiveData<ActionType>()
+    val eventInfoSaveState: StatefulLiveData<ActionType> = intEventInfoSaveState
 
     var masterId: String = ""
         private set
@@ -43,8 +44,6 @@ class EventSchedulerViewModel @Inject constructor(
     private var clientPhone: String = ""
         private set
     private var clientEmail: String = ""
-        private set
-    var eventId: String = ""
         private set
 
     fun setEventDate(year: Int, month: Int, day: Int) {
@@ -78,14 +77,28 @@ class EventSchedulerViewModel @Inject constructor(
         this.clientEmail = clientEmail
     }
 
-    fun loadEvent(eventId: String) {
-        this.eventId = eventId
-        if (!TextUtils.isEmpty(eventId)) {
-            return
+    fun loadEvent(id: String) {
+        if (!TextUtils.isEmpty(id)) {
+            setInProgress(true)
+            viewModelScope.launch(Dispatchers.IO) {
+                intEventInfo.postValue(
+                    run {
+                        val result = dbRepository.loadEventInfo(id)
+                        if (result is Result.Success) {
+                            stopProgress()
+                            result.data
+                        } else {
+                            intError.postValue((result as Result.Error).exception)
+                            stopProgress()
+                            null
+                        }
+                    }
+                )
+            }
         }
     }
 
-    fun saveEventInfo(description: String) {
+    fun saveEventInfo(action: ActionType, description: String = "") {
         if (intMaster.value == null) {
             intError.value =
                 Exception(appState.context.getString(R.string.str_master_empty))
@@ -101,42 +114,85 @@ class EventSchedulerViewModel @Inject constructor(
                 Exception(appState.context.getString(R.string.str_name_and_phone_empty))
             return
         }
-
+        setInProgress(true)
         viewModelScope.launch(Dispatchers.IO) {
             intEventInfoSaveState.postValue(
                 run {
-                    var duration = 0
-                    services.value!!.forEach {
-                        duration += it.duration?.duration ?: 0
-                    }
-                    val whenStart = calendar.value!!
-                    val whenFinish = whenStart.clone() as Calendar
-                    whenFinish.add(Calendar.MINUTE, duration)
-                    val client = saloonFactory.createSaloonClient(
-                        clientName ?: "",
-                        clientPhone ?: "",
-                        clientEmail ?: ""
-                    )
-                    val event = saloonFactory.createSaloonEvent(
-                        eventId,
-                        master.value!!, services.value!!, client,
-                        whenStart, whenFinish, description,
-                        eventColorizer.getRandomColor(appState.context)
-                    )
-                    val result = dbRepository.saveEventInfo(event)
-                    if (result is Result.Success) {
-                        eventId = event.id
-                        dbRepository.saveMasterServicesInfo(
-                            event.id,
-                            intServices.value ?: emptyList()
-                        )
-                        result.data
+                    if (action === ActionType.DELETE) {
+                        val event = eventInfo.value
+                        if (event != null) {
+                            val result = dbRepository.deleteEventInfo(eventInfo.value!!.id)
+                            if (result is Result.Success) {
+                                stopProgress()
+                                action
+                            } else {
+                                intError.postValue((result as Result.Error).exception)
+                                stopProgress()
+                                ActionType.ERROR
+                            }
+                        } else {
+                            ActionType.ERROR
+                        }
                     } else {
-                        intError.postValue((result as Result.Error).exception)
-                        false
+                        val event = createEvent(description)
+                        val result = dbRepository.saveEventInfo(event)
+                        if (result is Result.Success) {
+                            dbRepository.saveMasterServicesInfo(
+                                event.id,
+                                intServices.value ?: emptyList()
+                            )
+                            withContext(Dispatchers.Main){
+                                intEventInfo.value = event
+                            }
+                            stopProgress()
+                            action
+                        } else {
+                            intError.postValue((result as Result.Error).exception)
+                            stopProgress()
+                            ActionType.ERROR
+                        }
                     }
                 }
             )
+        }
+    }
+
+    suspend fun stopProgress(){
+        withContext(Dispatchers.Main) {
+            setInProgress(false)
+        }
+    }
+
+    private fun createEvent(description: String): SaloonEvent {
+        var duration = 0
+        services.value!!.forEach {
+            duration += it.duration?.duration ?: 0
+        }
+        val whenStart = calendar.value!!
+        val whenFinish = whenStart.clone() as Calendar
+        whenFinish.add(Calendar.MINUTE, duration)
+        val client = saloonFactory.createSaloonClient(
+            clientName ?: "",
+            clientPhone ?: "",
+            clientEmail ?: ""
+        )
+
+        return if (eventInfo.value == null) {
+            saloonFactory.createSaloonEvent(
+                "",
+                master.value!!, services.value!!, client,
+                whenStart, whenFinish, description,
+                eventColorizer.getRandomColor(appState.context)
+            )
+        } else {
+            val evt = eventInfo.value!!
+            evt.master = master.value!!
+            evt.services = services.value!!
+            evt.client = client
+            evt.whenStart = whenStart
+            evt.whenFinish = whenFinish
+            evt.description = description
+            evt
         }
     }
 

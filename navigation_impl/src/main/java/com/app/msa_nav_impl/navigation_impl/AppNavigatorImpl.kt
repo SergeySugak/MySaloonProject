@@ -20,6 +20,7 @@ import com.app.mscorebase.ui.dialogs.choicedialog.OnChoiceItemsSelectedListener
 import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenterImpl.Companion.showDialogFragment
 import com.app.mscoremodels.saloon.ChoosableSaloonMaster
 import com.app.mscoremodels.saloon.ChoosableSaloonService
+import com.app.mscoremodels.saloon.SaloonEvent
 import com.app.mscoremodels.saloon.SaloonService
 import javax.inject.Inject
 
@@ -34,67 +35,45 @@ class AppNavigatorImpl @Inject constructor() : AppNavigator {
         ContextCompat.startActivity(from, intent, bundleOf())
     }
 
-    override fun navigateToNewServiceFragment(
-        targetFragment: Fragment,
-        requestCode: Int,
-        tag: String?
-    ) {
-        navigateToEditServiceFragment(targetFragment, "", requestCode, tag)
+    override fun navigateToNewServiceFragment(targetFragment: Fragment) {
+        navigateToEditServiceFragment(targetFragment, "")
     }
 
-    override fun navigateToEditServiceFragment(
-        targetFragment: Fragment, serviceId: String,
-        requestCode: Int, tag: String?
-    ) {
+    override fun navigateToEditServiceFragment(targetFragment: Fragment, serviceId: String) {
         val newServiceFragment = ServiceFragment.newInstance().apply {
             retainInstance = true
-            setTargetFragment(targetFragment, requestCode)
             if (!TextUtils.isEmpty(serviceId)) {
                 arguments = bundleOf(Pair(ARG_EDIT_SERVICE_ID, serviceId))
             }
         }
-        showDialogFragment(targetFragment, newServiceFragment, tag)
+        showDialogFragment(targetFragment, newServiceFragment, newServiceFragment.javaClass.simpleName)
     }
 
-    override fun navigateToNewMasterFragment(
-        targetFragment: Fragment,
-        requestCode: Int,
-        tag: String?
-    ) {
-        navigateToEditMasterFragment(targetFragment, "", requestCode, tag)
+    override fun navigateToNewMasterFragment(targetFragment: Fragment) {
+        navigateToEditMasterFragment(targetFragment, "")
     }
 
-    override fun navigateToEditMasterFragment(
-        targetFragment: Fragment, masterId: String,
-        requestCode: Int, tag: String?
-    ) {
+    override fun navigateToEditMasterFragment(targetFragment: Fragment, masterId: String) {
         val newServiceFragment = MasterFragment.newInstance().apply {
             retainInstance = true
-            setTargetFragment(targetFragment, requestCode)
             if (!TextUtils.isEmpty(masterId)) {
                 arguments = bundleOf(Pair(ARG_EDIT_MASTER_ID, masterId))
             }
         }
-        showDialogFragment(targetFragment, newServiceFragment, tag)
+        showDialogFragment(targetFragment, newServiceFragment, newServiceFragment.javaClass.simpleName)
     }
 
-    override fun navigateToNewEventFragment(
-        targetFragment: Fragment,
-        requestCode: Int,
-        tag: String?
-    ) {
-        navigateToEditEventFragment(targetFragment, "", requestCode, tag)
+    override fun navigateToNewEventFragment(targetFragment: Fragment,
+                                            eventListener: AppNavigator.EventSchedulerListener?) {
+        navigateToEditEventFragment(targetFragment, "", eventListener)
     }
 
-    override fun navigateToEditEventFragment(
-        targetFragment: Fragment, eventId: String,
-        requestCode: Int, tag: String?
-    ) {
-        val newServiceFragment = EventSchedulerFragment.newInstance(eventId).apply {
+    override fun navigateToEditEventFragment(targetFragment: Fragment, id: String,
+                                             eventListener: AppNavigator.EventSchedulerListener?) {
+        val newServiceFragment = EventSchedulerFragment.newInstance(id, eventListener).apply {
             retainInstance = true
-            setTargetFragment(targetFragment, requestCode)
         }
-        showDialogFragment(targetFragment, newServiceFragment, tag)
+        showDialogFragment(targetFragment, newServiceFragment, newServiceFragment.javaClass.simpleName)
     }
 
     override fun navigateToSelectServicesFragment(

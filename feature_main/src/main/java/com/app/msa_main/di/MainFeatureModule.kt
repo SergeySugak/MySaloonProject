@@ -10,13 +10,6 @@ import dagger.Provides
 
 @Module
 object MainFeatureModule {
-    const val NEW_MASTER_FRAGMENT_TAG = "NewMasterDialogFragment"
-    const val NEW_SERVICE_FRAGMENT_TAG = "NewServiceDialogFragment"
-    const val NEW_EVENT_FRAGMENT_TAG = "NewEventDialogFragment"
-    const val REQ_NEW_MASTER = 10001
-    const val REQ_NEW_SERVICE = 10002
-    const val REQ_NEW_EVENT = 10003
-
     //Надо бы понять почему для scoped штук требуется
     //сохранять статические инстансы - почему это не происходит автоматически?
     private var savedMastersFragment: MastersFragment? = null

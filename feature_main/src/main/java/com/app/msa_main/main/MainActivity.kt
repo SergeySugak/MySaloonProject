@@ -9,12 +9,6 @@ import com.app.feature_schedule.ui.ScheduleFragment
 import com.app.feature_services.ui.ServicesFragment
 import com.app.msa.main.R
 import com.app.msa_main.di.DaggerMainFeatureComponent
-import com.app.msa_main.di.MainFeatureModule.NEW_EVENT_FRAGMENT_TAG
-import com.app.msa_main.di.MainFeatureModule.NEW_MASTER_FRAGMENT_TAG
-import com.app.msa_main.di.MainFeatureModule.NEW_SERVICE_FRAGMENT_TAG
-import com.app.msa_main.di.MainFeatureModule.REQ_NEW_EVENT
-import com.app.msa_main.di.MainFeatureModule.REQ_NEW_MASTER
-import com.app.msa_main.di.MainFeatureModule.REQ_NEW_SERVICE
 import com.app.msa_nav_api.navigation.AppNavigator
 import com.app.mscorebase.di.ComponentDependenciesProvider
 import com.app.mscorebase.di.HasComponentDependencies
@@ -23,6 +17,7 @@ import com.app.mscorebase.di.findComponentDependencies
 import com.app.mscorebase.ui.MSActivity
 import com.app.mscorebase.ui.MSActivityViewModel
 import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
+import com.app.mscoremodels.saloon.SaloonEvent
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import javax.inject.Inject
@@ -135,27 +130,15 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
     }
 
     private fun mastersFragmentFabAction() {
-        appNavigator.navigateToNewMasterFragment(
-            mastersFragment,
-            REQ_NEW_MASTER,
-            NEW_MASTER_FRAGMENT_TAG
-        )
+        appNavigator.navigateToNewMasterFragment(mastersFragment)
     }
 
     private fun servicesFragmentFabAction() {
-        appNavigator.navigateToNewServiceFragment(
-            servicesFragment,
-            REQ_NEW_SERVICE,
-            NEW_SERVICE_FRAGMENT_TAG
-        )
+        appNavigator.navigateToNewServiceFragment(servicesFragment)
     }
 
     private fun scheduleFragmentFabAction() {
-        appNavigator.navigateToNewEventFragment(
-            scheduleFragment,
-            REQ_NEW_EVENT,
-            NEW_EVENT_FRAGMENT_TAG
-        )
+        appNavigator.navigateToNewEventFragment(scheduleFragment, scheduleFragment.eventSchedulerListener)
     }
 
     override fun createViewModel(savedInstanceState: Bundle?): MSActivityViewModel {

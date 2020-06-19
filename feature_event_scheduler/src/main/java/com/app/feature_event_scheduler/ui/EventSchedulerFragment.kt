@@ -5,6 +5,8 @@ import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.os.Parcel
+import android.text.TextUtils
+import android.view.View.GONE
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
@@ -19,6 +21,7 @@ import com.app.mscorebase.di.findComponentDependencies
 import com.app.mscorebase.ui.MSDialogFragment
 import com.app.mscorebase.ui.dialogs.choicedialog.OnChoiceItemsSelectedListener
 import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
+import com.app.mscoremodels.saloon.ActionType
 import com.app.mscoremodels.saloon.ChoosableSaloonMaster
 import com.app.mscoremodels.saloon.ChoosableSaloonService
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -125,9 +128,10 @@ class EventSchedulerFragment : MSDialogFragment<EventSchedulerViewModel>(), Even
     override fun onStart() {
         super.onStart()
         val dlg = dialog as AlertDialog?
+        val eventId = requireArguments()[ARG_EDIT_EVENT_ID] as String
         if (dlg != null) {
-            val ok = dlg.getButton(Dialog.BUTTON_POSITIVE)
-            ok.setOnClickListener { _ ->
+            var button = dlg.getButton(Dialog.BUTTON_POSITIVE)
+            button.setOnClickListener { _ ->
                 val clientName = dlg.findViewById<EditText>(R.id.client_name)
                 val clientPhone = dlg.findViewById<EditText>(R.id.client_phone)
                 val clientEmail = dlg.findViewById<EditText>(R.id.client_email)
@@ -135,7 +139,17 @@ class EventSchedulerFragment : MSDialogFragment<EventSchedulerViewModel>(), Even
                     clientName?.text.toString() ?: "",
                     clientPhone?.text.toString() ?: "", clientEmail?.text.toString() ?: ""
                 )
-                getViewModel()?.saveEventInfo(services.text.toString())
+                val action = if (!TextUtils.isEmpty(eventId)) ActionType.EDIT else ActionType.ADD
+                getViewModel()?.saveEventInfo(action, services.text.toString())
+            }
+            button = dlg.getButton(Dialog.BUTTON_NEUTRAL)
+            if (TextUtils.isEmpty(eventId)) {
+                button.visibility = GONE
+            }
+            else {
+                button.setOnClickListener { _ ->
+                    getViewModel()?.saveEventInfo(ActionType.DELETE)
+                }
             }
         }
     }
@@ -187,9 +201,15 @@ class EventSchedulerFragment : MSDialogFragment<EventSchedulerViewModel>(), Even
 
         viewModel.eventInfoSaveState.observe(this, Observer {
             if (!viewModel.eventInfoSaveState.isHandled) {
-                if (it) {
-                    val intent = Intent()
-                    targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
+                val listener = requireArguments()[ARG_EVENT_LISTENER] as AppNavigator.EventSchedulerListener?
+                val event = viewModel.eventInfo.value
+                if (listener != null && event != null) {
+                    when (it){
+                        ActionType.ADD -> listener.onAdded(event)
+                        ActionType.EDIT -> listener.onUpdated(event)
+                        ActionType.DELETE -> listener.onDeleted(event)
+                        else -> {}
+                    }
                     dismiss()
                 }
                 viewModel.eventInfoSaveState.isHandled = true
@@ -207,12 +227,14 @@ class EventSchedulerFragment : MSDialogFragment<EventSchedulerViewModel>(), Even
 
     companion object {
         const val ARG_EDIT_EVENT_ID = "ARG_EDIT_EVENT_ID"
+        const val ARG_EVENT_LISTENER = "ARG_EVENT_LISTENER"
         private const val REQ_SET_DATE = 10001
         private const val REQ_SET_TIME = 10002
 
-        fun newInstance(eventId: String): EventSchedulerFragment {
+        fun newInstance(id: String, eventListener: AppNavigator.EventSchedulerListener?): EventSchedulerFragment {
             val result = EventSchedulerFragment()
-            result.arguments = bundleOf(Pair(ARG_EDIT_EVENT_ID, eventId))
+            result.arguments = bundleOf(Pair(ARG_EDIT_EVENT_ID, id),
+            Pair(ARG_EVENT_LISTENER, eventListener))
             return result
         }
     }

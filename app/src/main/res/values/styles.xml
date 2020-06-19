@@ -6,9 +6,10 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/design_default_color_error</item>
-        <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
+        <item name="materialAlertDialogTheme">@style/MaterialAlertDialogTheme</item>
+        <item name="alertDialogTheme">@style/AlertDialogTheme</item>
         <item name="dialogPreferredPadding">@dimen/dialog_content_padding</item>
-        <item name="android:buttonStyle">@style/DialogPositiveButtonStyle</item>
+        <item name="android:buttonStyle">@style/MaterialDialogPositiveButtonStyle</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -20,16 +21,31 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="AlertDialogTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+    <style name="MaterialAlertDialogTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
         <item name="colorSurface">#FFFFFF</item>
         <item name="materialAlertDialogTitlePanelStyle">@style/DialogTitlePaneStyle</item>
         <item name="materialAlertDialogTitleTextStyle">@style/DialogTitleTextStyle</item>
-        <item name="buttonBarPositiveButtonStyle">@style/DialogPositiveButtonStyle</item>
-        <item name="buttonBarNegativeButtonStyle">@style/DialogNegativeButtonStyle</item>
-        <item name="buttonBarNeutralButtonStyle">@style/DialogNeutralButtonStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/MaterialDialogPositiveButtonStyle</item>
+        <item name="buttonBarNegativeButtonStyle">@style/MaterialDialogNegativeButtonStyle</item>
+        <item name="buttonBarNeutralButtonStyle">@style/MaterialDialogNeutralButtonStyle</item>
         <item name="android:windowMinWidthMajor">90%</item>
         <item name="android:windowMinWidthMinor">90%</item>
     </style>
+
+    <style name="AlertDialogTheme" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="buttonBarNegativeButtonStyle">@style/MaterialDialogNegativeButtonStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/MaterialDialogPositiveButtonStyle</item>
+        <item name="buttonBarNeutralButtonStyle">@style/MaterialDialogNeutralButtonStyle</item>
+    </style>
+
+    <style name="NegativeButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">#f00</item>
+    </style>
+
+    <style name="PositiveButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">#00f</item>
+    </style>
+
 
     <style name="DialogTitlePaneStyle" parent="MaterialAlertDialog.MaterialComponents.Title.Panel">
         <item name="android:layout_gravity">center_vertical</item>
@@ -43,7 +59,7 @@
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Title</item>
     </style>
 
-    <style name="DialogPositiveButtonStyle" parent="Widget.MaterialComponents.Button">
+    <style name="MaterialDialogPositiveButtonStyle" parent="Widget.MaterialComponents.Button">
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textAppearance">?android:attr/textAppearanceButton</item>
         <item name="android:layout_marginLeft">@dimen/dialog_button_left_margin</item>
@@ -53,7 +69,7 @@
         <item name="backgroundTint">@color/btn_bg_color_selector</item>
     </style>
 
-    <style name="DialogNegativeButtonStyle" parent="Widget.MaterialComponents.Button">
+    <style name="MaterialDialogNegativeButtonStyle" parent="Widget.MaterialComponents.Button">
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textAppearance">?android:attr/textAppearanceButton</item>
         <item name="android:layout_marginLeft">@dimen/dialog_button_left_margin</item>
@@ -63,7 +79,7 @@
         <item name="backgroundTint">@color/btn_bg_color_selector</item>
     </style>
 
-    <style name="DialogNeutralButtonStyle" parent="Widget.MaterialComponents.Button">
+    <style name="MaterialDialogNeutralButtonStyle" parent="Widget.MaterialComponents.Button">
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textAppearance">?android:attr/textAppearanceButton</item>
         <item name="android:layout_marginLeft">@dimen/dialog_button_left_margin</item>

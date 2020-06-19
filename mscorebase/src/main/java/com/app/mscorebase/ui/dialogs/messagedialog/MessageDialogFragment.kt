@@ -37,7 +37,7 @@ class MessageDialogFragment : DialogFragment(),
         super.onCreate(savedInstanceState)
         isCancelable = false
         if (arguments != null && TextUtils.isEmpty(
-                arguments!!.getString(
+                requireArguments().getString(
                     ARGUMENT_TITLE
                 )
             )
@@ -47,17 +47,16 @@ class MessageDialogFragment : DialogFragment(),
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        assert(context != null)
         val builder =
-            AlertDialog.Builder(context!!)
+            AlertDialog.Builder(requireContext())
                 .setMessage(
-                    if (arguments != null) arguments!!.getCharSequence(
+                    if (arguments != null) requireArguments().getCharSequence(
                         ARGUMENT_MESSAGE
                     ) else null
                 )
         @DrawableRes var iconResId =
-            arguments!!.getInt(ARGUMENT_ICON)
-        when (arguments!!.getInt(ARGUMENT_ICON)) {
+            requireArguments().getInt(ARGUMENT_ICON)
+        when (requireArguments().getInt(ARGUMENT_ICON)) {
             ICON_INFO -> iconResId = R.drawable.ic_info
             ICON_QUESTION -> iconResId =
                 R.drawable.ic_question
@@ -66,14 +65,13 @@ class MessageDialogFragment : DialogFragment(),
             else -> {
             }
         }
-        if (arguments!!.getInt(ARGUMENT_ICON) != NO_ICON) {
+        if (requireArguments().getInt(ARGUMENT_ICON) != NO_ICON) {
             builder.setIcon(iconResId)
         }
-        if (!TextUtils.isEmpty(arguments!!.getString(ARGUMENT_TITLE))) {
-            builder.setTitle(arguments!!.getString(ARGUMENT_TITLE))
+        if (!TextUtils.isEmpty(requireArguments().getString(ARGUMENT_TITLE))) {
+            builder.setTitle(requireArguments().getString(ARGUMENT_TITLE))
         }
-        val buttons = arguments!!.getInt(ARGUMENT_BUTTONS)
-        when (buttons) {
+        when (requireArguments().getInt(ARGUMENT_BUTTONS)) {
             THREE_BUTTONS -> {
                 builder.setNeutralButton(android.R.string.cancel, this)
                 builder.setNeutralButton(R.string.cancel, this)
@@ -120,8 +118,8 @@ class MessageDialogFragment : DialogFragment(),
             listener.onClickDialogButton(
                 dialog,
                 which,
-                arguments!!.getInt(ARGUMENT_REQUEST_CODE),
-                arguments!!.getParcelable(ARGUMENT_PARAMS)
+                requireArguments().getInt(ARGUMENT_REQUEST_CODE),
+                requireArguments().getParcelable(ARGUMENT_PARAMS)
             )
         }
     }
@@ -261,7 +259,7 @@ class MessageDialogFragment : DialogFragment(),
             if (stackTrace) {
                 messageText = messageText + "\n\n--- Stack trace ---\n" + getStackTraceAsString(ex)
             }
-            Log.e("ERROR", messageText)
+            Log.e("ERROR", messageText ?: "")
             return newInstance(
                 context.getString(R.string.title_error),
                 messageText,
@@ -458,7 +456,7 @@ class MessageDialogFragment : DialogFragment(),
             }
             val f =
                 newInstance(
-                    fragment.context!!,
+                    fragment.requireContext(),
                     t,
                     requestCode,
                     stackTrace
@@ -507,7 +505,7 @@ class MessageDialogFragment : DialogFragment(),
             }
             val f =
                 newInstance(
-                    fragment.context!!,
+                    fragment.requireContext(),
                     t,
                     requestCode,
                     params

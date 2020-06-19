@@ -508,7 +508,6 @@ class FirebaseDbRepository
             ?: valueListenersMap[listenerId]?.let { data.removeEventListener(it) }
     }
 
-
     private suspend fun Query.runSuspendExistenceCheckQuery(): Result<Boolean> =
         suspendCoroutine { continuation ->
             this.addListenerForSingleValueEvent(object : ValueEventListener {
