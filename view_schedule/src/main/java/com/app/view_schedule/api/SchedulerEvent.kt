@@ -3,10 +3,10 @@ package com.app.view_schedule.api
 import java.util.*
 
 interface SchedulerEvent {
-    val id: String
-    val dateTimeStart: Calendar
-    val dateTimeFinish: Calendar
-    val header: String
-    val text: String
-    val color: Int
+    fun getEventId(): String
+    fun getDateTimeStart(): Calendar
+    fun getDateTimeFinish(): Calendar
+    fun getHeader(): String
+    fun getText(): String
+    fun getEventColor(): Int
 }

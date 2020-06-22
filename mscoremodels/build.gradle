@@ -30,6 +30,7 @@ def dagger_version = '2.28'
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     api project(":mscorebase")
+    api project(":view_schedule")
 
     //dagger
     implementation "com.google.dagger:dagger:$dagger_version"

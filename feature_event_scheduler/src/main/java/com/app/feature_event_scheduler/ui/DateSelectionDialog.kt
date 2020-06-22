@@ -44,6 +44,10 @@ class DateSelectionDialog : MSBottomSheetDialogFragment<DateAndTimeSelectionView
             getViewModel()?.setDate(year, month, dayOfMonth)
         }
         toolBar.inflateMenu(R.menu.date_time_selection_menu)
+        toolBar.setNavigationIcon(R.drawable.ic_back)
+        toolBar.setNavigationOnClickListener{
+            dismiss()
+        }
         toolBar.menu.findItem(R.id.menu_ok).setOnMenuItemClickListener { _ ->
             if (targetFragment is EventDateTimeReceiver) {
                 (targetFragment as EventDateTimeReceiver)
@@ -53,10 +57,6 @@ class DateSelectionDialog : MSBottomSheetDialogFragment<DateAndTimeSelectionView
                         getViewModel()!!.calendar.value!!.get(Calendar.DAY_OF_MONTH)
                     )
             }
-            dismiss()
-            true
-        }
-        toolBar.menu.findItem(R.id.menu_cancel).setOnMenuItemClickListener {
             dismiss()
             true
         }

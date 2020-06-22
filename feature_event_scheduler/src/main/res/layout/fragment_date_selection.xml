@@ -12,12 +12,12 @@
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
             android:minHeight="?attr/actionBarSize"
-            android:paddingStart="@dimen/list_item_spacing"
-            android:paddingEnd="@dimen/list_item_spacing"
+            android:paddingStart="@dimen/std_content_padding"
+            android:paddingEnd="@dimen/std_content_padding"
             android:theme="@style/AppTheme.AppBarOverlay"
             app:popupTheme="@style/AppTheme.PopupOverlay"
             app:title="@string/str_date"
-            tools:minHeight="40dp"></androidx.appcompat.widget.Toolbar>
+            tools:minHeight="40dp" />
 
     <CalendarView
             android:id="@+id/calendarView"

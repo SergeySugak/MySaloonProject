@@ -23,7 +23,7 @@ interface AppNavigator {
 
     fun navigateToNewEventFragment(targetFragment: Fragment,
                                    eventListener: EventSchedulerListener?)
-    fun navigateToEditEventFragment(targetFragment: Fragment, id: String,
+    fun navigateToEditEventFragment(targetFragment: Fragment, event: SaloonEvent?,
                                     eventListener: EventSchedulerListener?)
 
     fun navigateToSelectServicesFragment(

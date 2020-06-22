@@ -239,18 +239,28 @@ class FirebaseDbRepository
             val dateEvents = firebaseDb
                 .getReference(dateEventsRoot)
             val dateRoot = getDateRoot(event.whenStart)
-            val key = dateEvents.child(dateRoot).push().key!!
-            Tasks.await(dateEvents.child(dateRoot).child(key).setValue(event.id))
+            Tasks.await(dateEvents.child(dateRoot).child(event.id).setValue(event.id))
             return Result.Success(true)
         } catch (ex: Exception) {
             return Result.Error(Exception(appState.context.getString(R.string.err_cant_update_data) + " ${TBL_DATE_EVENTS}\n" + ex.message))
         }
     }
 
+    private fun deIndexEvent(event: SaloonEvent) {
+        val eventDateRoot = getDateRoot (event.savedWhenStart)
+        firebaseDb
+            .getReference(dateEventsRoot)
+            .child(eventDateRoot)
+            .child(event.id)
+            .removeValue()
+    }
+
     override suspend fun saveEventInfo(event: SaloonEvent): Result<Boolean> {
         val events = firebaseDb
             .getReference(eventsRoot)
-        if (event.id == "") {
+        if (!TextUtils.isEmpty(event.id)) {
+            deIndexEvent(event)
+        } else {
             try {
                 event.id = events.push().key!!
             } catch (ex: Exception) {
@@ -265,12 +275,13 @@ class FirebaseDbRepository
         return indexEvent(event)
     }
 
-    override suspend fun deleteEventInfo(eventId: String): Result<Boolean> {
+    override suspend fun deleteEventInfo(event: SaloonEvent): Result<Boolean> {
         return try {
+            deIndexEvent(event)
             Tasks.await(
                 firebaseDb
                     .getReference(eventsRoot)
-                    .child(eventId)
+                    .child(event.id)
                     .setValue(null)
             )
             Result.Success(true)
@@ -310,11 +321,6 @@ class FirebaseDbRepository
             idsResult as Result.Error
             return Result.Error(idsResult.exception)
         }
-    }
-
-    suspend fun firstNumber(): Int {
-        delay(3_000) // 3 seconds delay
-        return 5
     }
 
     private fun onInsertRepositoryTransformer(event: RepositoryEvent, onInsert: (SaloonEvent) -> Unit): Unit {

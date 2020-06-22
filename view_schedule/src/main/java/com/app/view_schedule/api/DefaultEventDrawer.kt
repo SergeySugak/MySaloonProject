@@ -15,7 +15,7 @@ class DefaultEventDrawer : EventDrawer {
     ) {
         //Рисуем обертку
         paint.style = Paint.Style.FILL;
-        paint.color = event.color
+        paint.color = event.getEventColor()
         canvas.drawRoundRect(rect, DEF_RADIUS, DEF_RADIUS, paint)
 
         paint.color = DEF_BORDER_COLOR
@@ -55,10 +55,10 @@ class DefaultEventDrawer : EventDrawer {
         val bottom = getHeaderBottom(rect.top)
         val midY = (2 * DEF_HEADER_V_PADDING + textHeight) / 2 + textOffset
         canvas.drawLine(rect.left, bottom, rect.right, bottom, paint)
-        val startTimeH = "${event.dateTimeStart.get(Calendar.HOUR_OF_DAY)}".padStart(2, '0')
-        val startTimeM = "${event.dateTimeStart.get(Calendar.MINUTE)}".padStart(2, '0')
-        val finishTimeH = "${event.dateTimeFinish.get(Calendar.HOUR_OF_DAY)}".padStart(2, '0')
-        val finishTimeM = "${event.dateTimeFinish.get(Calendar.MINUTE)}".padStart(2, '0')
+        val startTimeH = "${event.getDateTimeStart().get(Calendar.HOUR_OF_DAY)}".padStart(2, '0')
+        val startTimeM = "${event.getDateTimeStart().get(Calendar.MINUTE)}".padStart(2, '0')
+        val finishTimeH = "${event.getDateTimeFinish().get(Calendar.HOUR_OF_DAY)}".padStart(2, '0')
+        val finishTimeM = "${event.getDateTimeFinish().get(Calendar.MINUTE)}".padStart(2, '0')
 
         canvas.drawText(
             "$startTimeH:$startTimeM - $finishTimeH:$finishTimeM",
@@ -68,7 +68,7 @@ class DefaultEventDrawer : EventDrawer {
 
     private fun drawEventText(event: SchedulerEvent, canvas: Canvas, rect: RectF) {
         val text = TextUtils.ellipsize(
-            event.header, textPaint, rect.width() - 2 * DEF_TEXT_V_PADDING,
+            event.getHeader(), textPaint, rect.width() - 2 * DEF_TEXT_V_PADDING,
             TextUtils.TruncateAt.END
         ).toString()
         val textHeight = textPaint.descent() - textPaint.ascent()

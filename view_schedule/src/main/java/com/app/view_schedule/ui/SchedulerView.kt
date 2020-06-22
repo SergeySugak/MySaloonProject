@@ -357,6 +357,7 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
         val result = firstDrawableDate.clone() as Calendar
         with(result) {
             add(DATE, fitDays) //Первый и последний день могут быть видны частично
+            add(MINUTE, -1)
             add(HOUR_OF_DAY, fitHours)
             set(MILLISECOND, 999)
         }
@@ -460,8 +461,8 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
         val maxTime = lastDrawableDate.get(HOUR_OF_DAY) + firstDrawableDate.get(MINUTE) / 60
         val windowStart = firstDrawableDate.time
         val windowFinish = lastDrawableDate.time
-        val eventStart = event.dateTimeStart.time
-        val eventFinish = event.dateTimeFinish.time
+        val eventStart = event.getDateTimeStart().time
+        val eventFinish = event.getDateTimeFinish().time
         return (
                 //начало события внутри окна
                 (((eventStart == windowStart || eventStart.after(windowStart)) &&
@@ -471,16 +472,16 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
                                 (eventFinish == windowFinish || eventFinish.before(windowFinish))))
                         &&
                         //либо начало в пределах "окна"
-                        ((event.dateTimeStart.get(HOUR_OF_DAY) + event.dateTimeStart.get(MINUTE) / 60 in minTime..maxTime) ||
+                        ((event.getDateTimeStart().get(HOUR_OF_DAY) + event.getDateTimeStart().get(MINUTE) / 60 in minTime..maxTime) ||
                                 //либо конец в пределах "окна"
-                                (event.dateTimeFinish.get(HOUR_OF_DAY) + event.dateTimeFinish.get(
+                                (event.getDateTimeFinish().get(HOUR_OF_DAY) + event.getDateTimeFinish().get(
                                     MINUTE
                                 ) / 60 in minTime..maxTime) ||
                                 //либо и начало и конец за пределами "окна"
-                                (event.dateTimeStart.get(HOUR_OF_DAY) + event.dateTimeStart.get(
+                                (event.getDateTimeStart().get(HOUR_OF_DAY) + event.getDateTimeStart().get(
                                     MINUTE
                                 ) / 60 < minTime &&
-                                        event.dateTimeFinish.get(HOUR_OF_DAY) + event.dateTimeFinish.get(
+                                        event.getDateTimeFinish().get(HOUR_OF_DAY) + event.getDateTimeFinish().get(
                                     MINUTE
                                 ) / 60 > maxTime))) ||
                 //или начало события меньше начала окна и конец события больше конца окна
@@ -501,7 +502,7 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
         } else {
             //Сортируем так, чтобы более поздние события были поверх более ранних
             drawableEvents =
-                drawableEvents.sortedBy { schedulerEvent -> schedulerEvent.dateTimeStart }
+                drawableEvents.sortedBy { schedulerEvent -> schedulerEvent.getDateTimeStart() }
         }
         //Самый левый край первого дня
         val leftEdge = contentLeft + 1 - (ceil(xScroll) - xScroll) * cellWidth
@@ -510,12 +511,12 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
         var eventFinishHour: Float
         for (event in drawableEvents) {
             //Опеределим область рисования события
-            diffDays = (toSimpleDate(event.dateTimeStart.time.time) -
+            diffDays = (toSimpleDate(event.getDateTimeStart().time.time) -
                     toSimpleDate(firstDrawableDate.time.time)) / DAY_LENGTH
             eventStartHour =
-                event.dateTimeStart.get(HOUR_OF_DAY) + event.dateTimeStart.get(MINUTE) / 60f
+                event.getDateTimeStart().get(HOUR_OF_DAY) + event.getDateTimeStart().get(MINUTE) / 60f
             eventFinishHour =
-                event.dateTimeFinish.get(HOUR_OF_DAY) + event.dateTimeFinish.get(MINUTE) / 60f
+                event.getDateTimeFinish().get(HOUR_OF_DAY) + event.getDateTimeFinish().get(MINUTE) / 60f
             eventRect.left = leftEdge + diffDays * cellWidth + eventMargin
             eventRect.top = contentTop + (eventStartHour - yScroll) * cellHeight
             eventRect.right = eventRect.left + cellWidth - 2 * eventMargin

@@ -4,16 +4,17 @@ import android.graphics.Color
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.annotation.ColorInt
+import com.app.view_schedule.api.SchedulerEvent
 import com.google.firebase.database.IgnoreExtraProperties
-import kotlinx.android.parcel.Parcelize
 import java.util.*
 
 @IgnoreExtraProperties
-class SaloonEvent constructor(): Parcelable {
+class SaloonEvent constructor(): SchedulerEvent,  Parcelable {
     var id: String = ""
     lateinit var master: SaloonMaster
     lateinit var services: List<SaloonService>
     lateinit var client: SaloonClient
+    lateinit var savedWhenStart: Calendar
     lateinit var whenStart: Calendar
     lateinit var whenFinish: Calendar
     var description: String = ""
@@ -22,13 +23,14 @@ class SaloonEvent constructor(): Parcelable {
 
     constructor(
         id: String, master: SaloonMaster, services: List<SaloonService>, client: SaloonClient,
-        whenStart: Calendar, whenFinish: Calendar, description: String, @ColorInt color: Int,
-        state: SaloonEventState
+         whenStart: Calendar, whenFinish: Calendar, description: String,
+        @ColorInt color: Int, state: SaloonEventState
     ) : this() {
         this.id = id
         this.master = master
         this.services = services
         this.client = client
+        this.savedWhenStart = whenStart.clone() as Calendar
         this.whenStart = whenStart
         this.whenFinish = whenFinish
         this.description = description
@@ -39,20 +41,8 @@ class SaloonEvent constructor(): Parcelable {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
-
         other as SaloonEvent
-
-        if (id != other.id) return false
-        if (master != other.master) return false
-        if (services != other.services) return false
-        if (client != other.client) return false
-        if (whenStart != other.whenStart) return false
-        if (whenFinish != other.whenFinish) return false
-        if (description != other.description) return false
-        if (color != other.color) return false
-        if (state != other.state) return false
-
-        return true
+        return id == other.id
     }
 
     override fun hashCode(): Int {
@@ -60,6 +50,7 @@ class SaloonEvent constructor(): Parcelable {
         result = 31 * result + master.hashCode()
         result = 31 * result + services.hashCode()
         result = 31 * result + client.hashCode()
+        result = 31 * result + savedWhenStart.hashCode()
         result = 31 * result + whenStart.hashCode()
         result = 31 * result + whenFinish.hashCode()
         result = 31 * result + description.hashCode()
@@ -78,6 +69,9 @@ class SaloonEvent constructor(): Parcelable {
         parcel.writeTypedList(services)
         parcel.writeParcelable(client, flags)
         parcel.writeString(description)
+        parcel.writeSerializable(savedWhenStart)
+        parcel.writeSerializable(whenStart)
+        parcel.writeSerializable(whenFinish)
         parcel.writeInt(color)
         parcel.writeString(state.name)
     }
@@ -88,6 +82,9 @@ class SaloonEvent constructor(): Parcelable {
         services = parcel.createTypedArrayList(SaloonService)!!
         client = parcel.readParcelable(SaloonClient::class.java.classLoader)!!
         description = parcel.readString()!!
+        savedWhenStart = parcel.readSerializable() as Calendar
+        whenStart = parcel.readSerializable() as Calendar
+        whenFinish = parcel.readSerializable() as Calendar
         color = parcel.readInt()
         state = SaloonEventState.valueOf(parcel.readString()!!)
     }
@@ -105,4 +102,16 @@ class SaloonEvent constructor(): Parcelable {
             return arrayOfNulls(size)
         }
     }
+
+    override fun getEventId() = id
+
+    override fun getDateTimeStart() = whenStart
+
+    override fun getDateTimeFinish() = whenFinish
+
+    override fun getHeader() = master.name
+
+    override fun getText() = services.joinToString()
+
+    override fun getEventColor() = color
 }

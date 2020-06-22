@@ -65,12 +65,12 @@ class AppNavigatorImpl @Inject constructor() : AppNavigator {
 
     override fun navigateToNewEventFragment(targetFragment: Fragment,
                                             eventListener: AppNavigator.EventSchedulerListener?) {
-        navigateToEditEventFragment(targetFragment, "", eventListener)
+        navigateToEditEventFragment(targetFragment, null, eventListener)
     }
 
-    override fun navigateToEditEventFragment(targetFragment: Fragment, id: String,
+    override fun navigateToEditEventFragment(targetFragment: Fragment, event: SaloonEvent?,
                                              eventListener: AppNavigator.EventSchedulerListener?) {
-        val newServiceFragment = EventSchedulerFragment.newInstance(id, eventListener).apply {
+        val newServiceFragment = EventSchedulerFragment.newInstance(event, eventListener).apply {
             retainInstance = true
         }
         showDialogFragment(targetFragment, newServiceFragment, newServiceFragment.javaClass.simpleName)

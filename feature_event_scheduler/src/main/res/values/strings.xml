@@ -23,6 +23,9 @@
     <string name="str_master_empty">Необходимо указать мастера</string>
     <string name="str_services_empty">Необходимо указать требуемые услуги</string>
     <string name="str_name_and_phone_empty">Необходимо указать имя или телефон клиента</string>
+    <string name="str_event">Событие</string>
+    <string name="str_delete">Удалить</string>
+    <string name="str_confirm_delete_event">Действительно удалить событие?</string>
 
 
 </resources>

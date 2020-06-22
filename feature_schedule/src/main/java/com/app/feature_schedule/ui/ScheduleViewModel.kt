@@ -34,8 +34,8 @@ class ScheduleViewModel
     val notifier: PublishSubject<Pair<Calendar, Calendar>> = PublishSubject.create()
     private val intNewEventsLoaded = StatefulMutableLiveData<List<SchedulerEvent>>()
     val newEventsLoaded: StatefulLiveData<List<SchedulerEvent>> = intNewEventsLoaded
-    private val intEventDeleted = StatefulMutableLiveData<String>()
-    val eventDeleted: StatefulLiveData<String> = intEventDeleted
+    private val intEventDeleted = StatefulMutableLiveData<SaloonEvent>()
+    val eventDeleted: StatefulLiveData<SaloonEvent> = intEventDeleted
 
     private fun getKey(date: Calendar) = dateFormatter.format(date.time)
 
@@ -69,16 +69,7 @@ class ScheduleViewModel
                             }
                             if (events.size > 0) {
                                 synchronized(this){
-                                    newEvents.addAll(events.map{ event ->
-                                        object : SchedulerEvent {
-                                            override val id = event.id
-                                            override val dateTimeStart = event.whenStart
-                                            override val dateTimeFinish = event.whenFinish
-                                            override val header = event.master.name
-                                            override val text = event.services.joinToString()
-                                            override val color = event.color
-                                        }
-                                    })
+                                    newEvents.addAll(events)
                                 }
                             }
                         }
@@ -96,7 +87,6 @@ class ScheduleViewModel
             }
             withContext(Dispatchers.Main){
                 if (newEvents.size > 0) {
-                    Log.d(javaClass.simpleName, "Loading data newEvents size = ${newEvents.size ?: 0}")
                     intNewEventsLoaded.value = newEvents
                 }
                 setInProgress(false)
@@ -108,21 +98,28 @@ class ScheduleViewModel
         loadData(event.whenStart, event.whenStart, true)
     }
 
-    fun onEventUpdated(changedEventId: String, event: SaloonEvent) {
-        val key = getKey(event.whenStart)
-        if (eventsMap.contains(key)){
-            eventsMap[key] = mutableListOf()
-        }
+    fun onEventUpdated(event: SaloonEvent) {
+        removeEvent(event)
         loadData(event.whenStart, event.whenStart, true)
     }
 
-    fun onEventDeleted(deletedEventId: String) {
-        eventsMap.forEach{(_, v) ->
-            v.forEach{ event ->
-                if (event.id == deletedEventId){
-                    v.remove(event)
-                    intEventDeleted.value = deletedEventId
-                    return@onEventDeleted
+    fun onEventDeleted(event: SaloonEvent) {
+        removeEvent(event)
+    }
+
+    private fun removeEvent(deletedEvent: SaloonEvent){
+        val mapIterator = eventsMap.iterator()
+        var mapEntry: MutableList<SaloonEvent>
+        while (mapIterator.hasNext()){
+            mapEntry = mapIterator.next().value
+            val iterator = mapEntry.iterator()
+            var event: SaloonEvent
+            while (iterator.hasNext()){
+                event = iterator.next()
+                if (event == deletedEvent){
+                    iterator.remove()
+                    intEventDeleted.value = deletedEvent
+                    return
                 }
             }
         }

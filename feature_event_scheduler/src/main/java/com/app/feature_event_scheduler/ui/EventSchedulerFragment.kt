@@ -1,14 +1,11 @@
 package com.app.feature_event_scheduler.ui
 
-import android.app.Activity
-import android.app.Dialog
-import android.content.Intent
+import android.content.DialogInterface
 import android.os.Bundle
 import android.os.Parcel
-import android.text.TextUtils
-import android.view.View.GONE
+import android.view.View
 import android.widget.EditText
-import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -18,18 +15,21 @@ import com.app.feature_event_scheduler.di.DaggerEventSchedulerFeatureComponent
 import com.app.msa_nav_api.navigation.AppNavigator
 import com.app.mscorebase.di.ViewModelProviderFactory
 import com.app.mscorebase.di.findComponentDependencies
-import com.app.mscorebase.ui.MSDialogFragment
+import com.app.mscorebase.ui.MSBottomSheetDialogFragment
 import com.app.mscorebase.ui.dialogs.choicedialog.OnChoiceItemsSelectedListener
+import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter
 import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
 import com.app.mscoremodels.saloon.ActionType
 import com.app.mscoremodels.saloon.ChoosableSaloonMaster
 import com.app.mscoremodels.saloon.ChoosableSaloonService
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.app.mscoremodels.saloon.SaloonEvent
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
-class EventSchedulerFragment : MSDialogFragment<EventSchedulerViewModel>(), EventDateTimeReceiver {
+class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewModel>(), EventDateTimeReceiver {
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory
         protected set
@@ -38,10 +38,11 @@ class EventSchedulerFragment : MSDialogFragment<EventSchedulerViewModel>(), Even
     lateinit var appNavigator: AppNavigator
         protected set
 
-    private lateinit var date: EditText
-    private lateinit var time: EditText
-    private lateinit var services: EditText
-    private lateinit var master: EditText
+    private val date: EditText by lazy { requireView().findViewById<EditText>(R.id.date) }
+    private val time: EditText by lazy { requireView().findViewById<EditText>(R.id.time) }
+    private val services: EditText by lazy { requireView().findViewById<EditText>(R.id.services) }
+    private val master: EditText by lazy { requireView().findViewById<EditText>(R.id.master) }
+    private val toolBar: Toolbar by lazy { requireView().findViewById<Toolbar>(R.id.toolbar) }
 
     override val layoutId = R.layout.fragment_event_scheduler
 
@@ -54,17 +55,39 @@ class EventSchedulerFragment : MSDialogFragment<EventSchedulerViewModel>(), Even
         super.onCreate(savedInstanceState)
     }
 
-    override fun onBuildDialog(savedInstanceState: Bundle?): Dialog {
-        val inflater = requireActivity().layoutInflater
-        val view = inflater.inflate(layoutId, null)
-        val builder = MaterialAlertDialogBuilder(requireActivity())
-        builder.setView(view)
-            .setTitle(getString(R.string.title_edit_scheduler_event))
-            .setPositiveButton(getString(R.string.ok)) { _, _ -> }
-            .setNegativeButton(getString(R.string.cancel)) { _, _ ->
-                dialog?.dismiss()
-            }
-        services = view.findViewById(R.id.services)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupServices(services)
+        setupMaster(master)
+        setupDate(date)
+        setupTime(time)
+        setupMenu()
+        (dialog as BottomSheetDialog).behavior.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+    private fun setupMenu() {
+        val event = requireArguments()[ARG_EDIT_EVENT] as SaloonEvent?
+        toolBar.inflateMenu(R.menu.event_edit_menu)
+        toolBar.setNavigationIcon(R.drawable.ic_back)
+        toolBar.setNavigationOnClickListener{
+            dismiss()
+        }
+        toolBar.menu.findItem(R.id.menu_ok).setOnMenuItemClickListener { _ ->
+            saveEvent(event)
+            true
+        }
+        toolBar.menu.findItem(R.id.menu_delete).isVisible = event != null
+        toolBar.menu.findItem(R.id.menu_delete).setOnMenuItemClickListener {
+            MessageDialogFragment.showMessage(this, R.string.title_warning, R.string.str_confirm_delete_event,
+                DialogFragmentPresenter.ICON_WARNING, REQ_DELETE_EVENT,
+                DialogFragmentPresenter.TWO_BUTTONS_YN
+            )
+            true
+        }
+    }
+
+    private fun setupServices(services: EditText){
+        //val services = view.findViewById<EditText>(R.id.services)
         services.setOnClickListener {
             appNavigator.navigateToSelectServicesFragment(
                 this,
@@ -87,7 +110,9 @@ class EventSchedulerFragment : MSDialogFragment<EventSchedulerViewModel>(), Even
                 }
             )
         }
-        master = view.findViewById(R.id.master)
+    }
+
+    private fun setupMaster(master: EditText) {
         master.setOnClickListener {
             appNavigator.navigateToSelectMasterFragment(
                 this,
@@ -110,48 +135,34 @@ class EventSchedulerFragment : MSDialogFragment<EventSchedulerViewModel>(), Even
                 }
             )
         }
-        date = view.findViewById(R.id.date)
+    }
+
+    private fun setupDate(date: EditText){
         date.setOnClickListener {
             val dialog = DateSelectionDialog.newInstance(getViewModel()!!.calendar.value!!)
             dialog.setTargetFragment(this, REQ_SET_DATE)
             dialog.show(parentFragmentManager, dialog.javaClass.simpleName)
         }
-        time = view.findViewById(R.id.time)
+    }
+
+    private fun setupTime(time: EditText){
         time.setOnClickListener {
             val dialog = TimeSelectionDialog.newInstance(getViewModel()!!.calendar.value!!)
             dialog.setTargetFragment(this, REQ_SET_TIME)
             dialog.show(parentFragmentManager, dialog.javaClass.simpleName)
         }
-        return builder.create()
     }
 
-    override fun onStart() {
-        super.onStart()
-        val dlg = dialog as AlertDialog?
-        val eventId = requireArguments()[ARG_EDIT_EVENT_ID] as String
-        if (dlg != null) {
-            var button = dlg.getButton(Dialog.BUTTON_POSITIVE)
-            button.setOnClickListener { _ ->
-                val clientName = dlg.findViewById<EditText>(R.id.client_name)
-                val clientPhone = dlg.findViewById<EditText>(R.id.client_phone)
-                val clientEmail = dlg.findViewById<EditText>(R.id.client_email)
-                getViewModel()?.setClientInfo(
-                    clientName?.text.toString() ?: "",
-                    clientPhone?.text.toString() ?: "", clientEmail?.text.toString() ?: ""
-                )
-                val action = if (!TextUtils.isEmpty(eventId)) ActionType.EDIT else ActionType.ADD
-                getViewModel()?.saveEventInfo(action, services.text.toString())
-            }
-            button = dlg.getButton(Dialog.BUTTON_NEUTRAL)
-            if (TextUtils.isEmpty(eventId)) {
-                button.visibility = GONE
-            }
-            else {
-                button.setOnClickListener { _ ->
-                    getViewModel()?.saveEventInfo(ActionType.DELETE)
-                }
-            }
-        }
+    private fun saveEvent(event: SaloonEvent?){
+        val clientName = requireView().findViewById<EditText>(R.id.client_name)
+        val clientPhone = requireView().findViewById<EditText>(R.id.client_phone)
+        val clientEmail = requireView().findViewById<EditText>(R.id.client_email)
+        getViewModel()?.setClientInfo(
+            clientName?.text.toString() ?: "",
+            clientPhone?.text.toString() ?: "", clientEmail?.text.toString() ?: ""
+        )
+        val action = if (event != null) ActionType.EDIT else ActionType.ADD
+        getViewModel()?.saveEventInfo(action, services.text.toString())
     }
 
     override fun createViewModel(savedInstanceState: Bundle?) =
@@ -162,7 +173,7 @@ class EventSchedulerFragment : MSDialogFragment<EventSchedulerViewModel>(), Even
         savedInstanceState: Bundle?
     ) {
         super.onViewModelCreated(viewModel, savedInstanceState)
-        viewModel.loadEvent(requireArguments()[ARG_EDIT_EVENT_ID] as String)
+        viewModel.setEvent(requireArguments()[ARG_EDIT_EVENT] as SaloonEvent?)
     }
 
     override fun onStartObservingViewModel(viewModel: EventSchedulerViewModel) {
@@ -174,28 +185,20 @@ class EventSchedulerFragment : MSDialogFragment<EventSchedulerViewModel>(), Even
         })
 
         viewModel.calendar.observe(this, Observer { calendar ->
-            val formatter =
-                SimpleDateFormat(getString(R.string.str_date_format), Locale.getDefault())
-            date.setText(formatter.format(calendar.time))
-            formatter.applyPattern(getString(R.string.str_time_format))
-            time.setText(formatter.format(calendar.time))
+            formatDateTime(calendar)
         })
 
         viewModel.services.observe(this, Observer { items ->
             if (!viewModel.services.isHandled) {
-                if (::services.isInitialized) {
-                    services.setText(items.joinToString())
-                    viewModel.services.isHandled = true
-                }
+                services.setText(items.joinToString())
+                viewModel.services.isHandled = true
             }
         })
 
         viewModel.master.observe(this, Observer { item ->
             if (!viewModel.master.isHandled) {
-                if (::master.isInitialized) {
-                    master.setText(item.name)
-                    viewModel.master.isHandled = true
-                }
+                master.setText(item.name)
+                viewModel.master.isHandled = true
             }
         })
 
@@ -215,6 +218,24 @@ class EventSchedulerFragment : MSDialogFragment<EventSchedulerViewModel>(), Even
                 viewModel.eventInfoSaveState.isHandled = true
             }
         })
+
+        viewModel.eventInfo.observe(this, Observer { event ->
+            if (!viewModel.eventInfo.isHandled){
+                if (event != null) {
+                    dialog?.findViewById<EditText>(R.id.client_name)?.setText(event.client.name)
+                    dialog?.findViewById<EditText>(R.id.client_phone)?.setText(event.client.phone)
+                    dialog?.findViewById<EditText>(R.id.client_email)?.setText(event.client.email)
+                }
+                viewModel.eventInfo.isHandled = true
+            }
+        })
+    }
+
+    private fun formatDateTime(calendar: Calendar){
+        val formatter = SimpleDateFormat(getString(R.string.str_date_format), Locale.getDefault())
+        date.setText(formatter.format(calendar.time))
+        formatter.applyPattern(getString(R.string.str_time_format))
+        time.setText(formatter.format(calendar.time))
     }
 
     override fun setEventDate(year: Int, month: Int, day: Int) {
@@ -225,15 +246,30 @@ class EventSchedulerFragment : MSDialogFragment<EventSchedulerViewModel>(), Even
         getViewModel()?.setEventTime(hour, minute)
     }
 
+    override fun onClickDialogButton(
+        dialog: DialogInterface?,
+        whichButton: Int,
+        requestCode: Int,
+        params: Bundle?
+    ) {
+        when (requestCode) {
+            REQ_DELETE_EVENT -> if (whichButton == DialogInterface.BUTTON_POSITIVE){
+                getViewModel()?.saveEventInfo(ActionType.DELETE)
+            }
+        }
+        super.onClickDialogButton(dialog, whichButton, requestCode, params)
+    }
+
     companion object {
-        const val ARG_EDIT_EVENT_ID = "ARG_EDIT_EVENT_ID"
+        const val ARG_EDIT_EVENT = "ARG_EDIT_EVENT"
         const val ARG_EVENT_LISTENER = "ARG_EVENT_LISTENER"
         private const val REQ_SET_DATE = 10001
         private const val REQ_SET_TIME = 10002
+        private const val REQ_DELETE_EVENT = 10002
 
-        fun newInstance(id: String, eventListener: AppNavigator.EventSchedulerListener?): EventSchedulerFragment {
+        fun newInstance(event: SaloonEvent?, eventListener: AppNavigator.EventSchedulerListener?): EventSchedulerFragment {
             val result = EventSchedulerFragment()
-            result.arguments = bundleOf(Pair(ARG_EDIT_EVENT_ID, id),
+            result.arguments = bundleOf(Pair(ARG_EDIT_EVENT, event),
             Pair(ARG_EVENT_LISTENER, eventListener))
             return result
         }

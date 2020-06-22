@@ -37,11 +37,11 @@ class ScheduleFragment : MSFragment<ScheduleViewModel>() {
         }
 
         override fun onUpdated(event: SaloonEvent) {
-            getViewModel()?.onEventUpdated(event.id, event)
+            getViewModel()?.onEventUpdated(event)
         }
 
         override fun onDeleted(event: SaloonEvent) {
-            getViewModel()?.onEventDeleted(event.id)
+            getViewModel()?.onEventDeleted(event)
         }
     }
 
@@ -71,7 +71,7 @@ class ScheduleFragment : MSFragment<ScheduleViewModel>() {
         getViewModel()?.loadData(fromDate, toDate)
         schedulerView.setEventClickListener(object : SchedulerEventClickListener {
             override fun onSchedulerEventClickListener(event: SchedulerEvent) {
-                appNavigator.navigateToEditEventFragment(this@ScheduleFragment, event.id,
+                appNavigator.navigateToEditEventFragment(this@ScheduleFragment, event as SaloonEvent,
                     eventSchedulerListener)
             }
         })
@@ -96,15 +96,20 @@ class ScheduleFragment : MSFragment<ScheduleViewModel>() {
             }
         })
 
-        viewModel.eventDeleted.observe(this, Observer { deletedEventId ->
+        viewModel.eventDeleted.observe(this, Observer { event ->
             if (!viewModel.eventDeleted.isHandled){
-                val events = schedulerView.getEvents()
-                events.forEach{ event ->
-                    if (event.id == deletedEventId){
-                        schedulerView.removeEvent(event)
-                        return@forEach
-                    }
-                }
+                schedulerView.removeEvent(event)
+//                val iterator = schedulerView.getEvents().toMutableList().iterator()
+//                var event: SchedulerEvent? = null
+//                while (iterator.hasNext()){
+//                    event = iterator.next()
+//                    if (event.getEventId() == deletedEventId){
+//                        break
+//                    }
+//                }
+//                if (event != null){
+//                    schedulerView.removeEvent(event)
+//                }
                 viewModel.eventDeleted.isHandled = true
             }
         })

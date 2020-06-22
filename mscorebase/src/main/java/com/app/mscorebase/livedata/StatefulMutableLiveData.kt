@@ -6,8 +6,8 @@ open class StatefulMutableLiveData<T> :
     constructor() : super() {}
 
     public override fun setValue(value: T?) {
-        if (value != null && value != getValue() ||
-            getValue() != null && getValue() != value
+        if (value != null && value !== getValue() ||
+            getValue() != null && getValue() !== value
         ) {
             isHandled = false
         }

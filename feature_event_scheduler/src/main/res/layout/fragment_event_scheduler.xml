@@ -1,249 +1,268 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/std_content_padding"
-            tools:context=".ui.EventSchedulerFragment">
+            android:background="@color/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            android:paddingStart="@dimen/std_content_padding"
+            android:paddingEnd="@dimen/list_item_spacing"
+            android:theme="@style/AppTheme.AppBarOverlay"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:title="@string/title_edit_scheduler_event"
+            tools:minHeight="40dp" />
 
-        <TextView
-                android:id="@+id/when"
-                style="@style/TextAppearance.AppCompat.Large"
-                android:layout_width="wrap_content"
+    <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/str_when"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:padding="@dimen/std_content_padding"
+                tools:context=".ui.EventSchedulerFragment">
 
-        <View
-                android:id="@+id/divider_1"
-                style="@style/DividerLineH"
-                android:layout_width="0dp"
-                android:layout_height="2dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/when" />
+            <TextView
+                    android:id="@+id/when"
+                    style="@style/TextAppearance.AppCompat.Large"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/str_when"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-                android:id="@+id/label_date"
-                style="@style/TextAppearance.AppCompat.Medium"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingEnd="@dimen/list_item_spacing"
-                android:text="@string/str_date"
-                app:layout_constraintBaseline_toBaselineOf="@+id/date"
-                app:layout_constraintEnd_toStartOf="@+id/when_barrier" />
+            <View
+                    android:id="@+id/divider_1"
+                    style="@style/DividerLineH"
+                    android:layout_width="0dp"
+                    android:layout_height="2dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/when" />
 
-        <EditText
-                android:id="@+id/date"
-                style="@style/TextAppearance.AppCompat.Medium"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/list_item_spacing_half"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:importantForAutofill="no"
-                android:inputType="none"
-                android:maxLength="10"
-                android:singleLine="true"
-                app:layout_constraintStart_toEndOf="@+id/when_barrier"
-                app:layout_constraintTop_toBottomOf="@+id/divider_1"
-                tools:ignore="TextFields"
-                tools:text="01.12.2020" />
+            <TextView
+                    android:id="@+id/label_date"
+                    style="@style/TextAppearance.AppCompat.Medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingEnd="@dimen/list_item_spacing"
+                    android:text="@string/str_date"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/date"
+                    app:layout_constraintEnd_toStartOf="@+id/when_barrier" />
 
-        <TextView
-                android:id="@+id/label_time"
-                style="@style/TextAppearance.AppCompat.Medium"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingEnd="@dimen/list_item_spacing"
-                android:text="@string/str_time"
-                app:layout_constraintBaseline_toBaselineOf="@+id/time"
-                app:layout_constraintEnd_toStartOf="@+id/when_barrier" />
+            <EditText
+                    android:id="@+id/date"
+                    style="@style/TextAppearance.AppCompat.Medium"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/list_item_spacing_half"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:importantForAutofill="no"
+                    android:inputType="none"
+                    android:maxLength="10"
+                    android:singleLine="true"
+                    app:layout_constraintStart_toEndOf="@+id/when_barrier"
+                    app:layout_constraintTop_toBottomOf="@+id/divider_1"
+                    tools:ignore="TextFields"
+                    tools:text="01.12.2020" />
 
-        <EditText
-                android:id="@+id/time"
-                style="@style/TextAppearance.AppCompat.Medium"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/list_item_spacing_half"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:gravity="end"
-                android:importantForAutofill="no"
-                android:inputType="none"
-                android:maxLength="5"
-                android:singleLine="true"
-                app:layout_constraintEnd_toEndOf="@+id/date"
-                app:layout_constraintStart_toEndOf="@+id/when_barrier"
-                app:layout_constraintTop_toBottomOf="@+id/date"
-                tools:ignore="TextFields"
-                tools:text="15:15" />
+            <TextView
+                    android:id="@+id/label_time"
+                    style="@style/TextAppearance.AppCompat.Medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingEnd="@dimen/list_item_spacing"
+                    android:text="@string/str_time"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/time"
+                    app:layout_constraintEnd_toStartOf="@+id/when_barrier" />
 
-        <TextView
-                android:id="@+id/client"
-                style="@style/TextAppearance.AppCompat.Large"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/list_item_spacing"
-                android:text="@string/str_who_what"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/time" />
+            <EditText
+                    android:id="@+id/time"
+                    style="@style/TextAppearance.AppCompat.Medium"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/list_item_spacing_half"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:gravity="end"
+                    android:importantForAutofill="no"
+                    android:inputType="none"
+                    android:maxLength="5"
+                    android:singleLine="true"
+                    app:layout_constraintEnd_toEndOf="@+id/date"
+                    app:layout_constraintStart_toEndOf="@+id/when_barrier"
+                    app:layout_constraintTop_toBottomOf="@+id/date"
+                    tools:ignore="TextFields"
+                    tools:text="15:15" />
 
-        <View
-                android:id="@+id/divider_2"
-                style="@style/DividerLineH"
-                android:layout_width="0dp"
-                android:layout_height="2dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/client" />
+            <TextView
+                    android:id="@+id/client"
+                    style="@style/TextAppearance.AppCompat.Large"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/list_item_spacing"
+                    android:text="@string/str_who_what"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/time" />
 
-        <TextView
-                android:id="@+id/label_services"
-                style="@style/TextAppearance.AppCompat.Medium"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/list_item_spacing"
-                android:paddingEnd="@dimen/list_item_spacing"
-                android:text="@string/str_services"
-                app:layout_constraintBaseline_toBaselineOf="@+id/services"
-                app:layout_constraintEnd_toStartOf="@+id/when_barrier" />
+            <View
+                    android:id="@+id/divider_2"
+                    style="@style/DividerLineH"
+                    android:layout_width="0dp"
+                    android:layout_height="2dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/client" />
 
-        <EditText
-                android:id="@+id/services"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/list_item_spacing_half"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:inputType="none|textMultiLine"
-                android:singleLine="false"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/when_barrier"
-                app:layout_constraintTop_toBottomOf="@+id/divider_2" />
+            <TextView
+                    android:id="@+id/label_services"
+                    style="@style/TextAppearance.AppCompat.Medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/list_item_spacing"
+                    android:paddingEnd="@dimen/list_item_spacing"
+                    android:text="@string/str_services"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/services"
+                    app:layout_constraintEnd_toStartOf="@+id/when_barrier" />
 
-        <TextView
-                android:id="@+id/label_master"
-                style="@style/TextAppearance.AppCompat.Medium"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/list_item_spacing"
-                android:paddingEnd="@dimen/list_item_spacing"
-                android:text="@string/str_master"
-                app:layout_constraintBaseline_toBaselineOf="@+id/master"
-                app:layout_constraintEnd_toStartOf="@+id/when_barrier"
-                app:layout_constraintStart_toStartOf="parent" />
+            <EditText
+                    android:id="@+id/services"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/list_item_spacing_half"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:inputType="none|textMultiLine"
+                    android:singleLine="false"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/when_barrier"
+                    app:layout_constraintTop_toBottomOf="@+id/divider_2" />
 
-        <EditText
-                android:id="@+id/master"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/list_item_spacing_half"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:inputType="none"
-                android:singleLine="true"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/when_barrier"
-                app:layout_constraintTop_toBottomOf="@+id/services" />
+            <TextView
+                    android:id="@+id/label_master"
+                    style="@style/TextAppearance.AppCompat.Medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/list_item_spacing"
+                    android:paddingEnd="@dimen/list_item_spacing"
+                    android:text="@string/str_master"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/master"
+                    app:layout_constraintEnd_toStartOf="@+id/when_barrier"
+                    app:layout_constraintStart_toStartOf="parent" />
 
-        <TextView
-                android:id="@+id/label_email"
-                style="@style/TextAppearance.AppCompat.Medium"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/list_item_spacing"
-                android:paddingEnd="@dimen/list_item_spacing"
-                android:text="@string/str_client_email"
-                app:layout_constraintBaseline_toBaselineOf="@+id/client_email"
-                app:layout_constraintEnd_toStartOf="@+id/when_barrier" />
+            <EditText
+                    android:id="@+id/master"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/list_item_spacing_half"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:inputType="none"
+                    android:singleLine="true"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/when_barrier"
+                    app:layout_constraintTop_toBottomOf="@+id/services" />
 
-        <EditText
-                android:id="@+id/client_email"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/list_item_spacing_half"
-                android:inputType="textEmailAddress"
-                android:singleLine="true"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/when_barrier"
-                app:layout_constraintTop_toBottomOf="@+id/client_phone" />
+            <TextView
+                    android:id="@+id/label_email"
+                    style="@style/TextAppearance.AppCompat.Medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/list_item_spacing"
+                    android:paddingEnd="@dimen/list_item_spacing"
+                    android:text="@string/str_client_email"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/client_email"
+                    app:layout_constraintEnd_toStartOf="@+id/when_barrier" />
 
-        <TextView
-                android:id="@+id/who"
-                style="@style/TextAppearance.AppCompat.Large"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/list_item_spacing"
-                android:text="@string/str_client"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/master" />
+            <EditText
+                    android:id="@+id/client_email"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/list_item_spacing_half"
+                    android:inputType="textEmailAddress"
+                    android:singleLine="true"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/when_barrier"
+                    app:layout_constraintTop_toBottomOf="@+id/client_phone" />
 
-        <View
-                android:id="@+id/divider_3"
-                style="@style/DividerLineH"
-                android:layout_width="0dp"
-                android:layout_height="2dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/who" />
+            <TextView
+                    android:id="@+id/who"
+                    style="@style/TextAppearance.AppCompat.Large"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/list_item_spacing"
+                    android:text="@string/str_client"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/master" />
 
-        <TextView
-                android:id="@+id/label_name"
-                style="@style/TextAppearance.AppCompat.Medium"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/list_item_spacing"
-                android:paddingEnd="@dimen/list_item_spacing"
-                android:text="@string/str_client_name"
-                app:layout_constraintBaseline_toBaselineOf="@+id/client_name"
-                app:layout_constraintEnd_toStartOf="@+id/when_barrier" />
+            <View
+                    android:id="@+id/divider_3"
+                    style="@style/DividerLineH"
+                    android:layout_width="0dp"
+                    android:layout_height="2dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/who" />
 
-        <EditText
-                android:id="@+id/client_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/list_item_spacing_half"
-                android:inputType="textPersonName"
-                android:singleLine="false"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/when_barrier"
-                app:layout_constraintTop_toBottomOf="@+id/divider_3" />
+            <TextView
+                    android:id="@+id/label_name"
+                    style="@style/TextAppearance.AppCompat.Medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/list_item_spacing"
+                    android:paddingEnd="@dimen/list_item_spacing"
+                    android:text="@string/str_client_name"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/client_name"
+                    app:layout_constraintEnd_toStartOf="@+id/when_barrier" />
 
-        <TextView
-                android:id="@+id/label_phone"
-                style="@style/TextAppearance.AppCompat.Medium"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/list_item_spacing"
-                android:paddingEnd="@dimen/list_item_spacing"
-                android:text="@string/str_client_phone"
-                app:layout_constraintBaseline_toBaselineOf="@+id/client_phone"
-                app:layout_constraintEnd_toStartOf="@+id/when_barrier" />
+            <EditText
+                    android:id="@+id/client_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/list_item_spacing_half"
+                    android:inputType="textPersonName"
+                    android:singleLine="false"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/when_barrier"
+                    app:layout_constraintTop_toBottomOf="@+id/divider_3" />
 
-        <EditText
-                android:id="@+id/client_phone"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/list_item_spacing_half"
-                android:inputType="phone"
-                android:singleLine="true"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/when_barrier"
-                app:layout_constraintTop_toBottomOf="@+id/client_name" />
+            <TextView
+                    android:id="@+id/label_phone"
+                    style="@style/TextAppearance.AppCompat.Medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/list_item_spacing"
+                    android:paddingEnd="@dimen/list_item_spacing"
+                    android:text="@string/str_client_phone"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/client_phone"
+                    app:layout_constraintEnd_toStartOf="@+id/when_barrier" />
 
-        <androidx.constraintlayout.widget.Barrier
-                android:id="@+id/when_barrier"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:barrierDirection="right"
-                app:constraint_referenced_ids="when,client,who,label_master" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+            <EditText
+                    android:id="@+id/client_phone"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/list_item_spacing_half"
+                    android:inputType="phone"
+                    android:singleLine="true"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/when_barrier"
+                    app:layout_constraintTop_toBottomOf="@+id/client_name" />
+
+            <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/when_barrier"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:barrierDirection="right"
+                    app:constraint_referenced_ids="when,client,who,label_master" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</LinearLayout>

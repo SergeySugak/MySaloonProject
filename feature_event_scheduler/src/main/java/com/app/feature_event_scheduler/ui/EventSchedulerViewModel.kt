@@ -13,6 +13,7 @@ import com.app.mscorebase.livedata.StatefulMutableLiveData
 import com.app.mscorebase.ui.Colorizer
 import com.app.mscorebase.ui.MSFragmentViewModel
 import com.app.mscoremodels.saloon.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -77,83 +78,86 @@ class EventSchedulerViewModel @Inject constructor(
         this.clientEmail = clientEmail
     }
 
-    fun loadEvent(id: String) {
-        if (!TextUtils.isEmpty(id)) {
-            setInProgress(true)
-            viewModelScope.launch(Dispatchers.IO) {
-                intEventInfo.postValue(
-                    run {
-                        val result = dbRepository.loadEventInfo(id)
-                        if (result is Result.Success) {
-                            stopProgress()
-                            result.data
-                        } else {
-                            intError.postValue((result as Result.Error).exception)
-                            stopProgress()
-                            null
-                        }
-                    }
-                )
-            }
+    fun setEvent(event: SaloonEvent?) {
+        intEventInfo.postValue(event)
+        if (event != null){
+            intMaster.postValue(event.master)
+            intServices.postValue(event.services)
+            intCalendar.postValue(event.whenStart)
         }
+//        if (!TextUtils.isEmpty(id)) {
+//            setInProgress(true)
+//            viewModelScope.launch(Dispatchers.IO) {
+//                val result = dbRepository.loadEventInfo(id)
+//                val event: SaloonEvent?
+//                if (result is Result.Success) {
+//                    event = result.data
+//                    stopProgress()
+//                    intEventInfo.postValue(event)
+//                    if (event != null){
+//                        intMaster.postValue(event.master)
+//                        intServices.postValue(event.services)
+//                        intCalendar.postValue(event.whenStart)
+//                    }
+//                } else {
+//                    intError.postValue((result as Result.Error).exception)
+//                    stopProgress()
+//                }
+//            }
+//        }
     }
 
     fun saveEventInfo(action: ActionType, description: String = "") {
-        if (intMaster.value == null) {
-            intError.value =
-                Exception(appState.context.getString(R.string.str_master_empty))
-            return
-        }
-        if (intServices.value == null) {
-            intError.value =
-                Exception(appState.context.getString(R.string.str_services_empty))
-            return
-        }
-        if (TextUtils.isEmpty(clientName) && TextUtils.isEmpty(clientPhone)) {
-            intError.value =
-                Exception(appState.context.getString(R.string.str_name_and_phone_empty))
-            return
+        if (action !== ActionType.DELETE){
+            if (intMaster.value == null) {
+                intError.value =
+                    Exception(appState.context.getString(R.string.str_master_empty))
+                return
+            }
+            if (intServices.value == null) {
+                intError.value =
+                    Exception(appState.context.getString(R.string.str_services_empty))
+                return
+            }
+            if (TextUtils.isEmpty(clientName) && TextUtils.isEmpty(clientPhone)) {
+                intError.value =
+                    Exception(appState.context.getString(R.string.str_name_and_phone_empty))
+                return
+            }
         }
         setInProgress(true)
         viewModelScope.launch(Dispatchers.IO) {
-            intEventInfoSaveState.postValue(
-                run {
-                    if (action === ActionType.DELETE) {
-                        val event = eventInfo.value
-                        if (event != null) {
-                            val result = dbRepository.deleteEventInfo(eventInfo.value!!.id)
-                            if (result is Result.Success) {
-                                stopProgress()
-                                action
-                            } else {
-                                intError.postValue((result as Result.Error).exception)
-                                stopProgress()
-                                ActionType.ERROR
-                            }
-                        } else {
-                            ActionType.ERROR
-                        }
+            if (action === ActionType.DELETE) {
+                val event = eventInfo.value
+                if (event != null) {
+                    val result = dbRepository.deleteEventInfo(eventInfo.value!!)
+                    if (result is Result.Success) {
+                        intEventInfoSaveState.postValue(action)
+                        stopProgress()
                     } else {
-                        val event = createEvent(description)
-                        val result = dbRepository.saveEventInfo(event)
-                        if (result is Result.Success) {
-                            dbRepository.saveMasterServicesInfo(
-                                event.id,
-                                intServices.value ?: emptyList()
-                            )
-                            withContext(Dispatchers.Main){
-                                intEventInfo.value = event
-                            }
-                            stopProgress()
-                            action
-                        } else {
-                            intError.postValue((result as Result.Error).exception)
-                            stopProgress()
-                            ActionType.ERROR
-                        }
+                        intError.postValue((result as Result.Error).exception)
+                        stopProgress()
+                        intEventInfoSaveState.postValue(ActionType.ERROR)
                     }
+                } else {
+                    intEventInfoSaveState.postValue(ActionType.ERROR)
                 }
-            )
+            } else {
+                val event = createEvent(description)
+                val result = dbRepository.saveEventInfo(event)
+                if (result is Result.Success) {
+                    event.savedWhenStart = event.whenStart
+                    withContext(Dispatchers.Main){
+                        intEventInfo.value = event
+                        intEventInfoSaveState.value = action
+                    }
+                    stopProgress()
+                } else {
+                    intError.postValue((result as Result.Error).exception)
+                    stopProgress()
+                    intEventInfoSaveState.postValue(ActionType.ERROR)
+                }
+            }
         }
     }
 
