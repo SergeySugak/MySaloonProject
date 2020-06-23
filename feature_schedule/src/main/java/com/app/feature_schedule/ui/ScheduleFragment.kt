@@ -1,6 +1,7 @@
 package com.app.feature_schedule.ui
 
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
 import androidx.annotation.MenuRes
@@ -70,6 +71,9 @@ class ScheduleFragment : MSFragment<ScheduleViewModel>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (savedInstanceState == null){
+            schedulerView.scrollTo(Calendar.getInstance())
+        }
         schedulerView.setSchedulerViewListener(object : SchedulerViewListener {
             override fun onDateTimeRangeChanged(from: Calendar, to: Calendar) {
                 getViewModel()?.notifier?.onNext(Pair(from, to))
@@ -84,6 +88,23 @@ class ScheduleFragment : MSFragment<ScheduleViewModel>() {
                     eventSchedulerListener)
             }
         })
+    }
+
+    private fun scrollToNow(){
+        val now = Calendar.getInstance()
+        val minutes = now.get(Calendar.MINUTE)
+        now.set(Calendar.MINUTE, (minutes / 15) * 15)
+        now.set(Calendar.SECOND, 0)
+        now.set(Calendar.MILLISECOND, 0)
+        schedulerView.scrollTo(now)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId){
+            R.id.action_search -> {}
+            R.id.action_now -> scrollToNow()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onStartObservingViewModel(viewModel: ScheduleViewModel) {

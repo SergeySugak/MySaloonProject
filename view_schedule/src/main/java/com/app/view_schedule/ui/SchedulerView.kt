@@ -20,6 +20,7 @@ import com.app.view_schedule.api.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.Calendar.*
+import java.util.concurrent.TimeUnit
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.properties.ObservableProperty
@@ -598,12 +599,13 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
         }
     }
 
-    fun scrollToDate(date: Calendar) {
+    private fun daysBetween(from: Calendar, to: Calendar) =
+        TimeUnit.DAYS.convert(to.time.time - from.time.time, TimeUnit.MILLISECONDS).toInt()
 
-    }
-
-    fun scrollToHour(hour: Int) {
-
+    fun scrollTo(to: Calendar) {
+        xScroll = daysBetween(startingDate, to).toFloat()
+        yScroll = normalizeYScroll(to.get(HOUR_OF_DAY).toFloat() + to.get(MINUTE).toFloat() / 60)
+        postInvalidate()
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
