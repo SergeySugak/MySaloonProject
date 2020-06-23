@@ -86,7 +86,7 @@ abstract class MSFragment<VM : MSFragmentViewModel> :
     protected abstract fun onStartObservingViewModel(viewModel: VM)
 
     @get:MenuRes
-    val menu: Int
+    open val menu: Int
         get() = 0
 
     override fun setInProgress(inProgress: Boolean) {

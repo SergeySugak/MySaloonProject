@@ -49,7 +49,7 @@ object AppModule {
     ): AppStateManager {
         val appState = AppState(context, authManager, sharedPrefs, gson)
         //Тут добавляем StateManager-ы, которые существуют все время работы приложения
-        appState.attachStateManager(authManager as StateHolder) // authManager = AuthManagerImpl = StateHolder
+        appState.attachStateHolder(authManager as StateHolder) // authManager = AuthManagerImpl = StateHolder
         return appState
     }
 }

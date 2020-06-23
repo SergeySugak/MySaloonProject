@@ -3,6 +3,7 @@ package com.app.feature_schedule.ui
 import android.os.Bundle
 import android.view.View
 import android.widget.ProgressBar
+import androidx.annotation.MenuRes
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.app.feature_schedule.R
@@ -12,6 +13,7 @@ import com.app.mscorebase.di.ViewModelProviderFactory
 import com.app.mscorebase.di.findComponentDependencies
 import com.app.mscorebase.ui.MSFragment
 import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
+import com.app.mscorebase.utils.isTablet
 import com.app.mscoremodels.saloon.SaloonEvent
 import com.app.view_schedule.api.SchedulerEvent
 import com.app.view_schedule.api.SchedulerEventClickListener
@@ -27,6 +29,9 @@ class ScheduleFragment : MSFragment<ScheduleViewModel>() {
         protected set
     @Inject
     lateinit var appNavigator: AppNavigator
+
+    @get:MenuRes
+    override val menu = R.menu.schedule_menu
 
     private val loading: ProgressBar by lazy { requireView().findViewById<ProgressBar>(R.id.loading) }
     private val schedulerView: SchedulerView by lazy { requireView().findViewById<SchedulerView>(R.id.schedule_view) }
@@ -54,6 +59,10 @@ class ScheduleFragment : MSFragment<ScheduleViewModel>() {
             .build()
             .inject(this)
         super.onCreate(savedInstanceState)
+        if (!isTablet(requireContext())){
+            schedulerView.fitDays = 1
+        }
+        setHasOptionsMenu(true)
     }
 
     override fun createViewModel(savedInstanceState: Bundle?) =

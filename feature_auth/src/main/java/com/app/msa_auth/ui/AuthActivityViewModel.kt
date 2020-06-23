@@ -42,6 +42,8 @@ class AuthActivityViewModel
             val loginActionResult = authRepository.login(username, password)
             //Если вход выполнен успешно обновляем статус и фиксируем userId
             if (loginActionResult is Result.Success) {
+                appState.clear(true)
+                appState.attachStateHolder(this@AuthActivityViewModel)
                 //Проверяем, что для этого администратора создана ветка в базе
                 var checkResult = dbRepository.checkSaloonRoot(loginActionResult.data)
                 if (checkResult is Result.Success) {

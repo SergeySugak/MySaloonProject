@@ -5,13 +5,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.app.mscorebase.appstate.AppStateManager
+import com.app.mscorebase.appstate.InterruptedStateHolder
 import com.app.mscorebase.appstate.StateHolder
 import com.app.mscorebase.appstate.StateWriter
 import com.app.mscorebase.livedata.StatefulLiveData
 import com.app.mscorebase.livedata.StatefulMutableLiveData
 import kotlinx.coroutines.Job
+import java.util.*
 
-abstract class MSViewModel(private val appState: AppStateManager) : ViewModel(), StateHolder {
+abstract class MSViewModel(private val appState: AppStateManager) : ViewModel(), StateHolder,
+    InterruptedStateHolder {
     internal val _title = MutableLiveData<String>()
     val title: LiveData<String> = _title
     internal val _subtitle = MutableLiveData<String>()
@@ -25,8 +28,8 @@ abstract class MSViewModel(private val appState: AppStateManager) : ViewModel(),
     val genericHTTPError: StatefulLiveData<Throwable> = intHTTPError
     protected val intError = StatefulMutableLiveData<Throwable>()
     val error: StatefulLiveData<Throwable> = intError
-
     private val mCompositeJob = mutableListOf<Job>()
+    override val uniqueId: String by lazy { UUID.randomUUID().toString() }
 
     fun addJob(job: Job) {
         mCompositeJob.add(job)
@@ -64,7 +67,7 @@ abstract class MSViewModel(private val appState: AppStateManager) : ViewModel(),
     }
 
     fun onCreate(savedInstanceState: Bundle?) {
-        appState.attachStateManager(this)
+        appState.attachStateHolder(this)
     }
 
     fun onDestroy() {}

@@ -17,14 +17,13 @@ import com.app.mscorebase.di.findComponentDependencies
 import com.app.mscorebase.ui.MSActivity
 import com.app.mscorebase.ui.MSActivityViewModel
 import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
-import com.app.mscoremodels.saloon.SaloonEvent
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import javax.inject.Inject
 
 class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies {
 
-    val navView: BottomNavigationView by lazy { findViewById<BottomNavigationView>(R.id.nav_view) }
+    private val navView: BottomNavigationView by lazy { findViewById<BottomNavigationView>(R.id.nav_view) }
 
     private val injector: DaggerMainFeatureComponent by lazy {
         DaggerMainFeatureComponent
@@ -46,13 +45,14 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
     lateinit var appNavigator: AppNavigator
 
     @Inject
+    lateinit var scheduleFragment: ScheduleFragment
+
+    @Inject
     lateinit var mastersFragment: MastersFragment
 
     @Inject
     lateinit var servicesFragment: ServicesFragment
 
-    @Inject
-    lateinit var scheduleFragment: ScheduleFragment
     private lateinit var activeFragment: Fragment
     private val fab: FloatingActionButton by lazy { findViewById<FloatingActionButton>(R.id.fab) }
 
@@ -68,16 +68,16 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
 
         navView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
+                R.id.navigation_schedule -> changeActiveFragment(scheduleFragment)
                 R.id.navigation_masters -> changeActiveFragment(mastersFragment)
                 R.id.navigation_services -> changeActiveFragment(servicesFragment)
-                R.id.navigation_schedule -> changeActiveFragment(scheduleFragment)
                 else -> false
             }
         }
-        changeActiveFragment(mastersFragment)
+        changeActiveFragment(scheduleFragment)
         navView.selectedItemId =
-            savedInstanceState?.getInt(ID_SELECTED_ITEM_ID, R.id.navigation_masters)
-                ?: R.id.navigation_masters
+            savedInstanceState?.getInt(ID_SELECTED_ITEM_ID, R.id.navigation_schedule)
+                ?: R.id.navigation_schedule
         setupActionBar()
     }
 
@@ -90,17 +90,17 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
         supportFragmentManager
             .beginTransaction()
             .add(R.id.container, scheduleFragment)
-            .hide(scheduleFragment)
-            .commit();
+            .commit()
+        supportFragmentManager
+            .beginTransaction()
+            .add(R.id.container, mastersFragment)
+            .hide(mastersFragment)
+            .commit()
         supportFragmentManager
             .beginTransaction()
             .add(R.id.container, servicesFragment)
             .hide(servicesFragment)
-            .commit();
-        supportFragmentManager
-            .beginTransaction()
-            .add(R.id.container, mastersFragment)
-            .commit();
+            .commit()
     }
 
     private fun changeActiveFragment(fragment: Fragment): Boolean {
@@ -122,11 +122,15 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
     private fun setFabBehaviour() {
         fab.setOnClickListener {
             when (activeFragment) {
+                scheduleFragment -> scheduleFragmentFabAction()
                 mastersFragment -> mastersFragmentFabAction()
                 servicesFragment -> servicesFragmentFabAction()
-                scheduleFragment -> scheduleFragmentFabAction()
             }
         }
+    }
+
+    private fun scheduleFragmentFabAction() {
+        appNavigator.navigateToNewEventFragment(scheduleFragment, scheduleFragment.eventSchedulerListener)
     }
 
     private fun mastersFragmentFabAction() {
@@ -135,10 +139,6 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
 
     private fun servicesFragmentFabAction() {
         appNavigator.navigateToNewServiceFragment(servicesFragment)
-    }
-
-    private fun scheduleFragmentFabAction() {
-        appNavigator.navigateToNewEventFragment(scheduleFragment, scheduleFragment.eventSchedulerListener)
     }
 
     override fun createViewModel(savedInstanceState: Bundle?): MSActivityViewModel {

@@ -93,6 +93,6 @@ open class MSChoiceDialogFragmentViewModel<C : ChoiceItem<out Serializable>, P>(
 
     override fun clearState(writer: StateWriter) {
         writer.clearState(this, true)
-        appState.detachStateManager(this)
+        appState.detachStateHolder(this)
     }
 }

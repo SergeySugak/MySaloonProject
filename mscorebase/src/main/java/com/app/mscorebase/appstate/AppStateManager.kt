@@ -6,7 +6,8 @@ import main.java.com.app.mscorebase.auth.AuthManager
 interface AppStateManager : StateWriter {
     val context: Context
     val authManager: AuthManager
-    fun attachStateManager(sm: StateHolder)
-    fun detachStateManager(sm: StateHolder)
+    fun attachStateHolder(sm: StateHolder)
+    fun detachStateHolder(sm: StateHolder)
     fun save()
+    fun clear(detach: Boolean)
 }

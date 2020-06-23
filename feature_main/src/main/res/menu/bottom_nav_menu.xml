@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+
+    <item
+            android:id="@+id/navigation_schedule"
+            android:icon="@drawable/ic_schedule"
+            android:title="@string/title_schedule" />
+
     <item
             android:id="@+id/navigation_masters"
             android:icon="@drawable/ic_masters"
@@ -10,10 +16,5 @@
             android:id="@+id/navigation_services"
             android:icon="@drawable/ic_services"
             android:title="@string/title_services" />
-
-    <item
-            android:id="@+id/navigation_schedule"
-            android:icon="@drawable/ic_schedule"
-            android:title="@string/title_schedule" />
 
 </menu>

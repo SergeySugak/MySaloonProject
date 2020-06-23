@@ -18,69 +18,92 @@ class AppState(
     private val gson: Gson
 ) : AppStateManager {
 
-    private val stateManagers: MutableMap<String, StateHolder> =
+    private val stateHolders: MutableMap<String, StateHolder> =
         ConcurrentHashMap()
 
-    override fun attachStateManager(sm: StateHolder) {
-        if (appSharedPreferences.contains(sm.id)) {
-            sm.restoreState(this)
+    override fun attachStateHolder(sh: StateHolder) {
+        if (appSharedPreferences.contains(sh.id)) {
+            sh.restoreState(this)
         }
-        stateManagers[sm.id] = sm
+        stateHolders[sh.id] = sh
     }
 
     @SuppressLint("ApplySharedPref")
-    override fun detachStateManager(sm: StateHolder) {
-        clearState(sm, false)
-        stateManagers.remove(sm.id)
+    override fun detachStateHolder(sh: StateHolder) {
+        clearState(sh, false)
+        stateHolders.remove(sh.id)
     }
 
     @SuppressLint("ApplySharedPref")
-    override fun writeState(
-        sm: StateHolder,
-        state: Map<String, String>
-    ) {
-        val stateHolderManager = stateManagers[sm.id]
+    override fun writeState(sh: StateHolder, state: Map<String, String>) {
+        val curState = state.toMutableMap()
+        val stateHolderManager = stateHolders[sh.id]
         if (stateHolderManager != null && state.isNotEmpty()) {
-            appSharedPreferences.edit().putString(sm.id, gson.toJson(state)).commit()
+            if (sh is InterruptedStateHolder) {
+                curState[getInterruptedStateKey(sh)] = sh.uniqueId
+            }
+            appSharedPreferences.edit().putString(sh.id, gson.toJson(curState)).commit()
         }
-        Log.d(TAG, "State written for " + sm.id)
+        Log.d(TAG, "State written for " + sh.id)
     }
 
-    override fun readState(sm: StateHolder): Map<String, String> {
-        val typeOfHashMap = object :
-            TypeToken<Map<String?, String?>?>() {}.type
+    override fun readState(sh: StateHolder): Map<String, String> {
+        val typeOfHashMap = object : TypeToken<Map<String?, String?>?>() {}.type
         val json: String?
-        if (appSharedPreferences.contains(sm.id)) {
-            json = appSharedPreferences.getString(sm.id, null)
+        if (appSharedPreferences.contains(sh.id)) {
+            json = appSharedPreferences.getString(sh.id, null)
             if (!TextUtils.isEmpty(json)) {
-                return gson.fromJson(
-                    json,
-                    typeOfHashMap
-                )
+                val state: MutableMap<String, String> = gson.fromJson(json, typeOfHashMap)
+                if (sh is InterruptedStateHolder) {
+                    val current = isCurrent(sh, state)
+                    state.remove(getInterruptedStateKey(sh))
+                    if (!current) {
+                        return state
+                    }
+                } else {
+                    return state
+                }
             }
         }
-        Log.d(TAG, "State read for " + sm.id)
-        return HashMap()
+        Log.d(TAG, "State read for " + sh.id)
+        return emptyMap()
     }
 
+    private fun isCurrent(sh: InterruptedStateHolder, state: Map<String, String>): Boolean {
+        return if (state.containsKey(getInterruptedStateKey(sh))) {
+            state[getInterruptedStateKey(sh)] == sh.uniqueId
+        } else {
+            false
+        }
+    }
+
+    private fun getInterruptedStateKey(sh: StateHolder): String = "${sh.id}_$STATE_HOLDER_HASH_CODE"
+
     @SuppressLint("ApplySharedPref")
-    override fun clearState(sm: StateHolder, detach: Boolean) {
-        if (appSharedPreferences.contains(sm.id)) {
-            appSharedPreferences.edit().remove(sm.id).commit()
+    override fun clearState(sh: StateHolder, detach: Boolean) {
+        if (appSharedPreferences.contains(sh.id)) {
+            appSharedPreferences.edit().remove(sh.id).commit()
         }
         if (detach) {
-            stateManagers.remove(sm.id)
+            stateHolders.remove(sh.id)
         }
     }
 
     override fun save() {
-        for (sm in stateManagers.values) {
-            sm.saveState(this)
+        for (sh in stateHolders.values) {
+            sh.saveState(this)
+        }
+    }
+
+    override fun clear(detach: Boolean) {
+        for (sh in stateHolders.values) {
+            clearState(sh, detach)
         }
     }
 
     companion object {
         private val TAG = AppState::class.java.simpleName
+        private const val STATE_HOLDER_HASH_CODE = "_STATE_HOLDER_HASH_CODE"
     }
 
 }
