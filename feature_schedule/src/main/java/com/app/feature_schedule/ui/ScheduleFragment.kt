@@ -60,9 +60,6 @@ class ScheduleFragment : MSFragment<ScheduleViewModel>() {
             .build()
             .inject(this)
         super.onCreate(savedInstanceState)
-        if (!isTablet(requireContext())){
-            schedulerView.fitDays = 1
-        }
         setHasOptionsMenu(true)
     }
 
@@ -71,6 +68,9 @@ class ScheduleFragment : MSFragment<ScheduleViewModel>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (!isTablet(requireContext())){
+            schedulerView.fitDays = 1
+        }
         if (savedInstanceState == null){
             schedulerView.scrollTo(Calendar.getInstance())
         }
