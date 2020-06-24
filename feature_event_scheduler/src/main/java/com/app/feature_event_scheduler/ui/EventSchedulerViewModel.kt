@@ -13,7 +13,6 @@ import com.app.mscorebase.livedata.StatefulMutableLiveData
 import com.app.mscorebase.ui.Colorizer
 import com.app.mscorebase.ui.MSFragmentViewModel
 import com.app.mscoremodels.saloon.*
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -41,11 +40,11 @@ class EventSchedulerViewModel @Inject constructor(
     var masterId: String = ""
         private set
     private var clientName: String = ""
-        private set
     private var clientPhone: String = ""
-        private set
     private var clientEmail: String = ""
-        private set
+    private var description: String = ""
+    private var notes: String = ""
+    private var state: SaloonEventState = SaloonEventState.esScheduled
 
     fun setEventDate(year: Int, month: Int, day: Int) {
         intCalendar.value!!.set(year, month, day)
@@ -78,36 +77,35 @@ class EventSchedulerViewModel @Inject constructor(
         this.clientEmail = clientEmail
     }
 
+    fun setDescription(description: String) {
+        this.description = description
+    }
+
+    fun setNotes(notes: String) {
+        this.notes = notes
+    }
+
+    fun setDone(done: Boolean) {
+        state = if (done) SaloonEventState.esDone else SaloonEventState.esScheduled
+    }
+
+    fun getDone(): Boolean {
+        return state === SaloonEventState.esDone
+    }
+
     fun setEvent(event: SaloonEvent?) {
         intEventInfo.postValue(event)
         if (event != null){
             intMaster.postValue(event.master)
             intServices.postValue(event.services)
             intCalendar.postValue(event.whenStart)
+            notes = event.notes
+            description = event.description
+            state = event.state
         }
-//        if (!TextUtils.isEmpty(id)) {
-//            setInProgress(true)
-//            viewModelScope.launch(Dispatchers.IO) {
-//                val result = dbRepository.loadEventInfo(id)
-//                val event: SaloonEvent?
-//                if (result is Result.Success) {
-//                    event = result.data
-//                    stopProgress()
-//                    intEventInfo.postValue(event)
-//                    if (event != null){
-//                        intMaster.postValue(event.master)
-//                        intServices.postValue(event.services)
-//                        intCalendar.postValue(event.whenStart)
-//                    }
-//                } else {
-//                    intError.postValue((result as Result.Error).exception)
-//                    stopProgress()
-//                }
-//            }
-//        }
     }
 
-    fun saveEventInfo(action: ActionType, description: String = "") {
+    fun saveEventInfo(action: ActionType) {
         if (action !== ActionType.DELETE){
             if (intMaster.value == null) {
                 intError.value =
@@ -143,7 +141,7 @@ class EventSchedulerViewModel @Inject constructor(
                     intEventInfoSaveState.postValue(ActionType.ERROR)
                 }
             } else {
-                val event = createEvent(description)
+                val event = createEvent(description, notes)
                 val result = dbRepository.saveEventInfo(event)
                 if (result is Result.Success) {
                     event.savedWhenStart = event.whenStart
@@ -167,7 +165,7 @@ class EventSchedulerViewModel @Inject constructor(
         }
     }
 
-    private fun createEvent(description: String): SaloonEvent {
+    private fun createEvent(description: String, notes: String): SaloonEvent {
         var duration = 0
         services.value!!.forEach {
             duration += it.duration?.duration ?: 0
@@ -186,8 +184,8 @@ class EventSchedulerViewModel @Inject constructor(
                 "",
                 master.value!!, services.value!!, client,
                 whenStart, whenFinish, description,
-                eventColorizer.getRandomColor(appState.context)
-            )
+                eventColorizer.getRandomColor(appState.context),
+                notes, state)
         } else {
             val evt = eventInfo.value!!
             evt.master = master.value!!
@@ -196,6 +194,8 @@ class EventSchedulerViewModel @Inject constructor(
             evt.whenStart = whenStart
             evt.whenFinish = whenFinish
             evt.description = description
+            evt.notes = notes
+            evt.state = state
             evt
         }
     }

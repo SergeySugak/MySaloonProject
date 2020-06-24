@@ -17,6 +17,7 @@ class SaloonEvent constructor(): SchedulerEvent,  Parcelable {
     lateinit var savedWhenStart: Calendar
     lateinit var whenStart: Calendar
     lateinit var whenFinish: Calendar
+    lateinit var notes: String
     var description: String = ""
     @ColorInt var color: Int = Color.WHITE
     var state: SaloonEventState = SaloonEventState.esScheduled
@@ -24,7 +25,7 @@ class SaloonEvent constructor(): SchedulerEvent,  Parcelable {
     constructor(
         id: String, master: SaloonMaster, services: List<SaloonService>, client: SaloonClient,
          whenStart: Calendar, whenFinish: Calendar, description: String,
-        @ColorInt color: Int, state: SaloonEventState
+        @ColorInt color: Int, state: SaloonEventState, notes: String = ""
     ) : this() {
         this.id = id
         this.master = master
@@ -36,6 +37,7 @@ class SaloonEvent constructor(): SchedulerEvent,  Parcelable {
         this.description = description
         this.color = color
         this.state = state
+        this.notes = notes
     }
 
     override fun equals(other: Any?): Boolean {
@@ -56,6 +58,7 @@ class SaloonEvent constructor(): SchedulerEvent,  Parcelable {
         result = 31 * result + description.hashCode()
         result = 31 * result + color.hashCode()
         result = 31 * result + state.hashCode()
+        result = 31 * result + notes.hashCode()
         return result
     }
 
@@ -74,6 +77,7 @@ class SaloonEvent constructor(): SchedulerEvent,  Parcelable {
         parcel.writeSerializable(whenFinish)
         parcel.writeInt(color)
         parcel.writeString(state.name)
+        parcel.writeString(notes)
     }
 
     constructor(parcel: Parcel) : this() {
@@ -87,6 +91,7 @@ class SaloonEvent constructor(): SchedulerEvent,  Parcelable {
         whenFinish = parcel.readSerializable() as Calendar
         color = parcel.readInt()
         state = SaloonEventState.valueOf(parcel.readString()!!)
+        notes = parcel.readString() ?: ""
     }
 
     override fun describeContents(): Int {

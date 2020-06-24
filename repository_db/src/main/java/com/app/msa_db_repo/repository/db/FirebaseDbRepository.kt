@@ -230,8 +230,9 @@ class FirebaseDbRepository
         val description = event?.description ?: ""
         val color = event?.color ?: Color.WHITE
         val state = event?.state ?: SaloonEventState.esError
+        val notes = event?.notes ?: ""
         return Result.Success(saloonFactory.createSaloonEvent(event?.id ?: "", master, services,
-            client, whenStart, whenFinish, description, color, state))
+            client, whenStart, whenFinish, description, color, notes, state))
     }
 
     private fun indexEvent(event: SaloonEvent): Result<Boolean> {

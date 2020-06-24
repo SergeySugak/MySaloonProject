@@ -25,9 +25,8 @@ class SaloonFactory @Inject constructor() {
         id: String, master: SaloonMaster,
         services: List<SaloonService>, client: SaloonClient,
         whenStart: Calendar, whenFinish: Calendar, description: String, @ColorInt color: Int,
-        state: SaloonEventState = SaloonEventState.esScheduled
-    ) =
-        SaloonEvent(id, master, services, client, whenStart, whenFinish, description, color, state)
+        notes: String, state: SaloonEventState = SaloonEventState.esScheduled) =
+        SaloonEvent(id, master, services, client, whenStart, whenFinish, description, color, state, notes)
 
     fun createServiceDuration(duration: Int?, name: String?) = ServiceDuration(duration, name)
     fun createServiceDuration(duration: ChoosableServiceDuration?) =

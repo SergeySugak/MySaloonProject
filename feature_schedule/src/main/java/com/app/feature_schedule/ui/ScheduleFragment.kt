@@ -93,7 +93,8 @@ class ScheduleFragment : MSFragment<ScheduleViewModel>() {
     private fun scrollToNow(){
         val now = Calendar.getInstance()
         val minutes = now.get(Calendar.MINUTE)
-        now.set(Calendar.MINUTE, (minutes / 15) * 15)
+        val fraction = resources.getInteger(R.integer.time_fraction)
+        now.set(Calendar.MINUTE, (minutes / fraction) * fraction)
         now.set(Calendar.SECOND, 0)
         now.set(Calendar.MILLISECOND, 0)
         schedulerView.scrollTo(now)

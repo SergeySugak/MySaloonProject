@@ -17,6 +17,7 @@ class RepositoryEvent constructor() {
     var description: String = ""
     @ColorInt var color: Int = Color.WHITE
     var state: SaloonEventState = SaloonEventState.esScheduled
+    var notes: String = ""
 
     constructor(event: SaloonEvent) : this() {
         this.id = event.id
@@ -28,6 +29,7 @@ class RepositoryEvent constructor() {
         this.description = event.description
         this.color = event.color
         this.state = event.state
+        this.notes = event.notes
     }
 
     override fun equals(other: Any?): Boolean {
@@ -36,17 +38,7 @@ class RepositoryEvent constructor() {
 
         other as RepositoryEvent
 
-        if (id != other.id) return false
-        if (masterId != other.masterId) return false
-        if (serviceIds != other.serviceIds) return false
-        if (client != other.client) return false
-        if (whenStart != other.whenStart) return false
-        if (whenFinish != other.whenFinish) return false
-        if (description != other.description) return false
-        if (color != other.color) return false
-        if (state != other.state) return false
-
-        return true
+        return id == other.id
     }
 
     override fun hashCode(): Int {
@@ -59,6 +51,7 @@ class RepositoryEvent constructor() {
         result = 31 * result + description.hashCode()
         result = 31 * result + color.hashCode()
         result = 31 * result + state.hashCode()
+        result = 31 * result + notes.hashCode()
         return result
     }
 }

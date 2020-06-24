@@ -4,6 +4,8 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.os.Parcel
 import android.view.View
+import android.view.View.VISIBLE
+import android.widget.CheckedTextView
 import android.widget.EditText
 import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
@@ -162,7 +164,10 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
             clientPhone?.text.toString() ?: "", clientEmail?.text.toString() ?: ""
         )
         val action = if (event != null) ActionType.EDIT else ActionType.ADD
-        getViewModel()?.saveEventInfo(action, services.text.toString())
+        getViewModel()?.setDescription(requireView().findViewById<EditText>(R.id.services)?.text.toString())
+        getViewModel()?.setNotes(requireView().findViewById<EditText>(R.id.notes).text.toString())
+        getViewModel()?.setDone(requireView().findViewById<CheckedTextView>(R.id.done).isChecked)
+        getViewModel()?.saveEventInfo(action)
     }
 
     override fun createViewModel(savedInstanceState: Bundle?) =
@@ -225,6 +230,16 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
                     dialog?.findViewById<EditText>(R.id.client_name)?.setText(event.client.name)
                     dialog?.findViewById<EditText>(R.id.client_phone)?.setText(event.client.phone)
                     dialog?.findViewById<EditText>(R.id.client_email)?.setText(event.client.email)
+                    dialog?.findViewById<EditText>(R.id.notes)?.setText(event.notes)
+                    val done = dialog?.findViewById<CheckedTextView>(R.id.done)
+                    if (done != null) {
+                        done.visibility = VISIBLE
+                        done.isChecked = viewModel.getDone()
+                        done.setOnClickListener {
+                            done.isChecked = !done.isChecked
+                            viewModel.setDone(done.isChecked)
+                        }
+                    }
                 }
                 viewModel.eventInfo.isHandled = true
             }
