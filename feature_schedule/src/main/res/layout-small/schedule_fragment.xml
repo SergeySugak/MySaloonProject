@@ -12,7 +12,6 @@
             app:daysHeaderHeight="40dp"
             app:hourSepWidth="1dp"
             app:hoursHeaderWidth="40dp"
-            app:fitDays="3"
             app:daysHeaderTextSize="14sp"
             app:hoursHeaderTextSize="12sp"/>
     <ProgressBar
