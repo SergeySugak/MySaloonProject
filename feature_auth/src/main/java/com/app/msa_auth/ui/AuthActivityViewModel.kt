@@ -42,7 +42,7 @@ class AuthActivityViewModel
             val loginActionResult = authRepository.login(username, password)
             //Если вход выполнен успешно обновляем статус и фиксируем userId
             if (loginActionResult is Result.Success) {
-                appState.clear(true)
+                appState.clear()
                 appState.attachStateHolder(this@AuthActivityViewModel)
                 //Проверяем, что для этого администратора создана ветка в базе
                 var checkResult = dbRepository.checkSaloonRoot(loginActionResult.data)
@@ -110,7 +110,7 @@ class AuthActivityViewModel
 
     override fun restoreState(writer: StateWriter) {
         //nulls may probably appear as a side effect of some changes to codebase
-        val state: Map<String, String?> = writer.readState(this)
+        val state: Map<String, String?> = writer.readState(this) ?: return
         //read state item by item
     }
 

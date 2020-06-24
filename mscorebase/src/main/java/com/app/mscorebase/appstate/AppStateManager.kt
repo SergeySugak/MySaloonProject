@@ -9,5 +9,5 @@ interface AppStateManager : StateWriter {
     fun attachStateHolder(sm: StateHolder)
     fun detachStateHolder(sm: StateHolder)
     fun save()
-    fun clear(detach: Boolean)
+    fun clear()
 }

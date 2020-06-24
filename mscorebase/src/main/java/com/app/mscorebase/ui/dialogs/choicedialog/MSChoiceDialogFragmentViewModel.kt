@@ -87,7 +87,7 @@ open class MSChoiceDialogFragmentViewModel<C : ChoiceItem<out Serializable>, P>(
     }
 
     override fun restoreState(writer: StateWriter) {
-        val state = writer.readState(this)
+        val state = writer.readState(this) ?: return
         //read state
     }
 

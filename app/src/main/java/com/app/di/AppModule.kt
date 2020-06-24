@@ -22,15 +22,17 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
 import main.java.com.app.mscorebase.auth.AuthManager
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
 object AppModule {
 
-    private val APP_SHARED_PREFS = "MSA_SHARED_PREFS"
+    private val APP_SHARED_PREFS = "MSA_STATE_SHARED_PREFS"
 
     @Provides
     @Singleton
+    @Named("STATE")
     internal fun providesSharedPreferences(context: Context): SharedPreferences {
         return context.getSharedPreferences(APP_SHARED_PREFS, Context.MODE_PRIVATE)
     }
@@ -44,6 +46,7 @@ object AppModule {
     internal fun provideAppState(
         context: Context,
         authManager: AuthManager,
+        @Named("STATE")
         sharedPrefs: SharedPreferences,
         gson: Gson
     ): AppStateManager {

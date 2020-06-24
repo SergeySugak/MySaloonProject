@@ -1,6 +1,5 @@
 package com.app.feature_schedule.ui
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.app.msa_db_repo.repository.db.DbRepository
 import com.app.mscorebase.appstate.AppStateManager
@@ -11,7 +10,6 @@ import com.app.mscorebase.livedata.StatefulMutableLiveData
 import com.app.mscorebase.ui.MSFragmentViewModel
 import com.app.mscoremodels.saloon.SaloonEvent
 import com.app.view_schedule.api.SchedulerEvent
-import com.google.gson.Gson
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.PublishSubject
@@ -24,12 +22,12 @@ import javax.inject.Inject
 
 class ScheduleViewModel
 @Inject constructor(
-    private val appState: AppStateManager,
-    private val dbRepository: DbRepository,
-    private val gson: Gson
+    appState: AppStateManager,
+    private val dbRepository: DbRepository
 ) : MSFragmentViewModel(appState) {
     private val eventsMap = ConcurrentHashMap<String, MutableList<SaloonEvent>>()
     private var subscription: Disposable
+    private var filter: String = ""
     private val dateFormatter = SimpleDateFormat(KEY_FORMAT, Locale.getDefault())
     val notifier: PublishSubject<Pair<Calendar, Calendar>> = PublishSubject.create()
     private val intNewEventsLoaded = StatefulMutableLiveData<List<SchedulerEvent>>()
@@ -52,7 +50,7 @@ class ScheduleViewModel
                 jobs.add(i, async {
                     val date = from.clone() as Calendar
                     date.add(Calendar.DATE, i)
-                    val events: MutableList<SaloonEvent>
+                    var events: MutableList<SaloonEvent>
                     val key = getKey(date)
                     if (!eventsMap.containsKey(key) || force) {
                         val requestResult = dbRepository.getEvents(date)
@@ -62,9 +60,11 @@ class ScheduleViewModel
                                 events.removeAll{ event ->
                                     eventsMap[key]?.contains(event) ?: false
                                 }
+                                events = filterEvents(events, filter)
                                 eventsMap[key]!!.addAll(events)
                             }
                             else {
+                                events = filterEvents(events, filter)
                                 eventsMap[key] = mutableListOf<SaloonEvent>().apply { addAll(events) }
                             }
                             if (events.size > 0) {
@@ -92,6 +92,17 @@ class ScheduleViewModel
                 setInProgress(false)
             }
         }
+    }
+
+    private fun filterEvents(events: MutableList<SaloonEvent>, filter: String): MutableList<SaloonEvent> {
+        return events.filter { event ->
+            event.client.name.contains(filter) ||
+            event.client.email.contains(filter) ||
+            event.client.phone.contains(filter) ||
+            event.master.name.contains(filter) ||
+            event.description.contains(filter) ||
+            event.notes.contains(filter)
+        }.toMutableList()
     }
 
     fun onEventInserted(event: SaloonEvent) {
@@ -130,13 +141,37 @@ class ScheduleViewModel
         super.onCleared()
     }
 
-    override fun restoreState(writer: StateWriter) {}
+    override fun restoreState(writer: StateWriter) {
+        val state = writer.readState(this) ?: return
+        filter = state[STATE_FILTER] ?: ""
+//        val type = object: TypeToken<ConcurrentHashMap<String, MutableList<SaloonEvent>>>(){}.type
+//        eventsMap.putAll(gson.fromJson(state[STATE_EVENTS_MAP], type))
+    }
 
-    override fun saveState(writer: StateWriter) {}
+    override fun saveState(writer: StateWriter) {
+        val state = hashMapOf<String, String>()
+        state[STATE_FILTER] = filter
+//        state[STATE_EVENTS_MAP] = gson.toJson(eventsMap)
+        writer.writeState(this, state)
+    }
+
+    fun setFilter(filter: String?) {
+        this.filter = filter ?: ""
+    }
+
+    fun getFilter() = filter
+
+    fun applyFilter(from: Calendar, to: Calendar){
+        eventsMap.clear()
+        loadData(from, to)
+    }
 
     companion object {
         private const val KEY_FORMAT = "dd.MM.yyyy"
         private const val TIMEOUT = 300L
+
+        private val STATE_EVENTS_MAP: String = "${ScheduleViewModel::class.java.simpleName}_STATE_EVENTS_MAP"
+        private val STATE_FILTER: String = "${ScheduleViewModel::class.java.simpleName}_STATE_FILTER"
     }
 
     init {

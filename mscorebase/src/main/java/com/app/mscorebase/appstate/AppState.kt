@@ -47,7 +47,7 @@ class AppState(
         Log.d(TAG, "State written for " + sh.id)
     }
 
-    override fun readState(sh: StateHolder): Map<String, String> {
+    override fun readState(sh: StateHolder): Map<String, String>? {
         val typeOfHashMap = object : TypeToken<Map<String?, String?>?>() {}.type
         val json: String?
         if (appSharedPreferences.contains(sh.id)) {
@@ -66,7 +66,7 @@ class AppState(
             }
         }
         Log.d(TAG, "State read for " + sh.id)
-        return emptyMap()
+        return null
     }
 
     private fun isCurrent(sh: InterruptedStateHolder, state: Map<String, String>): Boolean {
@@ -95,10 +95,8 @@ class AppState(
         }
     }
 
-    override fun clear(detach: Boolean) {
-        for (sh in stateHolders.values) {
-            clearState(sh, detach)
-        }
+    override fun clear() {
+        appSharedPreferences.edit().clear().commit()
     }
 
     companion object {

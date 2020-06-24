@@ -1,6 +1,8 @@
 package com.app.feature_schedule.ui
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
@@ -130,20 +132,50 @@ class ScheduleFragment : MSFragment<ScheduleViewModel>() {
         viewModel.eventDeleted.observe(this, Observer { event ->
             if (!viewModel.eventDeleted.isHandled){
                 schedulerView.removeEvent(event)
-//                val iterator = schedulerView.getEvents().toMutableList().iterator()
-//                var event: SchedulerEvent? = null
-//                while (iterator.hasNext()){
-//                    event = iterator.next()
-//                    if (event.getEventId() == deletedEventId){
-//                        break
-//                    }
-//                }
-//                if (event != null){
-//                    schedulerView.removeEvent(event)
-//                }
                 viewModel.eventDeleted.isHandled = true
             }
         })
+    }
+
+    override fun onCreateOptionsMenu(optMenu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(optMenu, inflater)
+        val searchMenuItem = optMenu.findItem(R.id.action_search)
+        val searchView = searchMenuItem.actionView as androidx.appcompat.widget.SearchView
+        setupSearch(searchView, searchMenuItem)
+    }
+
+    private fun setupSearch(searchView: androidx.appcompat.widget.SearchView,
+                            searchMenuItem: MenuItem) {
+        searchView.setIconifiedByDefault(true)
+        searchView.queryHint = getString(R.string.str_search_for_event)
+        searchView.setOnQueryTextListener(object: androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                queryWithFilter()
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                getViewModel()?.setFilter(newText)
+                return false
+            }
+        })
+        searchView.setOnCloseListener {
+            queryWithFilter()
+            false
+        }
+
+        val savedFilter = getViewModel()?.getFilter()
+        if (savedFilter != null && savedFilter.isNotEmpty()){
+            searchMenuItem.expandActionView()
+            searchView.setQuery(savedFilter, false)
+        }
+    }
+
+    private fun queryWithFilter(){
+        val fromDate = schedulerView.getFirstDrawableDateTime()
+        val toDate = schedulerView.getLastDrawableDateTime(fromDate)
+        schedulerView.clearEvents()
+        getViewModel()?.applyFilter(fromDate, toDate)
     }
 
     override fun onHiddenChanged(hidden: Boolean) {

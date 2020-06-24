@@ -762,6 +762,11 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
         postInvalidate()
     }
 
+    fun clearEvents() {
+        events.clear()
+        postInvalidate()
+    }
+
     fun addEvents(events: List<SchedulerEvent>){
         val list = events.toMutableList()
         list.removeAll(this.events)
@@ -772,6 +777,7 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
     fun setEventClickListener(eventClickListener: SchedulerEventClickListener) {
         this.eventClickListener = eventClickListener
     }
+
 
     enum class HourFraction(val value: Int) {
         hf1(1), hf2(2), hf3(3), hf4(4), hf5(5), hf6(6), hf10(10), hf12(12), hf15(15), hf20(20), hf30(

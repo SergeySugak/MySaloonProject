@@ -48,7 +48,7 @@ class ServicesSelectionDialogViewModel
     }
 
     override fun restoreState(writer: StateWriter) {
-        val state = writer.readState(this)
+        val state = writer.readState(this) ?: return
         //read state
     }
 

@@ -37,10 +37,8 @@ class AuthManagerImpl @Inject constructor(private val authRepository: AuthReposi
     }
 
     override fun restoreState(writer: StateWriter) {
-        val state: Map<String, String?> = writer.readState(this)
-        if (state.containsKey(STATE_USER_NAME)) {
-            username = state[STATE_USER_NAME] ?: ""
-        }
+        val state: Map<String, String?> = writer.readState(this) ?: return
+        username = state[STATE_USER_NAME] ?: ""
     }
 
     override fun saveState(writer: StateWriter) {

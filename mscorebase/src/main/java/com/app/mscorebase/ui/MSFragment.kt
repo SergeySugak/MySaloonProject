@@ -21,7 +21,8 @@ abstract class MSFragment<VM : MSFragmentViewModel> :
     private val TAG = javaClass.simpleName
     private lateinit var viewModel: VM
     private val mainHandler = Handler()
-    private var optionsMenu: Menu? = null
+    var optionsMenu: Menu? = null
+        private set
 
     /**
      * Override for set layout resource
