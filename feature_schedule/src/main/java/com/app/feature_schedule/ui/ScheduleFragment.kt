@@ -1,6 +1,7 @@
 package com.app.feature_schedule.ui
 
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -156,14 +157,12 @@ class ScheduleFragment : MSFragment<ScheduleViewModel>() {
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 getViewModel()?.setFilter(newText)
+                if (TextUtils.isEmpty(newText)){
+                    queryWithFilter()
+                }
                 return false
             }
         })
-        searchView.setOnCloseListener {
-            queryWithFilter()
-            false
-        }
-
         val savedFilter = getViewModel()?.getFilter()
         if (savedFilter != null && savedFilter.isNotEmpty()){
             searchMenuItem.expandActionView()
