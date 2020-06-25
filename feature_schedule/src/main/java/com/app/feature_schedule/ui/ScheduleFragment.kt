@@ -71,9 +71,6 @@ class ScheduleFragment : MSFragment<ScheduleViewModel>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        if (!isTablet(requireContext())){
-//            schedulerView.fitDays = resources.getInteger(R.integer.small)
-//        }
         if (savedInstanceState == null){
             schedulerView.scrollTo(Calendar.getInstance())
         }
@@ -147,6 +144,7 @@ class ScheduleFragment : MSFragment<ScheduleViewModel>() {
 
     private fun setupSearch(searchView: androidx.appcompat.widget.SearchView,
                             searchMenuItem: MenuItem) {
+        searchView.maxWidth = Integer.MAX_VALUE
         searchView.setIconifiedByDefault(true)
         searchView.queryHint = getString(R.string.str_search_for_event)
         searchView.setOnQueryTextListener(object: androidx.appcompat.widget.SearchView.OnQueryTextListener {

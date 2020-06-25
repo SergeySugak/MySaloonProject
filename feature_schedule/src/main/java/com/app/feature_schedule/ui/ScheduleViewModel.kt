@@ -96,12 +96,12 @@ class ScheduleViewModel
 
     private fun filterEvents(events: MutableList<SaloonEvent>, filter: String): MutableList<SaloonEvent> {
         return events.filter { event ->
-            event.client.name.contains(filter) ||
-            event.client.email.contains(filter) ||
-            event.client.phone.contains(filter) ||
-            event.master.name.contains(filter) ||
-            event.description.contains(filter) ||
-            event.notes.contains(filter)
+            event.client.name.contains(filter, true) ||
+            event.client.email.contains(filter, true) ||
+            event.client.phone.contains(filter, true) ||
+            event.master.name.contains(filter, true) ||
+            event.description.contains(filter, true) ||
+            event.notes.contains(filter, true)
         }.toMutableList()
     }
 
