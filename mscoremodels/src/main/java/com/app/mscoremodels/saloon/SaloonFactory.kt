@@ -1,10 +1,11 @@
 package com.app.mscoremodels.saloon
 
 import androidx.annotation.ColorInt
+import com.app.mscorebase.appstate.AppStateManager
 import java.util.*
 import javax.inject.Inject
 
-class SaloonFactory @Inject constructor() {
+class SaloonFactory @Inject constructor(val appState: AppStateManager) {
     fun createSaloonService(
         id: String, name: String, price: Double,
         duration: ServiceDuration?, description: String,
@@ -25,8 +26,20 @@ class SaloonFactory @Inject constructor() {
         id: String, master: SaloonMaster,
         services: List<SaloonService>, client: SaloonClient,
         whenStart: Calendar, whenFinish: Calendar, description: String, @ColorInt color: Int,
-        notes: String, state: SaloonEventState = SaloonEventState.esScheduled) =
-        SaloonEvent(id, master, services, client, whenStart, whenFinish, description, color, state, notes)
+        notes: String, state: SaloonEventState = SaloonEventState.esScheduled
+    ) =
+        SaloonEvent(
+            id,
+            master,
+            services,
+            client,
+            whenStart,
+            whenFinish,
+            description,
+            color,
+            state,
+            notes
+        )
 
     fun createServiceDuration(duration: Int?, name: String?) = ServiceDuration(duration, name)
     fun createServiceDuration(duration: ChoosableServiceDuration?) =
@@ -93,4 +106,27 @@ class SaloonFactory @Inject constructor() {
         return result
     }
 
+    fun createChoosableEvents(
+        allEventsList: List<SaloonEvent>,
+        selectedEventsList: List<SaloonEvent>,
+        filter: String
+    ): List<ChoosableSaloonEvent> {
+        val result = mutableListOf<ChoosableSaloonEvent>()
+        allEventsList
+            .filter{ event ->
+                event.client.name.contains(filter, true) ||
+                event.client.email.contains(filter, true) ||
+                event.client.phone.contains(filter, true) ||
+                event.master.name.contains(filter, true) ||
+                event.description.contains(filter, true) ||
+                event.notes.contains(filter, true)
+            }
+            .sortedByDescending { it.whenStart }
+            .mapTo(result) { saloonEvent ->
+            ChoosableSaloonEvent(appState.context, saloonEvent).apply {
+                isSelected = selectedEventsList.indexOf(saloonEvent) != -1
+            }
+        }
+        return result
+    }
 }

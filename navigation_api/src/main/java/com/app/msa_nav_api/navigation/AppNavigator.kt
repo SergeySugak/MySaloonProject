@@ -5,10 +5,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import androidx.fragment.app.Fragment
 import com.app.mscorebase.ui.dialogs.choicedialog.OnChoiceItemsSelectedListener
-import com.app.mscoremodels.saloon.ChoosableSaloonMaster
-import com.app.mscoremodels.saloon.ChoosableSaloonService
-import com.app.mscoremodels.saloon.SaloonEvent
-import com.app.mscoremodels.saloon.SaloonService
+import com.app.mscoremodels.saloon.*
 
 interface AppNavigator {
     fun navigateToAuthActivity(from: Context)
@@ -19,12 +16,18 @@ interface AppNavigator {
 
     fun navigateToNewMasterFragment(targetFragment: Fragment)
     fun navigateToEditMasterFragment(
-        targetFragment: Fragment, masterId: String)
+        targetFragment: Fragment, masterId: String
+    )
 
-    fun navigateToNewEventFragment(targetFragment: Fragment,
-                                   eventListener: EventSchedulerListener?)
-    fun navigateToEditEventFragment(targetFragment: Fragment, event: SaloonEvent?,
-                                    eventListener: EventSchedulerListener?)
+    fun navigateToNewEventFragment(
+        targetFragment: Fragment,
+        eventListener: EventSchedulerListener?
+    )
+
+    fun navigateToEditEventFragment(
+        targetFragment: Fragment, event: SaloonEvent?,
+        eventListener: EventSchedulerListener?
+    )
 
     fun navigateToSelectServicesFragment(
         targetFragment: Fragment,
@@ -42,7 +45,15 @@ interface AppNavigator {
         listener: OnChoiceItemsSelectedListener<ChoosableSaloonMaster, String?>
     )
 
-    interface EventSchedulerListener: Parcelable {
+    fun navigateToSelectEventFragment(
+        targetFragment: Fragment,
+        title: String,
+        filter: String,
+        payload: String?,
+        listener: OnChoiceItemsSelectedListener<ChoosableSaloonEvent, String?>
+    )
+
+    interface EventSchedulerListener : Parcelable {
         fun onAdded(event: SaloonEvent)
         fun onUpdated(event: SaloonEvent)
         fun onDeleted(event: SaloonEvent)

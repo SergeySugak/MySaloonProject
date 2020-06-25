@@ -3,4 +3,6 @@
     <string name="menu_search">Поиск</string>
     <string name="str_today">Сегодня</string>
     <string name="str_search_for_event">Что искать</string>
+    <string name="str_found_events">Найденные события</string>
+    <string name="str_filter_events">Что фильтровать</string>
 </resources>

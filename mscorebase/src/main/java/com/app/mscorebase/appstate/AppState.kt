@@ -8,7 +8,6 @@ import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import main.java.com.app.mscorebase.auth.AuthManager
-import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 class AppState(

@@ -24,7 +24,7 @@ class EventSchedulerViewModel @Inject constructor(
     private val saloonFactory: SaloonFactory,
     private val dbRepository: DbRepository,
     private val eventColorizer: Colorizer
-    ) : MSFragmentViewModel(appState) {
+) : MSFragmentViewModel(appState) {
 
     private val intCalendar = StatefulMutableLiveData<Calendar>()
     val calendar: LiveData<Calendar> = intCalendar
@@ -95,7 +95,7 @@ class EventSchedulerViewModel @Inject constructor(
 
     fun setEvent(event: SaloonEvent?) {
         intEventInfo.postValue(event)
-        if (event != null){
+        if (event != null) {
             intMaster.postValue(event.master)
             intServices.postValue(event.services)
             intCalendar.postValue(event.whenStart)
@@ -106,7 +106,7 @@ class EventSchedulerViewModel @Inject constructor(
     }
 
     fun saveEventInfo(action: ActionType) {
-        if (action !== ActionType.DELETE){
+        if (action !== ActionType.DELETE) {
             if (intMaster.value == null) {
                 intError.value =
                     Exception(appState.context.getString(R.string.str_master_empty))
@@ -145,7 +145,7 @@ class EventSchedulerViewModel @Inject constructor(
                 val result = dbRepository.saveEventInfo(event)
                 if (result is Result.Success) {
                     event.savedWhenStart = event.whenStart
-                    withContext(Dispatchers.Main){
+                    withContext(Dispatchers.Main) {
                         intEventInfo.value = event
                         intEventInfoSaveState.value = action
                     }
@@ -159,7 +159,7 @@ class EventSchedulerViewModel @Inject constructor(
         }
     }
 
-    suspend fun stopProgress(){
+    suspend fun stopProgress() {
         withContext(Dispatchers.Main) {
             setInProgress(false)
         }
@@ -185,7 +185,8 @@ class EventSchedulerViewModel @Inject constructor(
                 master.value!!, services.value!!, client,
                 whenStart, whenFinish, description,
                 eventColorizer.getRandomColor(appState.context),
-                notes, state)
+                notes, state
+            )
         } else {
             val evt = eventInfo.value!!
             evt.master = master.value!!

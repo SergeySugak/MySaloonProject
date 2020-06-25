@@ -130,7 +130,10 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
     }
 
     private fun scheduleFragmentFabAction() {
-        appNavigator.navigateToNewEventFragment(scheduleFragment, scheduleFragment.eventSchedulerListener)
+        appNavigator.navigateToNewEventFragment(
+            scheduleFragment,
+            scheduleFragment.eventSchedulerListener
+        )
     }
 
     private fun mastersFragmentFabAction() {

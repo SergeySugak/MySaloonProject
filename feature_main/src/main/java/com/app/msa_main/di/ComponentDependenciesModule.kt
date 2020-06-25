@@ -4,6 +4,7 @@ import com.app.feature_event_scheduler.api.EventSchedulerFeatureDependencies
 import com.app.feature_master.api.MasterFeatureDependencies
 import com.app.feature_masters.api.MastersFeatureDependencies
 import com.app.feature_schedule.api.ScheduleFeatureDependencies
+import com.app.feature_select_event.api.SelectEventFeatureDependencies
 import com.app.feature_select_master.api.SelectMasterFeatureDependencies
 import com.app.feature_select_services.api.SelectServicesFeatureDependencies
 import com.app.feature_service.api.ServiceFeatureDependencies
@@ -55,4 +56,9 @@ abstract class ComponentDependenciesModule {
     @IntoMap
     @ComponentDependenciesKey(SelectMasterFeatureDependencies::class)
     abstract fun provideSelectMasterFeatureDependencies(component: MainFeatureComponent): ComponentDependencies
+
+    @Binds
+    @IntoMap
+    @ComponentDependenciesKey(SelectEventFeatureDependencies::class)
+    abstract fun provideSelectEventFeatureDependencies(component: MainFeatureComponent): ComponentDependencies
 }

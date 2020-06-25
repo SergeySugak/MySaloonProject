@@ -58,6 +58,7 @@ dependencies {
     implementation project(':feature_event_scheduler')
     implementation project(':feature_select_services')
     implementation project(':feature_select_master')
+    implementation project(':feature_select_event')
     implementation project(':repository_auth')
     implementation project(':repository_db')
 

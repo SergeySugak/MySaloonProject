@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        xmlns:tools="http://schemas.android.com/tools">
+        android:layout_height="match_parent">
+
     <com.app.view_schedule.ui.SchedulerView
             android:id="@+id/schedule_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:daySepWidth="1dp"
             app:daysHeaderHeight="40dp"
-            app:hourSepWidth="1dp"
-            app:hoursHeaderWidth="40dp"
             app:daysHeaderTextSize="14sp"
-            app:hoursHeaderTextSize="12sp"/>
+            app:hourSepWidth="1dp"
+            app:hoursHeaderTextSize="12sp"
+            app:hoursHeaderWidth="40dp" />
+
     <ProgressBar
             android:id="@+id/loading"
             android:layout_width="wrap_content"
@@ -24,6 +26,5 @@
             android:layout_marginEnd="32dp"
             android:layout_marginBottom="64dp"
             android:visibility="gone"
-            tools:visibility="visible"
-            />
+            tools:visibility="visible" />
 </FrameLayout>

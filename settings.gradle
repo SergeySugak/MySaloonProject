@@ -1,3 +1,4 @@
+include ':feature_select_event'
 include ':feature_select_master'
 rootProject.name = 'MySaloonAdmin'
 include ':app'

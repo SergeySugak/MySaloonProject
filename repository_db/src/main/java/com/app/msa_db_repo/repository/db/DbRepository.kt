@@ -57,6 +57,7 @@ interface DbRepository {
     suspend fun saveEventInfo(event: SaloonEvent): Result<Boolean>
     suspend fun deleteEventInfo(event: SaloonEvent): Result<Boolean>
     suspend fun getEvents(date: Calendar): Result<List<SaloonEvent>>
+    suspend fun getAllEvents(): Result<List<SaloonEvent>>
 
     fun startListenToEvents(
         onInsert: (event: SaloonEvent) -> Unit,

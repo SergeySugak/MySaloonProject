@@ -8,9 +8,12 @@ import com.app.mscorebase.common.Result
 import com.app.mscoremodels.saloon.*
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.database.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
-import kotlinx.coroutines.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -127,7 +130,13 @@ class FirebaseDbRepository
         onDelete: (deletedServiceId: String) -> Unit,
         onError: (exception: Exception) -> Unit
     ): String {
-        return startListenToUpdates<SaloonService, Unit>(servicesRoot, onInsert, onUpdate, onDelete, onError)
+        return startListenToUpdates<SaloonService, Unit>(
+            servicesRoot,
+            onInsert,
+            onUpdate,
+            onDelete,
+            onError
+        )
     }
 
     override fun stopListeningToServices(listenerId: String) {
@@ -181,7 +190,13 @@ class FirebaseDbRepository
         onDelete: (deletedMasterId: String) -> Unit,
         onError: (exception: Exception) -> Unit
     ): String {
-        return startListenToUpdates<SaloonMaster, Unit>(mastersRoot, onInsert, onUpdate, onDelete, onError)
+        return startListenToUpdates<SaloonMaster, Unit>(
+            mastersRoot,
+            onInsert,
+            onUpdate,
+            onDelete,
+            onError
+        )
     }
 
     override fun stopListeningToMasters(listenerId: String) {
@@ -198,16 +213,16 @@ class FirebaseDbRepository
         if (queryResult is Result.Error) {
             return Result.Error(queryResult.exception)
         } else {
-            return repositoryEventToSaloonEvent((queryResult as Result.Success).data)
+            return repositoryEventToSaloonEventResult((queryResult as Result.Success).data)
         }
     }
 
-    private suspend fun repositoryEventToSaloonEvent(event: RepositoryEvent?): Result<SaloonEvent?> {
+    private suspend fun repositoryEventToSaloonEvent(event: RepositoryEvent?): SaloonEvent? {
         val masterId = event?.masterId ?: ""
         val masterResult = loadMasterInfo(masterId)
         val master: SaloonMaster
         if (masterResult is Result.Error) {
-            return Result.Error(masterResult.exception)
+            return null
         } else {
             master = (masterResult as Result.Success).data ?: saloonFactory.createSaloonMaster(
                 masterId,
@@ -231,8 +246,14 @@ class FirebaseDbRepository
         val color = event?.color ?: Color.WHITE
         val state = event?.state ?: SaloonEventState.esError
         val notes = event?.notes ?: ""
-        return Result.Success(saloonFactory.createSaloonEvent(event?.id ?: "", master, services,
-            client, whenStart, whenFinish, description, color, notes, state))
+        return saloonFactory.createSaloonEvent(
+            event?.id ?: "", master, services,
+            client, whenStart, whenFinish, description, color, notes, state
+        )
+    }
+
+    private suspend fun repositoryEventToSaloonEventResult(event: RepositoryEvent?): Result<SaloonEvent?> {
+        return Result.Success(repositoryEventToSaloonEvent(event))
     }
 
     private fun indexEvent(event: SaloonEvent): Result<Boolean> {
@@ -248,7 +269,7 @@ class FirebaseDbRepository
     }
 
     private fun deIndexEvent(event: SaloonEvent) {
-        val eventDateRoot = getDateRoot (event.savedWhenStart)
+        val eventDateRoot = getDateRoot(event.savedWhenStart)
         firebaseDb
             .getReference(dateEventsRoot)
             .child(eventDateRoot)
@@ -324,25 +345,47 @@ class FirebaseDbRepository
         }
     }
 
-    private fun onInsertRepositoryTransformer(event: RepositoryEvent, onInsert: (SaloonEvent) -> Unit): Unit {
-        CoroutineScope(Dispatchers.IO).launch {
-            val result = repositoryEventToSaloonEvent(event)
-            if (result is Result.Success){
-                withContext(Dispatchers.Main){onInsert(result.data!!)}
+    override suspend fun getAllEvents(): Result<List<SaloonEvent>> {
+        val repositoryEventsResult: Result<List<RepositoryEvent>> =
+            firebaseDb
+            .getReference(eventsRoot)
+            .runSuspendGetListQuery()
+        if (repositoryEventsResult is Result.Success){
+            val repositoryEvents = repositoryEventsResult.data
+            val events = repositoryEvents.mapNotNull { repositoryEvent ->
+                repositoryEventToSaloonEvent(repositoryEvent)
             }
-            else {
+            return Result.Success(events)
+        }
+        else {
+            return Result.Error((repositoryEventsResult as Result.Error).exception)
+        }
+    }
+
+    private fun onInsertRepositoryTransformer(
+        event: RepositoryEvent,
+        onInsert: (SaloonEvent) -> Unit
+    ): Unit {
+        CoroutineScope(Dispatchers.IO).launch {
+            val result = repositoryEventToSaloonEventResult(event)
+            if (result is Result.Success) {
+                withContext(Dispatchers.Main) { onInsert(result.data!!) }
+            } else {
                 throw (result as Result.Error).exception
             }
         }
     }
 
-    private fun onUpdateRepositoryTransformer(event: RepositoryEvent, key: String, onUpdate: (String, SaloonEvent) -> Unit): Unit {
+    private fun onUpdateRepositoryTransformer(
+        event: RepositoryEvent,
+        key: String,
+        onUpdate: (String, SaloonEvent) -> Unit
+    ): Unit {
         CoroutineScope(Dispatchers.IO).launch {
-            val result = repositoryEventToSaloonEvent(event)
-            if (result is Result.Success){
-                withContext(Dispatchers.Main){onUpdate(key, result.data!!)}
-            }
-            else {
+            val result = repositoryEventToSaloonEventResult(event)
+            if (result is Result.Success) {
+                withContext(Dispatchers.Main) { onUpdate(key, result.data!!) }
+            } else {
                 throw (result as Result.Error).exception
             }
         }
@@ -354,8 +397,10 @@ class FirebaseDbRepository
         onDelete: (deletedMasterId: String) -> Unit,
         onError: (exception: Exception) -> Unit
     ): String {
-        return startListenToUpdates(eventsRoot, onInsert, onUpdate, onDelete, onError,
-            ::onInsertRepositoryTransformer, ::onUpdateRepositoryTransformer)
+        return startListenToUpdates(
+            eventsRoot, onInsert, onUpdate, onDelete, onError,
+            ::onInsertRepositoryTransformer, ::onUpdateRepositoryTransformer
+        )
     }
 
     override fun stopListeningToEvents(listenerId: String) {
@@ -465,11 +510,10 @@ class FirebaseDbRepository
             }
 
             override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
-                if (onInsertTransformer == null){
+                if (onInsertTransformer == null) {
                     val item = dataSnapshot.getValue(T::class.java)
                     item?.let { onInsert(it) }
-                }
-                else {
+                } else {
                     val item = dataSnapshot.getValue(T2::class.java)
                     item?.let {
                         onInsertTransformer(it, onInsert)
@@ -478,15 +522,14 @@ class FirebaseDbRepository
             }
 
             override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
-                if (onUpdateTransformer == null){
+                if (onUpdateTransformer == null) {
                     val item = dataSnapshot.getValue(T::class.java)
                     dataSnapshot.key?.let { key ->
                         item?.let { item ->
                             onUpdate(key, item)
                         }
                     }
-                }
-                else {
+                } else {
                     val item = dataSnapshot.getValue(T2::class.java)
                     dataSnapshot.key?.let { key ->
                         item?.let { item ->

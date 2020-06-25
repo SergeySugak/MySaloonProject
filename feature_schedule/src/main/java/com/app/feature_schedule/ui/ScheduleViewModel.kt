@@ -1,5 +1,6 @@
 package com.app.feature_schedule.ui
 
+import android.widget.SearchView
 import androidx.lifecycle.viewModelScope
 import com.app.msa_db_repo.repository.db.DbRepository
 import com.app.mscorebase.appstate.AppStateManager
@@ -28,6 +29,7 @@ class ScheduleViewModel
     private val eventsMap = ConcurrentHashMap<String, MutableList<SaloonEvent>>()
     private var subscription: Disposable
     private var filter: String = ""
+    private var searchFilter: String = ""
     private val dateFormatter = SimpleDateFormat(KEY_FORMAT, Locale.getDefault())
     val notifier: PublishSubject<Pair<Calendar, Calendar>> = PublishSubject.create()
     private val intNewEventsLoaded = StatefulMutableLiveData<List<SchedulerEvent>>()
@@ -45,8 +47,8 @@ class ScheduleViewModel
         val newEvents = mutableListOf<SchedulerEvent>()
         val daysBetween = daysBetween(from, to)
         val jobs = mutableListOf<Deferred<*>>()
-        viewModelScope.launch(Dispatchers.IO){
-            for (i in 0 .. daysBetween){
+        viewModelScope.launch(Dispatchers.IO) {
+            for (i in 0..daysBetween) {
                 jobs.add(i, async {
                     val date = from.clone() as Calendar
                     date.add(Calendar.DATE, i)
@@ -54,27 +56,26 @@ class ScheduleViewModel
                     val key = getKey(date)
                     if (!eventsMap.containsKey(key) || force) {
                         val requestResult = dbRepository.getEvents(date)
-                        if (requestResult is Result.Success){
+                        if (requestResult is Result.Success) {
                             events = requestResult.data.toMutableList()
                             if (eventsMap[key] != null) {
-                                events.removeAll{ event ->
+                                events.removeAll { event ->
                                     eventsMap[key]?.contains(event) ?: false
                                 }
                                 events = filterEvents(events, filter)
                                 eventsMap[key]!!.addAll(events)
-                            }
-                            else {
+                            } else {
                                 events = filterEvents(events, filter)
-                                eventsMap[key] = mutableListOf<SaloonEvent>().apply { addAll(events) }
+                                eventsMap[key] =
+                                    mutableListOf<SaloonEvent>().apply { addAll(events) }
                             }
                             if (events.size > 0) {
-                                synchronized(this){
+                                synchronized(this) {
                                     newEvents.addAll(events)
                                 }
                             }
-                        }
-                        else {
-                            withContext(Dispatchers.Main){
+                        } else {
+                            withContext(Dispatchers.Main) {
                                 setInProgress(false)
                                 intError.value = (requestResult as Result.Error).exception
                             }
@@ -82,10 +83,10 @@ class ScheduleViewModel
                     }
                 })
             }
-            for (i in 0 .. daysBetween){
+            for (i in 0..daysBetween) {
                 jobs[i].await()
             }
-            withContext(Dispatchers.Main){
+            withContext(Dispatchers.Main) {
                 if (newEvents.size > 0) {
                     intNewEventsLoaded.value = newEvents
                 }
@@ -94,14 +95,17 @@ class ScheduleViewModel
         }
     }
 
-    private fun filterEvents(events: MutableList<SaloonEvent>, filter: String): MutableList<SaloonEvent> {
+    private fun filterEvents(
+        events: MutableList<SaloonEvent>,
+        filter: String
+    ): MutableList<SaloonEvent> {
         return events.filter { event ->
             event.client.name.contains(filter, true) ||
-            event.client.email.contains(filter, true) ||
-            event.client.phone.contains(filter, true) ||
-            event.master.name.contains(filter, true) ||
-            event.description.contains(filter, true) ||
-            event.notes.contains(filter, true)
+                    event.client.email.contains(filter, true) ||
+                    event.client.phone.contains(filter, true) ||
+                    event.master.name.contains(filter, true) ||
+                    event.description.contains(filter, true) ||
+                    event.notes.contains(filter, true)
         }.toMutableList()
     }
 
@@ -118,16 +122,16 @@ class ScheduleViewModel
         removeEvent(event)
     }
 
-    private fun removeEvent(deletedEvent: SaloonEvent){
+    private fun removeEvent(deletedEvent: SaloonEvent) {
         val mapIterator = eventsMap.iterator()
         var mapEntry: MutableList<SaloonEvent>
-        while (mapIterator.hasNext()){
+        while (mapIterator.hasNext()) {
             mapEntry = mapIterator.next().value
             val iterator = mapEntry.iterator()
             var event: SaloonEvent
-            while (iterator.hasNext()){
+            while (iterator.hasNext()) {
                 event = iterator.next()
-                if (event == deletedEvent){
+                if (event == deletedEvent) {
                     iterator.remove()
                     intEventDeleted.value = deletedEvent
                     return
@@ -161,17 +165,25 @@ class ScheduleViewModel
 
     fun getFilter() = filter
 
-    fun applyFilter(from: Calendar, to: Calendar){
+    fun applyFilter(from: Calendar, to: Calendar) {
         eventsMap.clear()
         loadData(from, to)
+    }
+
+    fun getSearchFilter() = searchFilter
+
+    fun setSearchFilter(searchFilter: String?) {
+        this.searchFilter = searchFilter ?: ""
     }
 
     companion object {
         private const val KEY_FORMAT = "dd.MM.yyyy"
         private const val TIMEOUT = 300L
 
-        private val STATE_EVENTS_MAP: String = "${ScheduleViewModel::class.java.simpleName}_STATE_EVENTS_MAP"
-        private val STATE_FILTER: String = "${ScheduleViewModel::class.java.simpleName}_STATE_FILTER"
+        private val STATE_EVENTS_MAP: String =
+            "${ScheduleViewModel::class.java.simpleName}_STATE_EVENTS_MAP"
+        private val STATE_FILTER: String =
+            "${ScheduleViewModel::class.java.simpleName}_STATE_FILTER"
     }
 
     init {
@@ -179,10 +191,10 @@ class ScheduleViewModel
             .debounce(TIMEOUT, TimeUnit.MILLISECONDS)
             .subscribeOn(AndroidSchedulers.mainThread())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe ({ pair ->
-                            loadData(pair.first, pair.second)
-                        },
-                        { t -> intError.value = t}
+            .subscribe({ pair ->
+                loadData(pair.first, pair.second)
+            },
+                { t -> intError.value = t }
             )
     }
 }

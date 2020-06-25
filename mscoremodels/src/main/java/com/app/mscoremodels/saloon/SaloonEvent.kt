@@ -9,7 +9,7 @@ import com.google.firebase.database.IgnoreExtraProperties
 import java.util.*
 
 @IgnoreExtraProperties
-class SaloonEvent constructor(): SchedulerEvent,  Parcelable {
+class SaloonEvent constructor() : SchedulerEvent, Parcelable {
     var id: String = ""
     lateinit var master: SaloonMaster
     lateinit var services: List<SaloonService>
@@ -19,12 +19,13 @@ class SaloonEvent constructor(): SchedulerEvent,  Parcelable {
     lateinit var whenFinish: Calendar
     lateinit var notes: String
     var description: String = ""
-    @ColorInt var color: Int = Color.WHITE
+    @ColorInt
+    var color: Int = Color.WHITE
     var state: SaloonEventState = SaloonEventState.esScheduled
 
     constructor(
         id: String, master: SaloonMaster, services: List<SaloonService>, client: SaloonClient,
-         whenStart: Calendar, whenFinish: Calendar, description: String,
+        whenStart: Calendar, whenFinish: Calendar, description: String,
         @ColorInt color: Int, state: SaloonEventState, notes: String = ""
     ) : this() {
         this.id = id
@@ -119,4 +120,6 @@ class SaloonEvent constructor(): SchedulerEvent,  Parcelable {
     override fun getText() = services.joinToString()
 
     override fun getEventColor() = color
+
+
 }

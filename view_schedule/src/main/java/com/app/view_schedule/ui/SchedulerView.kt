@@ -7,7 +7,6 @@ import android.os.Parcelable
 import android.text.TextPaint
 import android.text.TextUtils
 import android.util.AttributeSet
-import android.util.Log
 import android.view.GestureDetector
 import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
@@ -473,16 +472,20 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
                                 (eventFinish == windowFinish || eventFinish.before(windowFinish))))
                         &&
                         //либо начало в пределах "окна"
-                        ((event.getDateTimeStart().get(HOUR_OF_DAY) + event.getDateTimeStart().get(MINUTE) / 60 in minTime..maxTime) ||
+                        ((event.getDateTimeStart().get(HOUR_OF_DAY) + event.getDateTimeStart()
+                            .get(MINUTE) / 60 in minTime..maxTime) ||
                                 //либо конец в пределах "окна"
-                                (event.getDateTimeFinish().get(HOUR_OF_DAY) + event.getDateTimeFinish().get(
+                                (event.getDateTimeFinish()
+                                    .get(HOUR_OF_DAY) + event.getDateTimeFinish().get(
                                     MINUTE
                                 ) / 60 in minTime..maxTime) ||
                                 //либо и начало и конец за пределами "окна"
-                                (event.getDateTimeStart().get(HOUR_OF_DAY) + event.getDateTimeStart().get(
+                                (event.getDateTimeStart()
+                                    .get(HOUR_OF_DAY) + event.getDateTimeStart().get(
                                     MINUTE
                                 ) / 60 < minTime &&
-                                        event.getDateTimeFinish().get(HOUR_OF_DAY) + event.getDateTimeFinish().get(
+                                        event.getDateTimeFinish()
+                                            .get(HOUR_OF_DAY) + event.getDateTimeFinish().get(
                                     MINUTE
                                 ) / 60 > maxTime))) ||
                 //или начало события меньше начала окна и конец события больше конца окна
@@ -515,9 +518,11 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
             diffDays = (toSimpleDate(event.getDateTimeStart().time.time) -
                     toSimpleDate(firstDrawableDate.time.time)) / DAY_LENGTH
             eventStartHour =
-                event.getDateTimeStart().get(HOUR_OF_DAY) + event.getDateTimeStart().get(MINUTE) / 60f
+                event.getDateTimeStart().get(HOUR_OF_DAY) + event.getDateTimeStart()
+                    .get(MINUTE) / 60f
             eventFinishHour =
-                event.getDateTimeFinish().get(HOUR_OF_DAY) + event.getDateTimeFinish().get(MINUTE) / 60f
+                event.getDateTimeFinish().get(HOUR_OF_DAY) + event.getDateTimeFinish()
+                    .get(MINUTE) / 60f
             eventRect.left = leftEdge + diffDays * cellWidth + eventMargin
             eventRect.top = contentTop + (eventStartHour - yScroll) * cellHeight
             eventRect.right = eventRect.left + cellWidth - 2 * eventMargin
@@ -631,8 +636,8 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
         return value
     }
 
-    private fun onDateRangeChanged(){
-        if (viewListener != null){
+    private fun onDateRangeChanged() {
+        if (viewListener != null) {
             val firstDrawableDateTime = getFirstDrawableDateTime()
             val lastDrawableDateTime = getLastDrawableDateTime(firstDrawableDateTime)
             viewListener?.onDateTimeRangeChanged(firstDrawableDateTime, lastDrawableDateTime)
@@ -757,7 +762,7 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
 
     fun getEvents(): List<SchedulerEvent> = events
 
-    fun removeEvent(event: SchedulerEvent){
+    fun removeEvent(event: SchedulerEvent) {
         events.remove(event)
         postInvalidate()
     }
@@ -767,7 +772,7 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
         postInvalidate()
     }
 
-    fun addEvents(events: List<SchedulerEvent>){
+    fun addEvents(events: List<SchedulerEvent>) {
         val list = events.toMutableList()
         list.removeAll(this.events)
         this.events.addAll(list)

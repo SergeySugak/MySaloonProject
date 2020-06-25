@@ -31,7 +31,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
-class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewModel>(), EventDateTimeReceiver {
+class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewModel>(),
+    EventDateTimeReceiver {
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory
         protected set
@@ -71,7 +72,7 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
         val event = requireArguments()[ARG_EDIT_EVENT] as SaloonEvent?
         toolBar.inflateMenu(R.menu.event_edit_menu)
         toolBar.setNavigationIcon(R.drawable.ic_back)
-        toolBar.setNavigationOnClickListener{
+        toolBar.setNavigationOnClickListener {
             dismiss()
         }
         toolBar.menu.findItem(R.id.menu_ok).setOnMenuItemClickListener { _ ->
@@ -80,7 +81,8 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
         }
         toolBar.menu.findItem(R.id.menu_delete).isVisible = event != null
         toolBar.menu.findItem(R.id.menu_delete).setOnMenuItemClickListener {
-            MessageDialogFragment.showMessage(this, R.string.title_warning, R.string.str_confirm_delete_event,
+            MessageDialogFragment.showMessage(
+                this, R.string.title_warning, R.string.str_confirm_delete_event,
                 DialogFragmentPresenter.ICON_WARNING, REQ_DELETE_EVENT,
                 DialogFragmentPresenter.TWO_BUTTONS_YN
             )
@@ -88,7 +90,7 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
         }
     }
 
-    private fun setupServices(services: EditText){
+    private fun setupServices(services: EditText) {
         //val services = view.findViewById<EditText>(R.id.services)
         services.setOnClickListener {
             appNavigator.navigateToSelectServicesFragment(
@@ -139,7 +141,7 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
         }
     }
 
-    private fun setupDate(date: EditText){
+    private fun setupDate(date: EditText) {
         date.setOnClickListener {
             val dialog = DateSelectionDialog.newInstance(getViewModel()!!.calendar.value!!)
             dialog.setTargetFragment(this, REQ_SET_DATE)
@@ -147,7 +149,7 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
         }
     }
 
-    private fun setupTime(time: EditText){
+    private fun setupTime(time: EditText) {
         time.setOnClickListener {
             val dialog = TimeSelectionDialog.newInstance(getViewModel()!!.calendar.value!!)
             dialog.setTargetFragment(this, REQ_SET_TIME)
@@ -155,7 +157,7 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
         }
     }
 
-    private fun saveEvent(event: SaloonEvent?){
+    private fun saveEvent(event: SaloonEvent?) {
         val clientName = requireView().findViewById<EditText>(R.id.client_name)
         val clientPhone = requireView().findViewById<EditText>(R.id.client_phone)
         val clientEmail = requireView().findViewById<EditText>(R.id.client_email)
@@ -209,14 +211,16 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
 
         viewModel.eventInfoSaveState.observe(this, Observer {
             if (!viewModel.eventInfoSaveState.isHandled) {
-                val listener = requireArguments()[ARG_EVENT_LISTENER] as AppNavigator.EventSchedulerListener?
+                val listener =
+                    requireArguments()[ARG_EVENT_LISTENER] as AppNavigator.EventSchedulerListener?
                 val event = viewModel.eventInfo.value
                 if (listener != null && event != null) {
-                    when (it){
+                    when (it) {
                         ActionType.ADD -> listener.onAdded(event)
                         ActionType.EDIT -> listener.onUpdated(event)
                         ActionType.DELETE -> listener.onDeleted(event)
-                        else -> {}
+                        else -> {
+                        }
                     }
                     dismiss()
                 }
@@ -225,7 +229,7 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
         })
 
         viewModel.eventInfo.observe(this, Observer { event ->
-            if (!viewModel.eventInfo.isHandled){
+            if (!viewModel.eventInfo.isHandled) {
                 if (event != null) {
                     dialog?.findViewById<EditText>(R.id.client_name)?.setText(event.client.name)
                     dialog?.findViewById<EditText>(R.id.client_phone)?.setText(event.client.phone)
@@ -246,7 +250,7 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
         })
     }
 
-    private fun formatDateTime(calendar: Calendar){
+    private fun formatDateTime(calendar: Calendar) {
         val formatter = SimpleDateFormat(getString(R.string.str_date_format), Locale.getDefault())
         date.setText(formatter.format(calendar.time))
         formatter.applyPattern(getString(R.string.str_time_format))
@@ -268,7 +272,7 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
         params: Bundle?
     ) {
         when (requestCode) {
-            REQ_DELETE_EVENT -> if (whichButton == DialogInterface.BUTTON_POSITIVE){
+            REQ_DELETE_EVENT -> if (whichButton == DialogInterface.BUTTON_POSITIVE) {
                 getViewModel()?.saveEventInfo(ActionType.DELETE)
             }
         }
@@ -282,10 +286,15 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
         private const val REQ_SET_TIME = 10002
         private const val REQ_DELETE_EVENT = 10002
 
-        fun newInstance(event: SaloonEvent?, eventListener: AppNavigator.EventSchedulerListener?): EventSchedulerFragment {
+        fun newInstance(
+            event: SaloonEvent?,
+            eventListener: AppNavigator.EventSchedulerListener?
+        ): EventSchedulerFragment {
             val result = EventSchedulerFragment()
-            result.arguments = bundleOf(Pair(ARG_EDIT_EVENT, event),
-            Pair(ARG_EVENT_LISTENER, eventListener))
+            result.arguments = bundleOf(
+                Pair(ARG_EDIT_EVENT, event),
+                Pair(ARG_EVENT_LISTENER, eventListener)
+            )
             return result
         }
     }

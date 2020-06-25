@@ -45,7 +45,7 @@ class DateSelectionDialog : MSBottomSheetDialogFragment<DateAndTimeSelectionView
         }
         toolBar.inflateMenu(R.menu.date_time_selection_menu)
         toolBar.setNavigationIcon(R.drawable.ic_back)
-        toolBar.setNavigationOnClickListener{
+        toolBar.setNavigationOnClickListener {
             dismiss()
         }
         toolBar.menu.findItem(R.id.menu_ok).setOnMenuItemClickListener { _ ->

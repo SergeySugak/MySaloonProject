@@ -3,7 +3,6 @@ package com.app.msa_main.di
 import com.app.feature_masters.ui.MastersFragment
 import com.app.feature_schedule.ui.ScheduleFragment
 import com.app.feature_services.ui.ServicesFragment
-import com.app.msa_main.main.MainActivity
 import com.app.msa_scopes.scopes.FeatureScope
 import dagger.Module
 import dagger.Provides

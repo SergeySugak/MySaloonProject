@@ -2,9 +2,10 @@ package com.app.msa_db_repo.repository.db
 
 import android.graphics.Color
 import androidx.annotation.ColorInt
-import com.app.mscoremodels.saloon.*
+import com.app.mscoremodels.saloon.SaloonClient
+import com.app.mscoremodels.saloon.SaloonEvent
+import com.app.mscoremodels.saloon.SaloonEventState
 import com.google.firebase.database.IgnoreExtraProperties
-import java.util.*
 
 @IgnoreExtraProperties
 class RepositoryEvent constructor() {
@@ -15,7 +16,8 @@ class RepositoryEvent constructor() {
     var whenStart: Long = 0
     var whenFinish: Long = 0
     var description: String = ""
-    @ColorInt var color: Int = Color.WHITE
+    @ColorInt
+    var color: Int = Color.WHITE
     var state: SaloonEventState = SaloonEventState.esScheduled
     var notes: String = ""
 

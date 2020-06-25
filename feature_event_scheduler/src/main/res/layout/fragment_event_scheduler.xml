@@ -109,14 +109,14 @@
                     style="@style/TextAppearance.AppCompat.Large"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBaseline_toBaselineOf="@+id/when"
                     android:checkMark="?android:attr/listChoiceIndicatorMultiple"
-                    tools:ignore="TextFields"
                     android:text="@string/str_done"
                     android:visibility="gone"
-                    tools:visibility="visible"/>
+                    app:layout_constraintBaseline_toBaselineOf="@+id/when"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="TextFields"
+                    tools:visibility="visible" />
 
             <TextView
                     android:id="@+id/client"
@@ -296,15 +296,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/list_item_spacing_half"
-                    android:gravity="start"
-                    android:padding="@dimen/edit_text_inset_horizontal_material"
-                    android:minLines="3"
                     android:background="@drawable/border_bg"
+                    android:gravity="start"
+                    android:minLines="3"
+                    android:padding="@dimen/edit_text_inset_horizontal_material"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/divider_4"
-                    tools:text="ssssss"
-                    />
+                    tools:text="ssssss" />
 
             <androidx.constraintlayout.widget.Barrier
                     android:id="@+id/when_barrier"
