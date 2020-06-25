@@ -9,9 +9,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
 import androidx.annotation.MenuRes
-import androidx.appcompat.view.menu.ActionMenuItem
-import androidx.core.view.MenuItemCompat
-import androidx.core.view.MenuItemCompat.collapseActionView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.app.feature_schedule.R
@@ -20,9 +17,7 @@ import com.app.msa_nav_api.navigation.AppNavigator
 import com.app.mscorebase.di.ViewModelProviderFactory
 import com.app.mscorebase.di.findComponentDependencies
 import com.app.mscorebase.ui.MSFragment
-import com.app.mscorebase.ui.dialogs.choicedialog.NoDataFoundListener
 import com.app.mscorebase.ui.dialogs.choicedialog.OnChoiceItemsSelectedListener
-import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter.Companion.ICON_INFO
 import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
 import com.app.mscoremodels.saloon.ChoosableSaloonEvent
 import com.app.mscoremodels.saloon.SaloonEvent
