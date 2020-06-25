@@ -1,5 +1,7 @@
 package com.app.feature_select_event.ui
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.app.feature_select_event.adapters.EventsAdapter
 import com.app.msa_db_repo.repository.db.DbRepository
@@ -23,6 +25,9 @@ class EventSelectionDialogViewModel
     private val saloonFactory: SaloonFactory
 ) : MSChoiceDialogFragmentViewModel<ChoosableSaloonEvent, String?>(appState, adapter) {
 
+    private val intNoDataFound = MutableLiveData<Boolean>()
+    val noDataFound: LiveData<Boolean> = intNoDataFound
+
     fun loadEvents(filter: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val allEventsResult = dbRepository.getAllEvents()
@@ -32,7 +37,14 @@ class EventSelectionDialogViewModel
                     emptyList(),
                     filter
                 )
-                withContext(Dispatchers.Main) { setChoices(choosable) }
+                withContext(Dispatchers.Main) {
+                    if (choosable.isEmpty()){
+                        intNoDataFound.value = true
+                    }
+                    else {
+                        setChoices(choosable)
+                    }
+                }
             } else {
                 intError.postValue((allEventsResult as Result.Error).exception)
             }
