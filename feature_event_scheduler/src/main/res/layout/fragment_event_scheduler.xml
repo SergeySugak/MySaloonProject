@@ -273,6 +273,119 @@
 
 
             <TextView
+                    android:id="@+id/plan_fact_label"
+                    style="@style/TextAppearance.AppCompat.Large"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/list_item_spacing"
+                    android:text="План/Факт"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/client_email" />
+
+            <View
+                    android:id="@+id/divider_5"
+                    style="@style/DividerLineH"
+                    android:layout_width="0dp"
+                    android:layout_height="2dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/plan_fact_label" />
+
+            <TextView
+                    android:id="@+id/label_time_plan_fact"
+                    style="@style/TextAppearance.AppCompat.Medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/list_item_spacing"
+                    android:paddingEnd="@dimen/list_item_spacing"
+                    android:text="@string/str_time"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/plan_time"
+                    app:layout_constraintEnd_toStartOf="@+id/when_barrier" />
+
+            <EditText
+                    android:id="@+id/plan_time"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/list_item_spacing_half"
+                    android:layout_marginStart="@dimen/list_item_spacing_half"
+                    android:layout_marginEnd="@dimen/list_item_spacing_half"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:inputType="none"
+                    android:singleLine="true"
+                    android:gravity="end"
+                    app:layout_constraintEnd_toStartOf="@+id/fact_time"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/label_time_plan_fact"
+                    app:layout_constraintTop_toBottomOf="@+id/divider_5"
+                    tools:text="123"/>
+
+            <EditText
+                    android:id="@+id/fact_time"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/list_item_spacing_half"
+                    android:layout_marginStart="@dimen/list_item_spacing_half"
+                    android:layout_marginEnd="@dimen/list_item_spacing_half"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:inputType="none"
+                    android:singleLine="true"
+                    android:gravity="end"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/plan_time"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/plan_time"
+                    app:layout_constraintTop_toBottomOf="@+id/plan_time" />
+
+            <TextView
+                    android:id="@+id/label_amount_plan_fact"
+                    style="@style/TextAppearance.AppCompat.Medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/list_item_spacing"
+                    android:paddingEnd="@dimen/list_item_spacing"
+                    android:text="@string/str_payment"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/plan_amount"
+                    app:layout_constraintEnd_toStartOf="@+id/when_barrier" />
+            <EditText
+                    android:id="@+id/plan_amount"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/list_item_spacing_half"
+                    android:layout_marginStart="@dimen/list_item_spacing_half"
+                    android:layout_marginEnd="@dimen/list_item_spacing_half"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:inputType="none"
+                    android:singleLine="true"
+                    android:gravity="end"
+                    app:layout_constraintEnd_toStartOf="@+id/fact_amount"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/when_barrier"
+                    app:layout_constraintTop_toBottomOf="@+id/fact_time" />
+
+            <EditText
+                    android:id="@+id/fact_amount"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/list_item_spacing_half"
+                    android:layout_marginStart="@dimen/list_item_spacing_half"
+                    android:layout_marginEnd="@dimen/list_item_spacing_half"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:inputType="none"
+                    android:singleLine="true"
+                    android:gravity="end"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/plan_amount"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/plan_amount"
+                    app:layout_constraintTop_toBottomOf="@+id/plan_amount" />
+
+
+            <TextView
                     android:id="@+id/notes_label"
                     style="@style/TextAppearance.AppCompat.Large"
                     android:layout_width="wrap_content"
@@ -280,7 +393,7 @@
                     android:layout_marginTop="@dimen/list_item_spacing"
                     android:text="@string/str_notes"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/client_email" />
+                    app:layout_constraintTop_toBottomOf="@+id/fact_amount" />
 
             <View
                     android:id="@+id/divider_4"
@@ -303,7 +416,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/divider_4"
-                    tools:text="ssssss" />
+                    tools:text="" />
 
             <androidx.constraintlayout.widget.Barrier
                     android:id="@+id/when_barrier"

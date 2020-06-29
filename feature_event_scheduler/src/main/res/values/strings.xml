@@ -27,5 +27,9 @@
     <string name="str_status">Статус</string>
     <string name="str_notes">Примечания</string>
     <string name="str_done">Выполнено</string>
+    <string name="str_payment">Оплата</string>
+    <string name="str_hm_format">%d ч. %d мин.</string>
+    <string name="str_m_format">%d мин</string>
+    <string name="str_h_format">%d ч.</string>
 
 </resources>

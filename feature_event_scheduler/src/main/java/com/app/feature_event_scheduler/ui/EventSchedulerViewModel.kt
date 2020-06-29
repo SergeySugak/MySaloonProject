@@ -166,10 +166,7 @@ class EventSchedulerViewModel @Inject constructor(
     }
 
     private fun createEvent(description: String, notes: String): SaloonEvent {
-        var duration = 0
-        services.value!!.forEach {
-            duration += it.duration?.duration ?: 0
-        }
+        val duration = getTotalServicesPlanDuration(services.value)
         val whenStart = calendar.value!!
         val whenFinish = whenStart.clone() as Calendar
         whenFinish.add(Calendar.MINUTE, duration)
@@ -207,6 +204,22 @@ class EventSchedulerViewModel @Inject constructor(
 
     override fun restoreState(writer: StateWriter) {
 
+    }
+
+    fun getTotalServicesPlanDuration(services: List<SaloonService>?): Int {
+        var result = 0
+        services?.forEach {
+            result += it.duration?.duration ?: 0
+        }
+        return result
+    }
+
+    fun getTotalServicesPlanAmount(services: List<SaloonService>?): Double {
+        var result = 0.0
+        services?.forEach {
+            result += it.price
+        }
+        return result
     }
 
     companion object {

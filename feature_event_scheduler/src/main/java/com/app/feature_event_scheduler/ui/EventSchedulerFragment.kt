@@ -21,6 +21,7 @@ import com.app.mscorebase.ui.MSBottomSheetDialogFragment
 import com.app.mscorebase.ui.dialogs.choicedialog.OnChoiceItemsSelectedListener
 import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter
 import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
+import com.app.mscorebase.utils.hideKeyboard
 import com.app.mscoremodels.saloon.ActionType
 import com.app.mscoremodels.saloon.ChoosableSaloonMaster
 import com.app.mscoremodels.saloon.ChoosableSaloonService
@@ -44,6 +45,10 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
     private val date: EditText by lazy { requireView().findViewById<EditText>(R.id.date) }
     private val time: EditText by lazy { requireView().findViewById<EditText>(R.id.time) }
     private val services: EditText by lazy { requireView().findViewById<EditText>(R.id.services) }
+    private val planDuration: EditText by lazy { requireView().findViewById<EditText>(R.id.plan_time) }
+    private val planAmount: EditText by lazy { requireView().findViewById<EditText>(R.id.plan_amount) }
+    private val factDuration: EditText by lazy { requireView().findViewById<EditText>(R.id.fact_time) }
+    private val factAmount: EditText by lazy { requireView().findViewById<EditText>(R.id.fact_amount) }
     private val master: EditText by lazy { requireView().findViewById<EditText>(R.id.master) }
     private val toolBar: Toolbar by lazy { requireView().findViewById<Toolbar>(R.id.toolbar) }
 
@@ -66,6 +71,9 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
         setupTime(time)
         setupMenu()
         (dialog as BottomSheetDialog).behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        if (savedInstanceState == null){
+            hideKeyboard(view.findViewById(R.id.client_name))
+        }
     }
 
     private fun setupMenu() {
@@ -198,6 +206,24 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
         viewModel.services.observe(this, Observer { items ->
             if (!viewModel.services.isHandled) {
                 services.setText(items.joinToString())
+                var minutes = viewModel.getTotalServicesPlanDuration(items)
+                var format = getString(R.string.str_hm_format)
+                val hours = minutes / 60
+                minutes -= hours * 60
+                if (hours == 0 && minutes > 0){
+                    format = getString(R.string.str_m_format)
+                    planDuration.setText(String.format(format, minutes))
+                }
+                else {
+                    if (hours > 0 && minutes == 0){
+                        format = getString(R.string.str_h_format)
+                        planDuration.setText(String.format(format, hours))
+                    }
+                    else {
+                        planDuration.setText(String.format(format, hours, minutes))
+                    }
+                }
+                planAmount.setText(String.format("%.2f", viewModel.getTotalServicesPlanAmount(items)))
                 viewModel.services.isHandled = true
             }
         })
