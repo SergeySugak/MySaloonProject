@@ -67,4 +67,7 @@ interface DbRepository {
     ): String
 
     fun stopListeningToEvents(listenerId: String)
+
+    suspend fun serviceHasRelatedEvent(serviceId: String): Result<Boolean>
+    suspend fun masterHasRelatedEvent(masterId: String): Result<Boolean>
 }

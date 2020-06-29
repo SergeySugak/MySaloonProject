@@ -605,11 +605,24 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
         }
     }
 
-    private fun daysBetween(from: Calendar, to: Calendar) = from.get(DATE) - to.get(DATE)
+    private fun daysBetween(from: Calendar, to: Calendar): Double {
+        val cloneFrom = from.clone() as Calendar
+        val cloneTo = to.clone() as Calendar
+        cloneFrom.set(Calendar.HOUR_OF_DAY, 0)
+        cloneFrom.set(Calendar.MINUTE, 0)
+        cloneFrom.set(Calendar.SECOND, 0)
+        cloneFrom.set(Calendar.MILLISECOND, 0)
+        cloneTo.set(Calendar.HOUR_OF_DAY, 0)
+        cloneTo.set(Calendar.MINUTE, 0)
+        cloneTo.set(Calendar.SECOND, 0)
+        cloneTo.set(Calendar.MILLISECOND, 0)
+        return (cloneTo.time.time - cloneFrom.time.time) * 1.0 / (1000 * 60 * 60 * 24)
+        //from.get(DATE) - to.get(DATE)
         //TimeUnit.DAYS.convert(to.time.time - from.time.time, TimeUnit.MILLISECONDS).toInt()
+    }
 
     fun scrollTo(to: Calendar) {
-        xScroll = daysBetween(startingDate, to).toFloat()
+        xScroll = -daysBetween(startingDate, to).toFloat()
         yScroll = normalizeYScroll(to.get(HOUR_OF_DAY).toFloat() + to.get(MINUTE).toFloat() / 60)
         postInvalidate()
         onDateRangeChanged()

@@ -1,6 +1,7 @@
 package com.app.feature_masters.ui
 
 import androidx.lifecycle.viewModelScope
+import com.app.feature_masters.R
 import com.app.msa_db_repo.repository.db.DbRepository
 import com.app.mscorebase.appstate.AppStateManager
 import com.app.mscorebase.appstate.StateWriter
@@ -35,9 +36,21 @@ class MastersViewModel
     fun deleteMaster(masterId: String?) {
         masterId?.let {
             viewModelScope.launch(Dispatchers.IO) {
-                val result = dbRepository.deleteMasterInfo(masterId)
-                if (result is Result.Error) {
-                    intError.postValue(result.exception)
+                val hasRelatedEventsResult = dbRepository.masterHasRelatedEvent(masterId)
+                if (hasRelatedEventsResult is Result.Success) {
+                    if (!hasRelatedEventsResult.data){
+                        val result = Result.Error(Exception("OOOOO")) //dbRepository.deleteMasterInfo(masterId)
+                        if (result is Result.Error) {
+                            intError.postValue(result.exception)
+                        }
+                    }
+                    else {
+                        intError.postValue(Exception(
+                            appState.context.getString(R.string.str_cant_delete_active_master)))
+                    }
+                }
+                else {
+                    intError.postValue((hasRelatedEventsResult as Result.Error).exception)
                 }
             }
         }

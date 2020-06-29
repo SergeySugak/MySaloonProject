@@ -73,6 +73,13 @@ class MastersFragment : MSFragment<MastersViewModel>() {
         viewModel.masters.observe(this, Observer { masters ->
             mastersAdapter.setItems(masters)
         })
+
+        viewModel.error.observe(this, Observer { error ->
+            if (!viewModel.error.isHandled) {
+                MessageDialogFragment.showError(this, error, false)
+                viewModel.error.isHandled = true
+            }
+        })
     }
 
     override fun onClickDialogButton(

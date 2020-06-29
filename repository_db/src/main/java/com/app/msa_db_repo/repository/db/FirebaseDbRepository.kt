@@ -40,11 +40,11 @@ class FirebaseDbRepository
     //region general
     override fun initialize(userId: String) {
         saloonRoot = "$TBL_SALOONS/${appState.authManager.getUserId()}"
-        servicesRoot = "$saloonRoot/${TBL_SERVICES}"
-        mastersRoot = "$saloonRoot/${TBL_MASTERS}"
-        eventsRoot = "$saloonRoot/${TBL_EVENTS}"
-        dateEventsRoot = "$saloonRoot/${TBL_DATE_EVENTS}"
-        masterServicesRoot = "$saloonRoot/${TBL_MASTER_SERVICES}"
+        servicesRoot = "$saloonRoot/$TBL_SERVICES"
+        mastersRoot = "$saloonRoot/$TBL_MASTERS"
+        eventsRoot = "$saloonRoot/$TBL_EVENTS"
+        dateEventsRoot = "$saloonRoot/$TBL_DATE_EVENTS"
+        masterServicesRoot = "$saloonRoot/$TBL_MASTER_SERVICES"
     }
 
     override suspend fun checkSaloonRoot(userId: String): Result<Boolean> {
@@ -257,14 +257,14 @@ class FirebaseDbRepository
     }
 
     private fun indexEvent(event: SaloonEvent): Result<Boolean> {
-        try {
+        return try {
             val dateEvents = firebaseDb
                 .getReference(dateEventsRoot)
             val dateRoot = getDateRoot(event.whenStart)
             Tasks.await(dateEvents.child(dateRoot).child(event.id).setValue(event.id))
-            return Result.Success(true)
+            Result.Success(true)
         } catch (ex: Exception) {
-            return Result.Error(Exception(appState.context.getString(R.string.err_cant_update_data) + " ${TBL_DATE_EVENTS}\n" + ex.message))
+            Result.Error(Exception(appState.context.getString(R.string.err_cant_update_data) + " ${TBL_DATE_EVENTS}\n" + ex.message))
         }
     }
 
@@ -359,6 +359,33 @@ class FirebaseDbRepository
         }
         else {
             return Result.Error((repositoryEventsResult as Result.Error).exception)
+        }
+    }
+
+    override suspend fun serviceHasRelatedEvent(serviceId: String): Result<Boolean> {
+        val queryResult = getAllEvents()
+        if (queryResult is Result.Success) {
+            val list = queryResult.data
+            return Result.Success(list.filter { event ->
+                val found = event.services.filter { service ->
+                    serviceId == service.id
+                }
+                return@filter found.isNotEmpty()
+            }.isNotEmpty())
+        } else {
+            return Result.Error((queryResult as Result.Error).exception)
+        }
+    }
+
+    override suspend fun masterHasRelatedEvent(masterId: String): Result<Boolean> {
+        val queryResult = getAllEvents()
+        if (queryResult is Result.Success) {
+            val list = queryResult.data
+            return Result.Success(list.any { event ->
+                event.master.id == masterId
+            })
+        } else {
+            return Result.Error((queryResult as Result.Error).exception)
         }
     }
 

@@ -1,6 +1,7 @@
 package com.app.feature_services.ui
 
 import androidx.lifecycle.viewModelScope
+import com.app.feature_services.R
 import com.app.msa_db_repo.repository.db.DbRepository
 import com.app.mscorebase.appstate.AppStateManager
 import com.app.mscorebase.appstate.StateWriter
@@ -15,7 +16,7 @@ import javax.inject.Inject
 
 class ServicesViewModel
 @Inject constructor(
-    appState: AppStateManager,
+    private val appState: AppStateManager,
     private val dbRepository: DbRepository
 ) : MSFragmentViewModel(appState) {
 
@@ -35,10 +36,24 @@ class ServicesViewModel
     fun deleteService(serviceId: String?) {
         serviceId?.let {
             viewModelScope.launch(Dispatchers.IO) {
-                val result = dbRepository.deleteServiceInfo(serviceId)
-                if (result is Result.Error) {
-                    intError.postValue(result.exception)
+                val hasRelatedEventsResult = dbRepository.serviceHasRelatedEvent(serviceId)
+                if (hasRelatedEventsResult is Result.Success) {
+                    if (!hasRelatedEventsResult.data){
+                        val result = Result.Error(Exception("OOOOO")) //dbRepository.deleteServiceInfo(serviceId)
+                        if (result is Result.Error) {
+                            intError.postValue(result.exception)
+                        }
+                    }
+                    else {
+                        intError.postValue(Exception(
+                            appState.context.getString(R.string.str_cant_delete_active_service)))
+                    }
                 }
+                else {
+                    intError.postValue((hasRelatedEventsResult as Result.Error).exception)
+                }
+
+
             }
         }
     }

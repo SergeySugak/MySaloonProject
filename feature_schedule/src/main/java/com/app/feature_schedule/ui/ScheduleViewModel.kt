@@ -21,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.math.abs
+import kotlin.math.ceil
 
 class ScheduleViewModel
 @Inject constructor(
@@ -40,7 +41,9 @@ class ScheduleViewModel
 
     private fun getKey(date: Calendar) = dateFormatter.format(date.time)
 
-    private fun daysBetween(from: Calendar, to: Calendar) = to.get(Calendar.DATE) - from.get(Calendar.DATE)
+    private fun daysBetween(from: Calendar, to: Calendar) =
+        ceil((to.time.time - from.time.time) * 1.0 / (1000 * 60 * 60 * 24)).toInt()
+        //to.get(Calendar.DATE) - from.get(Calendar.DATE)
         //TimeUnit.DAYS.convert(to.time.time - from.time.time, TimeUnit.MILLISECONDS).toInt()
 
     fun loadData(from: Calendar, to: Calendar, force: Boolean = false) {

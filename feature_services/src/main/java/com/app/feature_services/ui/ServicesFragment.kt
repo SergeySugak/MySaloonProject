@@ -74,6 +74,13 @@ class ServicesFragment : MSFragment<ServicesViewModel>() {
         viewModel.services.observe(this, Observer { services ->
             servicesAdapter.setItems(services)
         })
+
+        viewModel.error.observe(this, Observer { error ->
+            if (!viewModel.error.isHandled) {
+                MessageDialogFragment.showError(this, error, false)
+                viewModel.error.isHandled = true
+            }
+        })
     }
 
     override fun onClickDialogButton(
