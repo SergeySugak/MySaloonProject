@@ -10,9 +10,9 @@ import com.google.firebase.database.IgnoreExtraProperties
 @IgnoreExtraProperties
 class RepositoryEvent constructor() {
     var id: String = ""
-    lateinit var masterId: String
-    lateinit var serviceIds: List<String>
-    lateinit var client: SaloonClient
+    var masterId: String = ""
+    var serviceIds: List<String> = mutableListOf()
+    var client = SaloonClient()
     var whenStart: Long = 0
     var whenFinish: Long = 0
     var description: String = ""
