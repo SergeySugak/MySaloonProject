@@ -39,7 +39,7 @@ class MastersViewModel
                 val hasRelatedEventsResult = dbRepository.masterHasRelatedEvent(masterId)
                 if (hasRelatedEventsResult is Result.Success) {
                     if (!hasRelatedEventsResult.data){
-                        val result = Result.Error(Exception("OOOOO")) //dbRepository.deleteMasterInfo(masterId)
+                        val result = dbRepository.deleteMasterInfo(masterId)
                         if (result is Result.Error) {
                             intError.postValue(result.exception)
                         }

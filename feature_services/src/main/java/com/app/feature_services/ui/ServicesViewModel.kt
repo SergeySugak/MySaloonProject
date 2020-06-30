@@ -39,7 +39,7 @@ class ServicesViewModel
                 val hasRelatedEventsResult = dbRepository.serviceHasRelatedEvent(serviceId)
                 if (hasRelatedEventsResult is Result.Success) {
                     if (!hasRelatedEventsResult.data){
-                        val result = Result.Error(Exception("OOOOO")) //dbRepository.deleteServiceInfo(serviceId)
+                        val result = dbRepository.deleteServiceInfo(serviceId)
                         if (result is Result.Error) {
                             intError.postValue(result.exception)
                         }
