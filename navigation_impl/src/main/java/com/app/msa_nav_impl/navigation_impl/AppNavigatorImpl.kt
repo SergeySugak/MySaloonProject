@@ -14,6 +14,7 @@ import com.app.feature_select_master.ui.MasterSelectionDialog
 import com.app.feature_select_services.ui.ServicesSelectionDialog
 import com.app.feature_service.ui.ServiceFragment
 import com.app.feature_service.ui.ServiceFragment.Companion.ARG_EDIT_SERVICE_ID
+import com.app.feature_service_duration.ui.ServiceDurationSelectionDialog
 import com.app.msa_auth.ui.AuthActivity
 import com.app.msa_main.main.MainActivity
 import com.app.msa_nav_api.navigation.AppNavigator
@@ -50,6 +51,12 @@ class AppNavigatorImpl @Inject constructor() : AppNavigator {
             newServiceFragment,
             newServiceFragment.javaClass.simpleName
         )
+    }
+
+    override fun navigateToServiceDurationDialog(targetFragment: Fragment, title: String, durationId: Int?,
+                                                 resultListener: OnChoiceItemsSelectedListener<ChoosableServiceDuration, Int?>){
+        val fragment = ServiceDurationSelectionDialog.newInstance(title, durationId, resultListener)
+        showDialogFragment(targetFragment, fragment, "")
     }
 
     override fun navigateToNewMasterFragment(targetFragment: Fragment) {

@@ -1,13 +1,18 @@
 package com.app.msa_auth_repo.repository.auth
 
+import android.content.SharedPreferences
 import com.app.mscorebase.common.Result
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
 import javax.inject.Inject
+import javax.inject.Named
 
 @Suppress("BlockingMethodInNonBlockingContext")
 class FirebaseAuthRepository
-@Inject constructor(private val firebaseAuth: FirebaseAuth) :
+@Inject constructor(private val firebaseAuth: FirebaseAuth,
+                    @Named("LOGIN")
+                    private val loginSharedPrefs: SharedPreferences
+) :
     AuthRepository {
 
     override suspend fun isAccountRegistered(userName: String): Result<Boolean> {
@@ -58,5 +63,17 @@ class FirebaseAuthRepository
 
     override fun logout() {
         firebaseAuth.signOut()
+    }
+
+    override fun storeUserName(userName: String){
+        loginSharedPrefs.edit().putString(SP_LOGIN_USER_NAME, userName).apply()
+    }
+
+    override fun reStoreUserName(): String {
+        return loginSharedPrefs.getString(SP_LOGIN_USER_NAME, "") ?: ""
+    }
+
+    companion object {
+        private const val SP_LOGIN_USER_NAME = "SP_LOGIN_USER_NAME"
     }
 }

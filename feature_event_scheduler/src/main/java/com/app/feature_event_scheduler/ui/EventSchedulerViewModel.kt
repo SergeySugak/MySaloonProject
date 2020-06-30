@@ -45,6 +45,9 @@ class EventSchedulerViewModel @Inject constructor(
     private var description: String = ""
     private var notes: String = ""
     private var state: SaloonEventState = SaloonEventState.esScheduled
+    private var userDuration: Int = 0
+    private var amount: Double = 0.0
+    private var usedConsumables = mutableListOf<SaloonConsumable>()
 
     fun setEventDate(year: Int, month: Int, day: Int) {
         intCalendar.value!!.set(year, month, day)
@@ -102,6 +105,9 @@ class EventSchedulerViewModel @Inject constructor(
             notes = event.notes
             description = event.description
             state = event.state
+            userDuration = event.userDuration
+            usedConsumables = event.usedConsumables.toMutableList()
+            amount = event.amount
         }
     }
 
@@ -159,7 +165,7 @@ class EventSchedulerViewModel @Inject constructor(
         }
     }
 
-    suspend fun stopProgress() {
+    private suspend fun stopProgress() {
         withContext(Dispatchers.Main) {
             setInProgress(false)
         }
@@ -182,8 +188,7 @@ class EventSchedulerViewModel @Inject constructor(
                 master.value!!, services.value!!, client,
                 whenStart, whenFinish, description,
                 eventColorizer.getRandomColor(appState.context),
-                notes, state
-            )
+                notes, userDuration, usedConsumables, amount)
         } else {
             val evt = eventInfo.value!!
             evt.master = master.value!!
@@ -194,6 +199,9 @@ class EventSchedulerViewModel @Inject constructor(
             evt.description = description
             evt.notes = notes
             evt.state = state
+            evt.userDuration = userDuration
+            evt.usedConsumables = usedConsumables
+            evt.amount = amount
             evt
         }
     }
@@ -221,6 +229,14 @@ class EventSchedulerViewModel @Inject constructor(
         }
         return result
     }
+
+    fun setUserDuration(duration: Int?) {
+        userDuration = duration ?: 0
+    }
+
+    fun getUserDuration() = userDuration
+
+
 
     companion object {
         private const val DEF_HOUR_FRACTION = 15

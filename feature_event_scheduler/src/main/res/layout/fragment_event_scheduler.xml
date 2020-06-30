@@ -332,7 +332,6 @@
                     android:inputType="none"
                     android:singleLine="true"
                     android:gravity="end"
-                    android:visibility="invisible"
                     app:layout_constraintBaseline_toBaselineOf="@+id/plan_time"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"

@@ -14,6 +14,8 @@ interface AppNavigator {
 
     fun navigateToNewServiceFragment(targetFragment: Fragment)
     fun navigateToEditServiceFragment(targetFragment: Fragment, serviceId: String)
+    fun navigateToServiceDurationDialog(targetFragment: Fragment, title: String, durationId: Int?,
+                                        resultListener: OnChoiceItemsSelectedListener<ChoosableServiceDuration, Int?>)
 
     fun navigateToNewMasterFragment(targetFragment: Fragment)
     fun navigateToEditMasterFragment(

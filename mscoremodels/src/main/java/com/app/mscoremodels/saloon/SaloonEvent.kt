@@ -12,13 +12,17 @@ import java.util.*
 class SaloonEvent constructor() : SchedulerEvent, Parcelable {
     var id: String = ""
     lateinit var master: SaloonMaster
-    lateinit var services: List<SaloonService>
+    var services: List<SaloonService> = emptyList()
     lateinit var client: SaloonClient
     lateinit var savedWhenStart: Calendar
     lateinit var whenStart: Calendar
     lateinit var whenFinish: Calendar
+    var userDuration: Int = 0
     lateinit var notes: String
     var description: String = ""
+    var usedConsumables: List<SaloonConsumable> = emptyList()
+    var amount: Double = 0.0
+
     @ColorInt
     var color: Int = Color.WHITE
     var state: SaloonEventState = SaloonEventState.esScheduled
@@ -26,8 +30,9 @@ class SaloonEvent constructor() : SchedulerEvent, Parcelable {
     constructor(
         id: String, master: SaloonMaster, services: List<SaloonService>, client: SaloonClient,
         whenStart: Calendar, whenFinish: Calendar, description: String,
-        @ColorInt color: Int, state: SaloonEventState, notes: String = ""
-    ) : this() {
+        @ColorInt color: Int, state: SaloonEventState, notes: String = "",
+        userDuration: Int, usedConsumables: List<SaloonConsumable> = emptyList(),
+        amount: Double = 0.0) : this() {
         this.id = id
         this.master = master
         this.services = services
@@ -35,10 +40,13 @@ class SaloonEvent constructor() : SchedulerEvent, Parcelable {
         this.savedWhenStart = whenStart.clone() as Calendar
         this.whenStart = whenStart
         this.whenFinish = whenFinish
+        this.userDuration = userDuration
         this.description = description
         this.color = color
         this.state = state
         this.notes = notes
+        this.usedConsumables = usedConsumables
+        this.amount = amount
     }
 
     override fun equals(other: Any?): Boolean {
@@ -56,10 +64,13 @@ class SaloonEvent constructor() : SchedulerEvent, Parcelable {
         result = 31 * result + savedWhenStart.hashCode()
         result = 31 * result + whenStart.hashCode()
         result = 31 * result + whenFinish.hashCode()
+        result = 31 * result + userDuration.hashCode()
         result = 31 * result + description.hashCode()
         result = 31 * result + color.hashCode()
         result = 31 * result + state.hashCode()
         result = 31 * result + notes.hashCode()
+        result = 31 * result + usedConsumables.hashCode()
+        result = 31 * result + amount.hashCode()
         return result
     }
 
@@ -76,9 +87,12 @@ class SaloonEvent constructor() : SchedulerEvent, Parcelable {
         parcel.writeSerializable(savedWhenStart)
         parcel.writeSerializable(whenStart)
         parcel.writeSerializable(whenFinish)
+        parcel.writeSerializable(userDuration)
         parcel.writeInt(color)
         parcel.writeString(state.name)
         parcel.writeString(notes)
+        parcel.writeTypedList(usedConsumables)
+        parcel.writeDouble(amount)
     }
 
     constructor(parcel: Parcel) : this() {
@@ -90,9 +104,12 @@ class SaloonEvent constructor() : SchedulerEvent, Parcelable {
         savedWhenStart = parcel.readSerializable() as Calendar
         whenStart = parcel.readSerializable() as Calendar
         whenFinish = parcel.readSerializable() as Calendar
+        userDuration = parcel.readInt()
         color = parcel.readInt()
         state = SaloonEventState.valueOf(parcel.readString()!!)
         notes = parcel.readString() ?: ""
+        usedConsumables = parcel.createTypedArrayList(SaloonConsumable)!!
+        amount = parcel.readDouble()
     }
 
     override fun describeContents(): Int {
@@ -113,13 +130,19 @@ class SaloonEvent constructor() : SchedulerEvent, Parcelable {
 
     override fun getDateTimeStart() = whenStart
 
-    override fun getDateTimeFinish() = whenFinish
+    override fun getDateTimeFinish(): Calendar {
+        return if (userDuration <= 0)
+            whenFinish
+        else {
+            val userWhenFinish = whenStart.clone() as Calendar
+            userWhenFinish.add(Calendar.MINUTE, userDuration)
+            userWhenFinish
+        }
+    }
 
     override fun getHeader() = master.name
 
     override fun getText() = services.joinToString()
 
     override fun getEventColor() = color
-
-
 }

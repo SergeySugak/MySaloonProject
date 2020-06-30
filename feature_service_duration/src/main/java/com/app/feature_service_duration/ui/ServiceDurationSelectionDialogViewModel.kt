@@ -1,7 +1,6 @@
-package com.app.feature_service.ui
+package com.app.feature_service_duration.ui
 
 import androidx.lifecycle.viewModelScope
-import com.app.feature_service.models.ServiceDurationAdapter
 import com.app.msa_db_repo.repository.db.DbRepository
 import com.app.mscorebase.appstate.AppStateManager
 import com.app.mscorebase.appstate.StateWriter
@@ -18,7 +17,7 @@ import javax.inject.Inject
 class ServiceDurationSelectionDialogViewModel
 @Inject constructor(
     appState: AppStateManager,
-    adapter: ServiceDurationAdapter,
+    adapter: com.app.feature_service_duration.adapters.ServiceDurationAdapter,
     private val dbRepository: DbRepository,
     private val saloonFactory: SaloonFactory
 ) : MSChoiceDialogFragmentViewModel<ChoosableServiceDuration, Int?>(appState, adapter) {

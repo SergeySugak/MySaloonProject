@@ -32,4 +32,5 @@
     <string name="str_m_format">%d мин</string>
     <string name="str_h_format">%d ч.</string>
 
+    <string name="str_service_duration">Продолжительность услуги</string>
 </resources>

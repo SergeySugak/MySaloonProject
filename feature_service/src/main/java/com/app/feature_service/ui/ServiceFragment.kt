@@ -12,6 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.app.feature_service.R
 import com.app.feature_service.di.DaggerServiceFeatureComponent
+import com.app.msa_nav_api.navigation.AppNavigator
 import com.app.mscorebase.di.ViewModelProviderFactory
 import com.app.mscorebase.di.findComponentDependencies
 import com.app.mscorebase.ui.MSDialogFragment
@@ -24,6 +25,10 @@ import javax.inject.Inject
 class ServiceFragment : MSDialogFragment<ServiceViewModel>() {
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory
+        protected set
+
+    @Inject
+    lateinit var appNavigator: AppNavigator
         protected set
 
     override val layoutId = R.layout.fragment_new_service
@@ -49,25 +54,23 @@ class ServiceFragment : MSDialogFragment<ServiceViewModel>() {
             }
         val serviceDuration = view.findViewById<EditText>(R.id.service_duration)
         serviceDuration.setOnClickListener {
-            val fragment =
-                ServiceDurationSelectionDialog.newInstance(getString(R.string.str_service_duration),
-                    getViewModel()?.serviceDuration?.id,
-                    object : OnChoiceItemsSelectedListener<ChoosableServiceDuration, Int?> {
-                        override fun onChoiceItemsSelected(
-                            selections: List<ChoosableServiceDuration>,
-                            payload: Int?
-                        ) {
-                            getViewModel()?.serviceDuration = selections[0]
-                            serviceDuration.setText(selections[0].serviceDuration?.description)
-                        }
+            appNavigator.navigateToServiceDurationDialog(this, getString(R.string.str_service_duration),
+                getViewModel()?.serviceDuration?.id,
+                object : OnChoiceItemsSelectedListener<ChoosableServiceDuration, Int?> {
+                    override fun onChoiceItemsSelected(
+                        selections: List<ChoosableServiceDuration>,
+                        payload: Int?
+                    ) {
+                        getViewModel()?.serviceDuration = selections[0]
+                        serviceDuration.setText(selections[0].serviceDuration?.description)
+                    }
 
-                        override fun onNoItemSelected(payload: Int?) {}
-                        override fun writeToParcel(dest: Parcel?, flags: Int) {}
-                        override fun describeContents(): Int {
-                            return 0
-                        }
-                    })
-            showDialogFragment(fragment, "")
+                    override fun onNoItemSelected(payload: Int?) {}
+                    override fun writeToParcel(dest: Parcel?, flags: Int) {}
+                    override fun describeContents(): Int {
+                        return 0
+                    }
+                })
         }
         return builder.create()
     }

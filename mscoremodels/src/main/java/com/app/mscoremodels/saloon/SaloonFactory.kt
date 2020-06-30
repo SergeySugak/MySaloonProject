@@ -26,7 +26,8 @@ class SaloonFactory @Inject constructor(val appState: AppStateManager) {
         id: String, master: SaloonMaster,
         services: List<SaloonService>, client: SaloonClient,
         whenStart: Calendar, whenFinish: Calendar, description: String, @ColorInt color: Int,
-        notes: String, state: SaloonEventState = SaloonEventState.esScheduled
+        notes: String, userDuration: Int = 0, usedConsumables: List<SaloonConsumable> = emptyList(),
+        amount: Double = 0.0, state: SaloonEventState = SaloonEventState.esScheduled
     ) =
         SaloonEvent(
             id,
@@ -38,7 +39,10 @@ class SaloonFactory @Inject constructor(val appState: AppStateManager) {
             description,
             color,
             state,
-            notes
+            notes,
+            userDuration,
+            usedConsumables,
+            amount
         )
 
     fun createServiceDuration(duration: Int?, name: String?) = ServiceDuration(duration, name)

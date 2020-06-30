@@ -3,6 +3,7 @@ package com.app.msa_db_repo.repository.db
 import android.graphics.Color
 import androidx.annotation.ColorInt
 import com.app.mscoremodels.saloon.SaloonClient
+import com.app.mscoremodels.saloon.SaloonConsumable
 import com.app.mscoremodels.saloon.SaloonEvent
 import com.app.mscoremodels.saloon.SaloonEventState
 import com.google.firebase.database.IgnoreExtraProperties
@@ -20,6 +21,9 @@ class RepositoryEvent constructor() {
     var color: Int = Color.WHITE
     var state: SaloonEventState = SaloonEventState.esScheduled
     var notes: String = ""
+    var usedConsumables: List<SaloonConsumable> = emptyList()
+    var amount: Double = 0.0
+    var userDuration: Int = 0
 
     constructor(event: SaloonEvent) : this() {
         this.id = event.id
@@ -32,6 +36,9 @@ class RepositoryEvent constructor() {
         this.color = event.color
         this.state = event.state
         this.notes = event.notes
+        this.usedConsumables = event.usedConsumables
+        this.userDuration = event.userDuration
+        this.amount = event.amount
     }
 
     override fun equals(other: Any?): Boolean {
@@ -54,6 +61,9 @@ class RepositoryEvent constructor() {
         result = 31 * result + color.hashCode()
         result = 31 * result + state.hashCode()
         result = 31 * result + notes.hashCode()
+        result = 31 * result + usedConsumables.hashCode()
+        result = 31 * result + userDuration.hashCode()
+        result = 31 * result + amount.hashCode()
         return result
     }
 }

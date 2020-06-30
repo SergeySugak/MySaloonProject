@@ -22,10 +22,7 @@ import com.app.mscorebase.ui.dialogs.choicedialog.OnChoiceItemsSelectedListener
 import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenter
 import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
 import com.app.mscorebase.utils.hideKeyboard
-import com.app.mscoremodels.saloon.ActionType
-import com.app.mscoremodels.saloon.ChoosableSaloonMaster
-import com.app.mscoremodels.saloon.ChoosableSaloonService
-import com.app.mscoremodels.saloon.SaloonEvent
+import com.app.mscoremodels.saloon.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import java.text.SimpleDateFormat
@@ -47,7 +44,7 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
     private val services: EditText by lazy { requireView().findViewById<EditText>(R.id.services) }
     private val planDuration: EditText by lazy { requireView().findViewById<EditText>(R.id.plan_time) }
     private val planAmount: EditText by lazy { requireView().findViewById<EditText>(R.id.plan_amount) }
-    private val factDuration: EditText by lazy { requireView().findViewById<EditText>(R.id.fact_time) }
+    private val userDuration: EditText by lazy { requireView().findViewById<EditText>(R.id.fact_time) }
     private val factAmount: EditText by lazy { requireView().findViewById<EditText>(R.id.fact_amount) }
     private val master: EditText by lazy { requireView().findViewById<EditText>(R.id.master) }
     private val toolBar: Toolbar by lazy { requireView().findViewById<Toolbar>(R.id.toolbar) }
@@ -69,10 +66,43 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
         setupMaster(master)
         setupDate(date)
         setupTime(time)
+        setupUserDuration()
+        setupAmount()
         setupMenu()
         (dialog as BottomSheetDialog).behavior.state = BottomSheetBehavior.STATE_EXPANDED
         if (savedInstanceState == null){
             hideKeyboard(view.findViewById(R.id.client_name))
+        }
+    }
+
+    private fun setupAmount() {
+
+    }
+
+    private fun setupUserDuration() {
+        userDuration.setOnClickListener {
+            appNavigator.navigateToServiceDurationDialog(this, getString(R.string.str_service_duration),
+                null,
+                object : OnChoiceItemsSelectedListener<ChoosableServiceDuration, Int?> {
+                    override fun onChoiceItemsSelected(
+                        selections: List<ChoosableServiceDuration>,
+                        payload: Int?
+                    ) {
+                        val duration = selections[0].serviceDuration?.duration ?: 0
+                        getViewModel()?.setUserDuration(duration)
+                        if (duration == 0) {
+                            userDuration.setText("")
+                        } else {
+                            userDuration.setText(formatDuration(duration))
+                        }
+                    }
+
+                    override fun onNoItemSelected(payload: Int?) {}
+                    override fun writeToParcel(dest: Parcel?, flags: Int) {}
+                    override fun describeContents(): Int {
+                        return 0
+                    }
+                })
         }
     }
 
@@ -206,23 +236,8 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
         viewModel.services.observe(this, Observer { items ->
             if (!viewModel.services.isHandled) {
                 services.setText(items.joinToString())
-                var minutes = viewModel.getTotalServicesPlanDuration(items)
-                var format = getString(R.string.str_hm_format)
-                val hours = minutes / 60
-                minutes -= hours * 60
-                if (hours == 0 && minutes > 0){
-                    format = getString(R.string.str_m_format)
-                    planDuration.setText(String.format(format, minutes))
-                }
-                else {
-                    if (hours > 0 && minutes == 0){
-                        format = getString(R.string.str_h_format)
-                        planDuration.setText(String.format(format, hours))
-                    }
-                    else {
-                        planDuration.setText(String.format(format, hours, minutes))
-                    }
-                }
+                val minutes = viewModel.getTotalServicesPlanDuration(items)
+                planDuration.setText(formatDuration(minutes))
                 planAmount.setText(String.format("%.2f", viewModel.getTotalServicesPlanAmount(items)))
                 viewModel.services.isHandled = true
             }
@@ -261,6 +276,12 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
                     dialog?.findViewById<EditText>(R.id.client_phone)?.setText(event.client.phone)
                     dialog?.findViewById<EditText>(R.id.client_email)?.setText(event.client.email)
                     dialog?.findViewById<EditText>(R.id.notes)?.setText(event.notes)
+                    val userDuration = viewModel.getUserDuration()
+                    if (userDuration <= 0) {
+                        this.userDuration.setText("")
+                    } else {
+                        this.userDuration.setText(formatDuration(userDuration))
+                    }
                     val done = dialog?.findViewById<CheckedTextView>(R.id.done)
                     if (done != null) {
                         done.visibility = VISIBLE
@@ -303,6 +324,26 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
             }
         }
         super.onClickDialogButton(dialog, whichButton, requestCode, params)
+    }
+
+    fun formatDuration(minutesToFormat: Int): String {
+        var minutes = minutesToFormat
+        var format = getString(R.string.str_hm_format)
+        val hours = minutes / 60
+        minutes -= hours * 60
+        if (hours == 0 && minutes > 0){
+            format = getString(R.string.str_m_format)
+            return String.format(format, minutes)
+        }
+        else {
+            if (hours > 0 && minutes == 0){
+                format = getString(R.string.str_h_format)
+                return String.format(format, hours)
+            }
+            else {
+                return String.format(format, hours, minutes)
+            }
+        }
     }
 
     companion object {

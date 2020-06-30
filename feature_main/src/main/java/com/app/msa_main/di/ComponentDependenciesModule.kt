@@ -8,6 +8,7 @@ import com.app.feature_select_event.api.SelectEventFeatureDependencies
 import com.app.feature_select_master.api.SelectMasterFeatureDependencies
 import com.app.feature_select_services.api.SelectServicesFeatureDependencies
 import com.app.feature_service.api.ServiceFeatureDependencies
+import com.app.feature_service_duration.api.ServiceDurationFeatureDependencies
 import com.app.feature_services.api.ServicesFeatureDependencies
 import com.app.mscorebase.di.ComponentDependencies
 import com.app.mscorebase.di.ComponentDependenciesKey
@@ -36,6 +37,11 @@ abstract class ComponentDependenciesModule {
     @IntoMap
     @ComponentDependenciesKey(ServiceFeatureDependencies::class)
     abstract fun provideServiceFeatureDependencies(component: MainFeatureComponent): ComponentDependencies
+
+    @Binds
+    @IntoMap
+    @ComponentDependenciesKey(ServiceDurationFeatureDependencies::class)
+    abstract fun provideServiceDurationFeatureDependencies(component: MainFeatureComponent): ComponentDependencies
 
     @Binds
     @IntoMap

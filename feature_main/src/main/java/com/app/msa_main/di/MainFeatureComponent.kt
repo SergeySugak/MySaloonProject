@@ -8,6 +8,7 @@ import com.app.feature_select_event.api.SelectEventFeatureDependencies
 import com.app.feature_select_master.api.SelectMasterFeatureDependencies
 import com.app.feature_select_services.api.SelectServicesFeatureDependencies
 import com.app.feature_service.api.ServiceFeatureDependencies
+import com.app.feature_service_duration.api.ServiceDurationFeatureDependencies
 import com.app.feature_services.api.ServicesFeatureDependencies
 import com.app.msa_db_repo.repository.db.DbRepository
 import com.app.msa_db_repo.repository.di.DbRepositoryModule
@@ -32,6 +33,7 @@ interface MainFeatureComponent : MastersFeatureDependencies,
     ServicesFeatureDependencies,
     ScheduleFeatureDependencies,
     ServiceFeatureDependencies,
+    ServiceDurationFeatureDependencies,
     EventSchedulerFeatureDependencies,
     SelectServicesFeatureDependencies,
     SelectMasterFeatureDependencies,

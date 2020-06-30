@@ -246,10 +246,13 @@ class FirebaseDbRepository
         val color = event?.color ?: Color.WHITE
         val state = event?.state ?: SaloonEventState.esError
         val notes = event?.notes ?: ""
+        val usedConsumables = event?.usedConsumables.orEmpty()
+        val userDuration = event?.userDuration ?: 0
+        val amount = event?.amount ?: 0.0
         return saloonFactory.createSaloonEvent(
             event?.id ?: "", master, services,
-            client, whenStart, whenFinish, description, color, notes, state
-        )
+            client, whenStart, whenFinish, description, color, notes,
+            userDuration, usedConsumables, amount, state)
     }
 
     private suspend fun repositoryEventToSaloonEventResult(event: RepositoryEvent?): Result<SaloonEvent?> {

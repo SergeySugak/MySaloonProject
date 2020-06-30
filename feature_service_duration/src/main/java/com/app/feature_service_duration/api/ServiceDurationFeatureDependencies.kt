@@ -1,12 +1,10 @@
-package com.app.feature_service.api
+package com.app.feature_service_duration.api
 
 import com.app.msa_db_repo.repository.db.DbRepository
-import com.app.msa_nav_api.navigation.AppNavigator
 import com.app.mscorebase.appstate.AppStateManager
 import com.app.mscorebase.di.ComponentDependencies
 
-interface ServiceFeatureDependencies : ComponentDependencies {
+interface ServiceDurationFeatureDependencies : ComponentDependencies {
     fun appStateManager(): AppStateManager
     fun dbRepository(): DbRepository
-    fun appNavigator(): AppNavigator
 }

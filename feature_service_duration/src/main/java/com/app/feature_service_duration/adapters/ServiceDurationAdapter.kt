@@ -1,4 +1,4 @@
-package com.app.feature_service.models
+package com.app.feature_service_duration.adapters
 
 import com.app.mscorebase.ui.dialogs.choicedialog.ChoiceMode
 import com.app.mscorebase.ui.dialogs.choicedialog.SimpleChoiceAdapter

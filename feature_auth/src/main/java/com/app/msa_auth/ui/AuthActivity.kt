@@ -73,6 +73,10 @@ class AuthActivity : MSActivity<AuthActivityViewModel>() {
     }
 
     override fun onStartObservingViewModel(viewModel: AuthActivityViewModel) {
+        viewModel.restoredUserName.observe(this, Observer { restoredUserName ->
+            username.setText(restoredUserName)
+        })
+
         viewModel.authFormState.observe(this, Observer {
             val loginState = it ?: return@Observer
 

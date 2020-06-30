@@ -1,9 +1,9 @@
-package com.app.feature_service.ui
+package com.app.feature_service_duration.ui
 
 import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.app.feature_service.di.DaggerServiceFeatureComponent
+import com.app.feature_service_duration.di.DaggerServiceDurationFeatureComponent
 import com.app.mscorebase.di.ViewModelProviderFactory
 import com.app.mscorebase.di.findComponentDependencies
 import com.app.mscorebase.ui.dialogs.choicedialog.MSChoiceDialogFragment
@@ -20,9 +20,9 @@ class ServiceDurationSelectionDialog :
         protected set
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        DaggerServiceFeatureComponent
+        DaggerServiceDurationFeatureComponent
             .builder()
-            .serviceFeatureDependencies(findComponentDependencies())
+            .serviceDurationFeatureDependencies(findComponentDependencies())
             .build()
             .inject(this)
         super.onCreate(savedInstanceState)
@@ -59,7 +59,8 @@ class ServiceDurationSelectionDialog :
             resultListener: OnChoiceItemsSelectedListener<ChoosableServiceDuration, Int?>
         ): ServiceDurationSelectionDialog {
             val args = Bundle();
-            val fragment = ServiceDurationSelectionDialog()
+            val fragment =
+                ServiceDurationSelectionDialog()
             fragment.retainInstance = true
             if (durationId != null)
                 args.putInt(ARGUMENT_PAYLOAD, durationId)
