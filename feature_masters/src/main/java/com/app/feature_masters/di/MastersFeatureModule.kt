@@ -1,7 +1,7 @@
 package com.app.feature_masters.di
 
-import com.app.feature_masters.models.MastersAdapter
-import com.app.feature_masters.models.MastersAdapterImpl
+import com.app.feature_masters.adapters.MastersAdapter
+import com.app.feature_masters.adapters.MastersAdapterImpl
 import com.app.msa_scopes.scopes.FeatureScope
 import dagger.Binds
 import dagger.Module

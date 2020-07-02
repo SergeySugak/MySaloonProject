@@ -1,5 +1,6 @@
 package com.app.msa_main.di
 
+import com.app.feature_consumables.ui.ConsumablesFragment
 import com.app.feature_masters.ui.MastersFragment
 import com.app.feature_schedule.ui.ScheduleFragment
 import com.app.feature_services.ui.ServicesFragment
@@ -14,11 +15,13 @@ object MainFeatureModule {
     private var savedMastersFragment: MastersFragment? = null
     private var savedServicesFragment: ServicesFragment? = null
     private var savedScheduleFragment: ScheduleFragment? = null
+    private var savedConsumablesFragment: ConsumablesFragment? = null
 
     fun reset() {
         savedMastersFragment = null
         savedServicesFragment = null
         savedScheduleFragment = null
+        savedConsumablesFragment = null
     }
 
     @Provides
@@ -46,5 +49,14 @@ object MainFeatureModule {
             savedScheduleFragment = ScheduleFragment.newInstance()
         }
         return savedScheduleFragment!!
+    }
+
+    @Provides
+    @FeatureScope
+    fun provideConsumablesFragment(): ConsumablesFragment {
+        if (savedConsumablesFragment == null) {
+            savedConsumablesFragment = ConsumablesFragment.newInstance()
+        }
+        return savedConsumablesFragment!!
     }
 }

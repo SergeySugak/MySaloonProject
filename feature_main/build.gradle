@@ -53,6 +53,7 @@ dependencies {
     implementation project(':feature_masters')
     implementation project(':feature_master')
     implementation project(':feature_services')
+    implementation project(':feature_consumables')
     implementation project(':feature_service')
     implementation project(':feature_service_duration')
     implementation project(':feature_schedule')

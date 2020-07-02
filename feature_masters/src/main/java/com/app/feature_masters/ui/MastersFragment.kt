@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.feature_masters.R
 import com.app.feature_masters.di.DaggerMastersFeatureComponent
-import com.app.feature_masters.models.MastersAdapter
+import com.app.feature_masters.adapters.MastersAdapter
 import com.app.msa_nav_api.navigation.AppNavigator
 import com.app.mscorebase.di.ViewModelProviderFactory
 import com.app.mscorebase.di.findComponentDependencies

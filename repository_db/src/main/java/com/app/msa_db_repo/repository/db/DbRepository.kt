@@ -1,10 +1,7 @@
 package com.app.msa_db_repo.repository.db
 
 import com.app.mscorebase.common.Result
-import com.app.mscoremodels.saloon.SaloonEvent
-import com.app.mscoremodels.saloon.SaloonMaster
-import com.app.mscoremodels.saloon.SaloonService
-import com.app.mscoremodels.saloon.ServiceDuration
+import com.app.mscoremodels.saloon.*
 import java.util.*
 
 interface DbRepository {
@@ -45,6 +42,18 @@ interface DbRepository {
 
     fun stopListeningToMasters(listenerId: String)
 
+    //Расходники
+    suspend fun saveConsumableInfo(consumable: SaloonConsumable): Result<Boolean>
+    suspend fun loadConsumableInfo(consumableId: String): Result<SaloonConsumable?>
+    suspend fun deleteConsumableInfo(consumableId: String): Result<Boolean>
+    fun startListenToConsumables(
+        onInsert: (consumable: SaloonConsumable) -> Unit,
+        onUpdate: (updatedConsumableId: String, consumable: SaloonConsumable) -> Unit,
+        onDelete: (deletedConsumableId: String) -> Unit,
+        onError: (exception: Exception) -> Unit
+    ): String
+    fun stopListeningToConsumables(listenerId: String)
+
     //Мастер-Сервис
     suspend fun getServices(masterId: String? = null): Result<List<SaloonService>>
     suspend fun saveMasterServicesInfo(
@@ -70,4 +79,5 @@ interface DbRepository {
 
     suspend fun serviceHasRelatedEvent(serviceId: String): Result<Boolean>
     suspend fun masterHasRelatedEvent(masterId: String): Result<Boolean>
+    suspend fun consumableHasRelatedEvent(consumableId: String): Result<Boolean>
 }

@@ -84,6 +84,7 @@ dependencies {
     implementation project(':feature_service')
     implementation project(':feature_schedule')
     implementation project(':feature_event_scheduler')
+    implementation project(':feature_consumables')
     implementation project(':feature_auth')
     implementation project(':feature_main')
     implementation project(':navigation_impl')

@@ -1,4 +1,4 @@
-package com.app.feature_masters.models
+package com.app.feature_masters.adapters
 
 import com.app.mscoremodels.saloon.SaloonMaster
 

@@ -1,4 +1,4 @@
-package com.app.feature_masters.models
+package com.app.feature_masters.adapters
 
 import android.view.LayoutInflater
 import android.view.View

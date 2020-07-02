@@ -77,6 +77,15 @@ class AppNavigatorImpl @Inject constructor() : AppNavigator {
         )
     }
 
+    override fun navigateToNewConsumableFragment(targetFragment: Fragment) {
+        navigateToEditConsumableFragment(targetFragment, "")
+    }
+
+    override fun navigateToEditConsumableFragment(targetFragment: Fragment, consumableId: String) {
+
+    }
+
+
     override fun navigateToNewEventFragment(
         targetFragment: Fragment,
         eventListener: AppNavigator.EventSchedulerListener?

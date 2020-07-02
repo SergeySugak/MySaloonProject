@@ -1,5 +1,6 @@
 package com.app.msa_main.di
 
+import com.app.feature_consumables.api.ConsumablesFeatureDependencies
 import com.app.feature_event_scheduler.api.EventSchedulerFeatureDependencies
 import com.app.feature_master.api.MasterFeatureDependencies
 import com.app.feature_masters.api.MastersFeatureDependencies
@@ -37,7 +38,8 @@ interface MainFeatureComponent : MastersFeatureDependencies,
     EventSchedulerFeatureDependencies,
     SelectServicesFeatureDependencies,
     SelectMasterFeatureDependencies,
-    SelectEventFeatureDependencies {
+    SelectEventFeatureDependencies,
+    ConsumablesFeatureDependencies {
     override fun appStateManager(): AppStateManager
     override fun dbRepository(): DbRepository
     override fun appNavigator(): AppNavigator

@@ -1,0 +1,4 @@
+<resources>
+    <string name="str_delete_consumable">Удалить расходник\n%s?</string>
+    <string name="str_cant_delete_active_consumable">Нельзя удалять расходник пока есть связанные с ним события!</string>
+</resources>

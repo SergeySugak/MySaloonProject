@@ -31,6 +31,7 @@ class FirebaseDbRepository
     private lateinit var saloonRoot: String
     private lateinit var servicesRoot: String
     private lateinit var mastersRoot: String
+    private lateinit var consumablesRoot: String
     private lateinit var masterServicesRoot: String
     private lateinit var eventsRoot: String
     private lateinit var dateEventsRoot: String
@@ -42,6 +43,7 @@ class FirebaseDbRepository
         saloonRoot = "$TBL_SALOONS/${appState.authManager.getUserId()}"
         servicesRoot = "$saloonRoot/$TBL_SERVICES"
         mastersRoot = "$saloonRoot/$TBL_MASTERS"
+        consumablesRoot = "$saloonRoot/$TBL_CONSUMABLES"
         eventsRoot = "$saloonRoot/$TBL_EVENTS"
         dateEventsRoot = "$saloonRoot/$TBL_DATE_EVENTS"
         masterServicesRoot = "$saloonRoot/$TBL_MASTER_SERVICES"
@@ -203,6 +205,81 @@ class FirebaseDbRepository
         stopListenToUpdates(mastersRoot, listenerId)
     }
     //endregion Masters
+
+    //region Consumables
+    override suspend fun saveConsumableInfo(consumable: SaloonConsumable): Result<Boolean> {
+        val services = firebaseDb
+            .getReference(consumablesRoot)
+        if (consumable.id == "") {
+            try {
+                consumable.id = services.push().key!!
+            } catch (ex: Exception) {
+                return Result.Error(Exception(appState.context.getString(R.string.err_cant_create_new_key) + " $TBL_CONSUMABLES\n" + ex.message))
+            }
+        }
+        try {
+            Tasks.await(services.child(consumable.id).setValue(consumable))
+        } catch (ex: Exception) {
+            return Result.Error(Exception(appState.context.getString(R.string.err_cant_update_data) + " $TBL_CONSUMABLES\n" + ex.message))
+        }
+        return Result.Success(true)
+    }
+
+    override suspend fun loadConsumableInfo(consumableId: String): Result<SaloonConsumable?> {
+        return firebaseDb
+            .getReference(consumablesRoot)
+            .child(consumableId)
+            .runSuspendGetValueQuery()
+    }
+
+    override suspend fun deleteConsumableInfo(consumableId: String): Result<Boolean> {
+        return try {
+            Tasks.await(
+                firebaseDb
+                    .getReference(consumablesRoot)
+                    .child(consumableId)
+                    .setValue(null)
+            )
+            Result.Success(true)
+        } catch (ex: Exception) {
+            Result.Error(ex)
+        }
+    }
+
+    override fun startListenToConsumables(
+        onInsert: (consumable: SaloonConsumable) -> Unit,
+        onUpdate: (updatedConsumableId: String, consumable: SaloonConsumable) -> Unit,
+        onDelete: (deletedConsumableId: String) -> Unit,
+        onError: (exception: Exception) -> Unit
+    ): String {
+        return startListenToUpdates<SaloonConsumable, Unit>(
+            consumablesRoot,
+            onInsert,
+            onUpdate,
+            onDelete,
+            onError
+        )
+    }
+
+    override fun stopListeningToConsumables(listenerId: String) {
+        stopListenToUpdates(consumablesRoot, listenerId)
+    }
+
+    override suspend fun consumableHasRelatedEvent(consumableId: String): Result<Boolean> {
+        val queryResult = getAllEvents()
+        if (queryResult is Result.Success) {
+            val list = queryResult.data
+            return Result.Success(list.filter { event ->
+                val found = event.usedConsumables.filter { consumable ->
+                    consumableId == consumable.id
+                }
+                return@filter found.isNotEmpty()
+            }.isNotEmpty())
+        } else {
+            return Result.Error((queryResult as Result.Error).exception)
+        }
+    }
+    //endregion Consumables
 
     //region Events
     override suspend fun loadEventInfo(eventId: String): Result<SaloonEvent?> {
@@ -659,6 +736,7 @@ class FirebaseDbRepository
         const val TBL_SALOONS = "Saloons"
         const val TBL_SERVICES = "Services"
         const val TBL_MASTERS = "Masters"
+        const val TBL_CONSUMABLES = "Consumables"
         const val TBL_EVENTS = "Events"
         const val TBL_DATE_EVENTS = "DateEvents"
         const val TBL_MASTER_SERVICES = "MasterServices"

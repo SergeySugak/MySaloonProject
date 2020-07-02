@@ -4,17 +4,20 @@ import android.os.Parcel
 import android.os.Parcelable
 
 class SaloonConsumable constructor() : Parcelable {
+    var id: String = ""
     var name: String = ""
     var uom: String = ""
     var price: Double = 0.0
 
     constructor(parcel: Parcel) : this() {
+        id = parcel.readString() ?: ""
         name = parcel.readString() ?: ""
         uom = parcel.readString() ?: ""
         price = parcel.readDouble()
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(id)
         parcel.writeString(name)
         parcel.writeString(uom)
         parcel.writeDouble(price)
@@ -30,6 +33,7 @@ class SaloonConsumable constructor() : Parcelable {
 
         other as SaloonConsumable
 
+        if (id != other.id) return false
         if (name != other.name) return false
         if (uom != other.uom) return false
         if (price != other.price) return false
@@ -39,6 +43,7 @@ class SaloonConsumable constructor() : Parcelable {
 
     override fun hashCode(): Int {
         var result = name.hashCode()
+        result = 31 * result + id.hashCode()
         result = 31 * result + uom.hashCode()
         result = 31 * result + price.hashCode()
         return result

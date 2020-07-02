@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.app.feature_consumables.ui.ConsumablesFragment
 import com.app.feature_masters.ui.MastersFragment
 import com.app.feature_schedule.ui.ScheduleFragment
 import com.app.feature_services.ui.ServicesFragment
@@ -53,6 +54,9 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
     @Inject
     lateinit var servicesFragment: ServicesFragment
 
+    @Inject
+    lateinit var consumablesFragment: ConsumablesFragment
+
     private lateinit var activeFragment: Fragment
     private val fab: FloatingActionButton by lazy { findViewById<FloatingActionButton>(R.id.fab) }
 
@@ -71,6 +75,7 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
                 R.id.navigation_schedule -> changeActiveFragment(scheduleFragment)
                 R.id.navigation_masters -> changeActiveFragment(mastersFragment)
                 R.id.navigation_services -> changeActiveFragment(servicesFragment)
+                R.id.navigation_consumables -> changeActiveFragment(consumablesFragment)
                 else -> false
             }
         }
@@ -101,6 +106,11 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
             .add(R.id.container, servicesFragment)
             .hide(servicesFragment)
             .commit()
+        supportFragmentManager
+            .beginTransaction()
+            .add(R.id.container, consumablesFragment)
+            .hide(consumablesFragment)
+            .commit()
     }
 
     private fun changeActiveFragment(fragment: Fragment): Boolean {
@@ -125,6 +135,7 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
                 scheduleFragment -> scheduleFragmentFabAction()
                 mastersFragment -> mastersFragmentFabAction()
                 servicesFragment -> servicesFragmentFabAction()
+                consumablesFragment -> consumablesFragmentFabAction()
             }
         }
     }
@@ -142,6 +153,10 @@ class MainActivity : MSActivity<MSActivityViewModel>(), HasComponentDependencies
 
     private fun servicesFragmentFabAction() {
         appNavigator.navigateToNewServiceFragment(servicesFragment)
+    }
+
+    private fun consumablesFragmentFabAction() {
+        appNavigator.navigateToNewConsumableFragment(consumablesFragment)
     }
 
     override fun createViewModel(savedInstanceState: Bundle?): MSActivityViewModel {
