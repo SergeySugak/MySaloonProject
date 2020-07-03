@@ -9,6 +9,13 @@ class SaloonConsumable constructor() : Parcelable {
     var uom: String = ""
     var price: Double = 0.0
 
+    constructor(id: String, name: String, price: Double, uom: String): this() {
+        this.id = id
+        this.name = name
+        this.price = price
+        this.uom = uom
+    }
+
     constructor(parcel: Parcel) : this() {
         id = parcel.readString() ?: ""
         name = parcel.readString() ?: ""

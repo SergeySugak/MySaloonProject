@@ -9,14 +9,12 @@ class SaloonFactory @Inject constructor(val appState: AppStateManager) {
     fun createSaloonService(
         id: String, name: String, price: Double,
         duration: ServiceDuration?, description: String,
-        imageUrl: String = ""
-    ) =
+        imageUrl: String = "") =
         SaloonService(id, name, price, duration, description, imageUrl)
 
     fun createSaloonMaster(
         id: String, name: String, description: String,
-        portfolioUrl: String = "", imageUrl: String = ""
-    ) =
+        portfolioUrl: String = "", imageUrl: String = "") =
         SaloonMaster(id, name, description, portfolioUrl, imageUrl)
 
     fun createSaloonClient(name: String, phone: String, email: String) =
@@ -133,4 +131,7 @@ class SaloonFactory @Inject constructor(val appState: AppStateManager) {
         }
         return result
     }
+
+    fun createSaloonConsumable(consumableId: String, name: String, price: Double, uom: String) =
+        SaloonConsumable (consumableId, name, price, uom)
 }

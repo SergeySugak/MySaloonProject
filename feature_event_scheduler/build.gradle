@@ -74,7 +74,7 @@ dependencies {
 
     //google
     implementation 'com.google.android.material:material:1.1.0'
-    compileOnly 'com.google.firebase:firebase-database:19.3.0'
+    compileOnly 'com.google.firebase:firebase-database:19.3.1'
 
     //tests
     testImplementation 'junit:junit:4.13'

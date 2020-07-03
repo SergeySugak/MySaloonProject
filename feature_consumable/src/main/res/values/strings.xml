@@ -1,0 +1,10 @@
+<resources>
+    <string name="title_fragment_new_consumable">Новый расходник</string>
+    <string name="title_fragment_edit_consumable">Редактирование расходника</string>
+    <string name="str_consumable_name">Название расходника</string>
+    <string name="str_consumable_uom">ЕИ</string>
+    <string name="str_consumable_price">Цена</string>
+    <string name="str_currency">руб.</string>
+    <string name="err_fill_required_before_save">Перед сохранением необходимо заполнить название, ЕИ и цену расходника!</string>
+    <string name="str_for">за</string>
+</resources>

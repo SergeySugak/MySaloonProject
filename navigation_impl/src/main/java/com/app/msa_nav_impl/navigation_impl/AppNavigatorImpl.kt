@@ -6,6 +6,8 @@ import android.text.TextUtils
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import com.app.feature_consumable.ui.ConsumableFragment
+import com.app.feature_consumable.ui.ConsumableFragment.Companion.ARG_EDIT_CONSUMABLE_ID
 import com.app.feature_event_scheduler.ui.EventSchedulerFragment
 import com.app.feature_master.ui.MasterFragment
 import com.app.feature_master.ui.MasterFragment.Companion.ARG_EDIT_MASTER_ID
@@ -18,7 +20,6 @@ import com.app.feature_service_duration.ui.ServiceDurationSelectionDialog
 import com.app.msa_auth.ui.AuthActivity
 import com.app.msa_main.main.MainActivity
 import com.app.msa_nav_api.navigation.AppNavigator
-import com.app.mscorebase.ui.dialogs.choicedialog.NoDataFoundListener
 import com.app.mscorebase.ui.dialogs.choicedialog.OnChoiceItemsSelectedListener
 import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenterImpl.Companion.showDialogFragment
 import com.app.mscoremodels.saloon.*
@@ -82,7 +83,17 @@ class AppNavigatorImpl @Inject constructor() : AppNavigator {
     }
 
     override fun navigateToEditConsumableFragment(targetFragment: Fragment, consumableId: String) {
-
+        val newConsumableFragment = ConsumableFragment.newInstance().apply {
+            retainInstance = true
+            if (!TextUtils.isEmpty(consumableId)) {
+                arguments = bundleOf(Pair(ARG_EDIT_CONSUMABLE_ID, consumableId))
+            }
+        }
+        showDialogFragment(
+            targetFragment,
+            newConsumableFragment,
+            newConsumableFragment.javaClass.simpleName
+        )
     }
 
 

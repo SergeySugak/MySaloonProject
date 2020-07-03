@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/feature_auth" />
+            <option value="$PROJECT_DIR$/feature_consumable" />
             <option value="$PROJECT_DIR$/feature_consumables" />
             <option value="$PROJECT_DIR$/feature_event_scheduler" />
             <option value="$PROJECT_DIR$/feature_main" />

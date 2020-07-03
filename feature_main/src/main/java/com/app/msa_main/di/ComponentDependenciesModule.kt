@@ -1,5 +1,6 @@
 package com.app.msa_main.di
 
+import com.app.feature_consumable.api.ConsumableFeatureDependencies
 import com.app.feature_consumables.api.ConsumablesFeatureDependencies
 import com.app.feature_event_scheduler.api.EventSchedulerFeatureDependencies
 import com.app.feature_master.api.MasterFeatureDependencies
@@ -73,4 +74,9 @@ abstract class ComponentDependenciesModule {
     @IntoMap
     @ComponentDependenciesKey(ConsumablesFeatureDependencies::class)
     abstract fun provideConsumablesFeatureDependencies(component: MainFeatureComponent): ComponentDependencies
+
+    @Binds
+    @IntoMap
+    @ComponentDependenciesKey(ConsumableFeatureDependencies::class)
+    abstract fun provideConsumableFeatureDependencies(component: MainFeatureComponent): ComponentDependencies
 }
