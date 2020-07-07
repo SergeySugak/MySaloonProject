@@ -5,6 +5,5 @@
     <string name="str_service_duration">Продолжительность услуги</string>
     <string name="str_service_description">Подробное описание услуги</string>
     <string name="str_service_price">Цена услуги</string>
-    <string name="str_currency">руб.</string>
     <string name="err_fill_required_before_save">Перед сохранением необходимо заполнить название, продолжительность и цену услуги!</string>
 </resources>

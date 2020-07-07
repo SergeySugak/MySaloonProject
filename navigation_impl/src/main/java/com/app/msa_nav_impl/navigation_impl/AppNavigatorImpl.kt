@@ -14,6 +14,7 @@ import com.app.feature_master.ui.MasterFragment.Companion.ARG_EDIT_MASTER_ID
 import com.app.feature_select_event.ui.EventSelectionDialog
 import com.app.feature_select_master.ui.MasterSelectionDialog
 import com.app.feature_select_services.ui.ServicesSelectionDialog
+import com.app.feature_select_uom.ui.UomSelectionDialog
 import com.app.feature_service.ui.ServiceFragment
 import com.app.feature_service.ui.ServiceFragment.Companion.ARG_EDIT_SERVICE_ID
 import com.app.feature_service_duration.ui.ServiceDurationSelectionDialog
@@ -150,4 +151,10 @@ class AppNavigatorImpl @Inject constructor() : AppNavigator {
         showDialogFragment(targetFragment, fragment, "")
     }
 
+    override fun navigateToSelectUom(targetFragment: Fragment,
+                                     title: String, uom: String?,
+                                     listener: OnChoiceItemsSelectedListener<ChoosableUom, String?>) {
+        val fragment = UomSelectionDialog.newInstance(title, uom, listener)
+        showDialogFragment(targetFragment, fragment, "")
+    }
 }

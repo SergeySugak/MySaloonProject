@@ -35,23 +35,27 @@
                 android:inputType="textCapSentences" />
     </com.google.android.material.textfield.TextInputLayout>
 
-
-    <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/consumable_price_wrap"
+    <TextView
+            android:id="@+id/price_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginStart="@dimen/std_margin_small"
+            android:text="@string/str_consumable_price"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/consumable_name_wrap">
+            app:layout_constraintBaseline_toBaselineOf="@+id/consumable_price"
+            android:background="@android:color/transparent"
+            style="@android:style/Widget.EditText"/>
 
-        <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/consumable_price"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:hint="@string/str_consumable_price"
-                android:gravity="end"
-                android:inputType="number" />
-    </com.google.android.material.textfield.TextInputLayout>
+    <EditText
+            android:id="@+id/consumable_price"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:inputType="number"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            app:layout_constraintStart_toEndOf="@+id/price_label"
+            app:layout_constraintTop_toBottomOf="@+id/consumable_name_wrap"
+            android:importantForAutofill="no" />
 
     <TextView
             android:id="@+id/cur_code"
@@ -59,9 +63,10 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/std_margin_small"
             android:text="@string/str_currency"
-            app:layout_constraintBottom_toBottomOf="@+id/consumable_price_wrap"
-            app:layout_constraintStart_toEndOf="@+id/consumable_price_wrap"
-            app:layout_constraintTop_toTopOf="@+id/consumable_price_wrap" />
+            app:layout_constraintBaseline_toBaselineOf="@+id/consumable_price"
+            app:layout_constraintStart_toEndOf="@+id/consumable_price"
+            android:background="@android:color/transparent"
+            style="@android:style/Widget.EditText"/>
 
     <TextView
             android:id="@+id/label_for"
@@ -69,28 +74,24 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/std_margin_small"
             android:text="@string/str_for"
-            app:layout_constraintBottom_toBottomOf="@+id/consumable_price_wrap"
+            app:layout_constraintBaseline_toBaselineOf="@+id/consumable_price"
             app:layout_constraintStart_toEndOf="@+id/cur_code"
-            app:layout_constraintTop_toTopOf="@+id/consumable_price_wrap" />
+            android:background="@android:color/transparent"
+            style="@android:style/Widget.EditText"/>
 
-    <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/consumable_uom_wrap"
+    <EditText
+            android:id="@+id/consumable_uom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/std_margin_small"
-            android:hint="@string/str_consumable_uom"
-            android:inputType="text"
-            app:layout_constraintBottom_toBottomOf="@+id/consumable_price_wrap"
+            android:inputType="none"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:maxLines="1"
+            android:minEms="2"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="@+id/consumable_price"
             app:layout_constraintStart_toEndOf="@+id/label_for"
-            app:layout_constraintTop_toTopOf="@+id/consumable_price_wrap">
-
-        <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/consumable_uom"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                tools:text="гр."/>
-    </com.google.android.material.textfield.TextInputLayout>
+            tools:text="гр."/>
 
     <!--    <androidx.recyclerview.widget.RecyclerView-->
     <!--            android:id="@+id/consumable_descriptions"-->

@@ -10,6 +10,7 @@ import com.app.mscorebase.common.Result
 import com.app.mscorebase.livedata.StatefulLiveData
 import com.app.mscorebase.livedata.StatefulMutableLiveData
 import com.app.mscorebase.ui.MSFragmentViewModel
+import com.app.mscoremodels.saloon.ChoosableUom
 import com.app.mscoremodels.saloon.SaloonFactory
 import com.app.mscoremodels.saloon.SaloonConsumable
 import kotlinx.coroutines.Dispatchers
@@ -29,29 +30,32 @@ class ConsumableViewModel
     var consumableId: String = ""
     val intConsumableInfo = StatefulMutableLiveData<SaloonConsumable>()
     val consumableInfo: StatefulLiveData<SaloonConsumable> = intConsumableInfo
+    var selectedUom: String = ""
 
     override fun restoreState(writer: StateWriter) {
-
+        val state = writer.readState(this)
+        selectedUom = state?.get(IS_UOM) ?: ""
     }
 
     override fun saveState(writer: StateWriter) {
-
+        val state = HashMap<String, String>()
+        state[IS_UOM] = selectedUom
+        writer.writeState(this, state)
     }
 
     fun saveConsumableInfo(
         name: String,
-        price: String,
-        uom: String
+        price: String
     ) {
         if (!TextUtils.isEmpty(name) &&
             !TextUtils.isEmpty(price) &&
-            !TextUtils.isEmpty(uom)) {
+            !TextUtils.isEmpty(selectedUom)) {
             viewModelScope.launch(Dispatchers.IO) {
                 intConsumableInfoSaveState.postValue(
                     run {
                         val result = dbRepository.saveConsumableInfo(
                             saloonFactory.createSaloonConsumable(
-                                consumableId, name, valueOf(price), uom)
+                                consumableId, name, valueOf(price), selectedUom)
                         )
                         if (result is Result.Success) {
                             result.data
@@ -77,5 +81,13 @@ class ConsumableViewModel
                 intError.postValue((consumableResult as Result.Error).exception)
             }
         }
+    }
+
+    fun setUom(selectedUom: String) {
+        this.selectedUom = selectedUom
+    }
+
+    companion object {
+        private val IS_UOM = "${ConsumableViewModel::class.java.simpleName}_IS_UOM"
     }
 }

@@ -39,7 +39,7 @@ class ConsumablesViewModel
                 val hasRelatedEventsResult = dbRepository.consumableHasRelatedEvent(consumableId)
                 if (hasRelatedEventsResult is Result.Success) {
                     if (!hasRelatedEventsResult.data){
-                        val result = dbRepository.deleteMasterInfo(consumableId)
+                        val result = dbRepository.deleteConsumableInfo(consumableId)
                         if (result is Result.Error) {
                             intError.postValue(result.exception)
                         }

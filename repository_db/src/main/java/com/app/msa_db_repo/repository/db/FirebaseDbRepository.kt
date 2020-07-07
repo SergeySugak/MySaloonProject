@@ -599,6 +599,17 @@ class FirebaseDbRepository
     }
     //endregion
 
+    //region UOM
+    override fun getUoms(): Result<List<String>> {
+        return try {
+            Result.Success(listOf(*appState.context.resources.getStringArray(R.array.uoms)))
+        }
+        catch (ex: java.lang.Exception){
+            Result.Error(ex)
+        }
+    }
+    //endregion UOM
+
     //region helpers
     private inline fun <reified T : Any, reified T2 : Any>
             startListenToUpdates(

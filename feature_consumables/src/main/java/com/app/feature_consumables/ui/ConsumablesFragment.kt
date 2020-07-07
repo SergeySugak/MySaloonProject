@@ -40,7 +40,7 @@ class ConsumablesFragment : MSFragment<ConsumablesViewModel>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         consumablesAdapter.setOnConsumableClickListener { consumable ->
-            appNavigator.navigateToEditMasterFragment(this, consumable.id)
+            appNavigator.navigateToEditConsumableFragment(this, consumable.id)
         }
         consumablesAdapter.setOnConsumableDeleteListener { consumable ->
             MessageDialogFragment.showMessage(
@@ -100,7 +100,7 @@ class ConsumablesFragment : MSFragment<ConsumablesViewModel>() {
     companion object {
         fun newInstance() = ConsumablesFragment()
 
-        const val EDIT_CONSUMABLE_FRAGMENT_TAG = "NewMasterDialogFragment"
+        const val EDIT_CONSUMABLE_FRAGMENT_TAG = "ConsumableDialogFragment"
         const val REQ_EDIT_CONSUMABLE = 10002
         const val REQ_DELETE_CONSUMABLE = 10003
         val CONSUMABLE_ID = "${ConsumablesFragment::class.java.simpleName}_CONSUMABLE_ID"

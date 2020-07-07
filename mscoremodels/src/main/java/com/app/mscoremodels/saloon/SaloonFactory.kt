@@ -134,4 +134,14 @@ class SaloonFactory @Inject constructor(val appState: AppStateManager) {
 
     fun createSaloonConsumable(consumableId: String, name: String, price: Double, uom: String) =
         SaloonConsumable (consumableId, name, price, uom)
+
+    fun createChoosableUom(list: List<String>, selected: List<String>): List<ChoosableUom> {
+        val result = mutableListOf<ChoosableUom>()
+        list.mapTo(result) { uom ->
+            ChoosableUom(uom).apply {
+                isSelected = selected.indexOf(uom) != -1
+            }
+        }
+        return result
+    }
 }

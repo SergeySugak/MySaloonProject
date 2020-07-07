@@ -14,4 +14,7 @@
     <string name="title_information">Информация</string>
     <string name="title_confirmation">Подтверждение</string>
     <string name="err_no_viewmodel">ViewModel не определена</string>
+
+    <string name="str_currency">руб.</string>
+    <string name="str_for">за</string>
 </resources>

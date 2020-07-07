@@ -72,4 +72,9 @@
         <item name="min_7_45">465</item>
         <item name="min_8_0">480</item>
     </integer-array>
+
+    <string-array name="uoms">
+        <item>шт.</item>
+        <item>гр.</item>
+    </string-array>
 </resources>

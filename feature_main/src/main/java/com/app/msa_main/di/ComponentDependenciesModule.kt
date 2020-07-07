@@ -9,6 +9,7 @@ import com.app.feature_schedule.api.ScheduleFeatureDependencies
 import com.app.feature_select_event.api.SelectEventFeatureDependencies
 import com.app.feature_select_master.api.SelectMasterFeatureDependencies
 import com.app.feature_select_services.api.SelectServicesFeatureDependencies
+import com.app.feature_select_uom.api.SelectUomFeatureDependencies
 import com.app.feature_service.api.ServiceFeatureDependencies
 import com.app.feature_service_duration.api.ServiceDurationFeatureDependencies
 import com.app.feature_services.api.ServicesFeatureDependencies
@@ -79,4 +80,9 @@ abstract class ComponentDependenciesModule {
     @IntoMap
     @ComponentDependenciesKey(ConsumableFeatureDependencies::class)
     abstract fun provideConsumableFeatureDependencies(component: MainFeatureComponent): ComponentDependencies
+
+    @Binds
+    @IntoMap
+    @ComponentDependenciesKey(SelectUomFeatureDependencies::class)
+    abstract fun provideSelectUomFeatureDependencies(component: MainFeatureComponent): ComponentDependencies
 }

@@ -1,49 +1,45 @@
-package com.app.feature_service_duration.ui
+package com.app.feature_select_uom.ui
 
 import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.app.feature_service_duration.di.DaggerServiceDurationFeatureComponent
+import com.app.feature_select_uom.di.DaggerSelectUomFeatureComponent
 import com.app.mscorebase.di.ViewModelProviderFactory
 import com.app.mscorebase.di.findComponentDependencies
 import com.app.mscorebase.ui.dialogs.choicedialog.MSChoiceDialogFragment
 import com.app.mscorebase.ui.dialogs.choicedialog.OnChoiceItemsSelectedListener
 import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
-import com.app.mscoremodels.saloon.ChoosableServiceDuration
+import com.app.mscoremodels.saloon.ChoosableUom
 import javax.inject.Inject
 
-class ServiceDurationSelectionDialog :
-    MSChoiceDialogFragment<ChoosableServiceDuration, ServiceDurationSelectionDialogViewModel, Int?>() {
+class UomSelectionDialog :
+    MSChoiceDialogFragment<ChoosableUom, UomSelectionDialogViewModel, String?>() {
 
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory
         protected set
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        DaggerServiceDurationFeatureComponent
+        DaggerSelectUomFeatureComponent
             .builder()
-            .serviceDurationFeatureDependencies(findComponentDependencies())
+            .selectUomFeatureDependencies(findComponentDependencies())
             .build()
             .inject(this)
         super.onCreate(savedInstanceState)
     }
 
-    override fun createViewModel(savedInstanceState: Bundle?): ServiceDurationSelectionDialogViewModel {
-        return ViewModelProvider(
-            this,
-            providerFactory
-        ).get(ServiceDurationSelectionDialogViewModel::class.java)
-    }
+    override fun createViewModel(savedInstanceState: Bundle?) =
+        ViewModelProvider(this, providerFactory).get(UomSelectionDialogViewModel::class.java)
 
     override fun onViewModelCreated(
-        viewModel: ServiceDurationSelectionDialogViewModel,
+        viewModel: UomSelectionDialogViewModel,
         savedInstanceState: Bundle?
     ) {
         super.onViewModelCreated(viewModel, savedInstanceState)
-        viewModel.getServiceDurations(arguments?.getInt(ARGUMENT_PAYLOAD) ?: -1)
+        viewModel.getUoms(arguments?.getString(ARGUMENT_PAYLOAD) ?: "")
     }
 
-    override fun onStartObservingViewModel(viewModel: ServiceDurationSelectionDialogViewModel) {
+    override fun onStartObservingViewModel(viewModel: UomSelectionDialogViewModel) {
         super.onStartObservingViewModel(viewModel)
         viewModel.error.observe(this, Observer { error ->
             if (!viewModel.error.isHandled) {
@@ -55,20 +51,17 @@ class ServiceDurationSelectionDialog :
 
     companion object {
         fun newInstance(
-            title: String, durationId: Int?,
-            resultListener: OnChoiceItemsSelectedListener<ChoosableServiceDuration, Int?>
-        ): ServiceDurationSelectionDialog {
-            val args = Bundle()
-            val fragment = ServiceDurationSelectionDialog()
+            title: String, uom: String?,
+            resultListener: OnChoiceItemsSelectedListener<ChoosableUom, String?>
+        ): UomSelectionDialog {
+            val args = Bundle();
+            val fragment = UomSelectionDialog()
             fragment.retainInstance = true
-            if (durationId != null)
-                args.putInt(ARGUMENT_PAYLOAD, durationId)
-            else
-                args.putInt(ARGUMENT_PAYLOAD, -1)
+            args.putString(ARGUMENT_PAYLOAD, uom)
             args.putString(ARGUMENT_TITLE, title)
             args.putParcelable(ARGUMENT_RESULT_LISTENER, resultListener)
             fragment.arguments = args
-            return fragment
+            return fragment;
         }
     }
 }

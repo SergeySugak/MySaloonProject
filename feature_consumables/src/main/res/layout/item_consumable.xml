@@ -30,28 +30,45 @@
                 tools:text="Saloon consumable name" />
 
         <TextView
-                android:id="@+id/consumable_uom"
-                style="@style/TextAppearance.AppCompat.Medium"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/card_item_margin"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/consumable_name"
-                tools:text="Saloon consumable description" />
-
-        <TextView
                 android:id="@+id/consumable_price"
                 style="@style/TextAppearance.AppCompat.Medium"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/card_item_margin"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/consumable_uom"
-                tools:text="Consumable price" />
+                app:layout_constraintTop_toBottomOf="@+id/consumable_name"
+                tools:text="150,00" />
+
+        <TextView
+                android:id="@+id/cur_code"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/std_margin_small"
+                android:text="@string/str_currency"
+                app:layout_constraintBottom_toBottomOf="@+id/consumable_price"
+                app:layout_constraintStart_toEndOf="@+id/consumable_price"/>
+
+        <TextView
+                android:id="@+id/label_for"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/std_margin_small"
+                android:text="@string/str_for"
+                app:layout_constraintBottom_toBottomOf="@+id/consumable_price"
+                app:layout_constraintStart_toEndOf="@+id/cur_code"/>
+
+
+        <TextView
+                android:id="@+id/consumable_uom"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/std_margin_small"
+                app:layout_constraintStart_toEndOf="@+id/label_for"
+                app:layout_constraintBottom_toBottomOf="@+id/consumable_price"
+                tools:text="uom" />
 
         <ImageButton
                 android:id="@+id/delete_consumable"

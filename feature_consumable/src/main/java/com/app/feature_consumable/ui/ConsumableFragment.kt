@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcel
 import android.text.TextUtils
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
@@ -15,7 +16,9 @@ import com.app.msa_nav_api.navigation.AppNavigator
 import com.app.mscorebase.di.ViewModelProviderFactory
 import com.app.mscorebase.di.findComponentDependencies
 import com.app.mscorebase.ui.MSDialogFragment
+import com.app.mscorebase.ui.dialogs.choicedialog.OnChoiceItemsSelectedListener
 import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
+import com.app.mscoremodels.saloon.ChoosableUom
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import javax.inject.Inject
 
@@ -42,6 +45,25 @@ class ConsumableFragment : MSDialogFragment<ConsumableViewModel>() {
     override fun onBuildDialog(savedInstanceState: Bundle?): Dialog {
         val inflater = requireActivity().layoutInflater
         val view = inflater.inflate(layoutId, null)
+        val uom = view.findViewById<EditText>(R.id.consumable_uom)
+        uom.setOnClickListener {
+            appNavigator.navigateToSelectUom(this,
+                getString(R.string.str_select_uom), uom.text.toString(),
+                object: OnChoiceItemsSelectedListener<ChoosableUom, String?> {
+                    override fun onChoiceItemsSelected(
+                        selections: List<ChoosableUom>,
+                        payload: String?
+                    ) {
+                        uom.setText(selections[0].name ?: "")
+                        getViewModel()?.setUom(selections[0].id ?: "")
+                    }
+                    override fun onNoItemSelected(payload: String?) {}
+                    override fun writeToParcel(dest: Parcel?, flags: Int) {}
+                    override fun describeContents() = 0
+                }
+            )
+        }
+
         val builder = MaterialAlertDialogBuilder(requireActivity())
         builder.setView(view)
             .setTitle(R.string.title_fragment_edit_consumable)
@@ -60,16 +82,15 @@ class ConsumableFragment : MSDialogFragment<ConsumableViewModel>() {
             ok.setOnClickListener { _ ->
                 getViewModel()?.saveConsumableInfo(
                     dlg.findViewById<EditText>(R.id.consumable_name)?.text.toString(),
-                    dlg.findViewById<EditText>(R.id.consumable_price)?.text.toString(),
-                    dlg.findViewById<EditText>(R.id.consumable_uom)?.text.toString()
+                    dlg.findViewById<EditText>(R.id.consumable_price)?.text.toString()
                 )
             }
         }
     }
 
-    override fun createViewModel(savedInstanceState: Bundle?): ConsumableViewModel {
-        return ViewModelProvider(this, providerFactory).get(ConsumableViewModel::class.java)
-    }
+    override fun createViewModel(savedInstanceState: Bundle?) =
+        ViewModelProvider(this, providerFactory).get(ConsumableViewModel::class.java)
+
 
     override fun onViewModelCreated(viewModel: ConsumableViewModel, savedInstanceState: Bundle?) {
         super.onViewModelCreated(viewModel, savedInstanceState)
