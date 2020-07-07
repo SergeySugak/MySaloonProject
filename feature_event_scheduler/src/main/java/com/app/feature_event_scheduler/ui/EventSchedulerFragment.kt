@@ -4,7 +4,9 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.os.Parcel
 import android.view.View
+import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
+import android.widget.CheckBox
 import android.widget.CheckedTextView
 import android.widget.EditText
 import androidx.appcompat.widget.Toolbar
@@ -48,6 +50,7 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
     private val factAmount: EditText by lazy { requireView().findViewById<EditText>(R.id.fact_amount) }
     private val master: EditText by lazy { requireView().findViewById<EditText>(R.id.master) }
     private val toolBar: Toolbar by lazy { requireView().findViewById<Toolbar>(R.id.toolbar) }
+    private val done: CheckedTextView by lazy { requireView().findViewById<CheckedTextView>(R.id.done) }
 
     override val layoutId = R.layout.fragment_event_scheduler
 
@@ -69,6 +72,7 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
         setupUserDuration()
         setupAmount()
         setupMenu()
+        setupDone()
         (dialog as BottomSheetDialog).behavior.state = BottomSheetBehavior.STATE_EXPANDED
         if (savedInstanceState == null){
             hideKeyboard(view.findViewById(R.id.client_name))
@@ -195,6 +199,14 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
         }
     }
 
+    private fun setupDone(){
+        done.setOnClickListener {
+            //if (done.isChecked){
+                MessageDialogFragment.showError(this, Exception("Checked"))
+            //}
+        }
+    }
+
     private fun saveEvent(event: SaloonEvent?) {
         val clientName = requireView().findViewById<EditText>(R.id.client_name)
         val clientPhone = requireView().findViewById<EditText>(R.id.client_phone)
@@ -288,8 +300,10 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
                         done.isChecked = viewModel.getDone()
                         done.setOnClickListener {
                             done.isChecked = !done.isChecked
+                            factAmount.visibility = if (done.isChecked) VISIBLE else INVISIBLE
                             viewModel.setDone(done.isChecked)
                         }
+                        factAmount.visibility = if (done.isChecked) VISIBLE else INVISIBLE
                     }
                 }
                 viewModel.eventInfo.isHandled = true

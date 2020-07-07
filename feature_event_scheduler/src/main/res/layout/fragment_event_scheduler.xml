@@ -19,7 +19,7 @@
             app:title="@string/title_edit_scheduler_event"
             tools:minHeight="40dp" />
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -348,6 +348,7 @@
                     android:text="@string/str_payment"
                     app:layout_constraintBaseline_toBaselineOf="@+id/plan_amount"
                     app:layout_constraintEnd_toStartOf="@+id/when_barrier" />
+
             <EditText
                     android:id="@+id/plan_amount"
                     android:layout_width="0dp"
@@ -426,5 +427,5 @@
                     app:barrierDirection="right"
                     app:constraint_referenced_ids="when,client,who,label_master" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 </LinearLayout>
