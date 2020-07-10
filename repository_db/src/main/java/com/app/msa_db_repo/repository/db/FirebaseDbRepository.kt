@@ -246,7 +246,7 @@ class FirebaseDbRepository
         }
     }
 
-    override suspend fun getConsumables(): Result<List<SaloonConsumable>> {
+    override suspend fun getConsumablesAsUsed(): Result<List<SaloonUsedConsumable>> {
         return try {
             firebaseDb.getReference(consumablesRoot).runSuspendGetListQuery()
         }

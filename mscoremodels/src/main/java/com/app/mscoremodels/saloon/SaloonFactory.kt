@@ -24,7 +24,7 @@ class SaloonFactory @Inject constructor(val appState: AppStateManager) {
         id: String, master: SaloonMaster,
         services: List<SaloonService>, client: SaloonClient,
         whenStart: Calendar, whenFinish: Calendar, description: String, @ColorInt color: Int,
-        notes: String, userDuration: Int = 0, usedConsumables: List<SaloonConsumable> = emptyList(),
+        notes: String, userDuration: Int = 0, usedConsumables: List<SaloonUsedConsumable> = emptyList(),
         amount: Double = 0.0, state: SaloonEventState = SaloonEventState.esScheduled
     ) =
         SaloonEvent(
@@ -143,13 +143,21 @@ class SaloonFactory @Inject constructor(val appState: AppStateManager) {
         return result
     }
 
-    fun createChoosableConsumables(list: List<SaloonConsumable>, selected: List<SaloonConsumable>):
+    fun createChoosableConsumables(list: List<SaloonUsedConsumable>, selected: List<SaloonUsedConsumable>):
             List<ChoosableSaloonConsumable> {
         val result = mutableListOf<ChoosableSaloonConsumable>()
         list.mapTo(result) { consumable ->
             ChoosableSaloonConsumable(consumable).apply {
                 isSelected = selected.indexOf(consumable) != -1
             }
+        }
+        return result
+    }
+
+    fun convertToSaloonConsumables(consumables: List<ChoosableSaloonConsumable>): List<SaloonUsedConsumable> {
+        val result = mutableListOf<SaloonUsedConsumable>()
+        consumables.forEach { choosableSaloonConsumable ->
+            result.add(choosableSaloonConsumable.saloonConsumable)
         }
         return result
     }

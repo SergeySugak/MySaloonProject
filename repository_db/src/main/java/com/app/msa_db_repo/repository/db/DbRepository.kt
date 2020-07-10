@@ -81,5 +81,5 @@ interface DbRepository {
     suspend fun masterHasRelatedEvent(masterId: String): Result<Boolean>
     suspend fun consumableHasRelatedEvent(consumableId: String): Result<Boolean>
     suspend fun getUoms(): Result<List<String>>
-    suspend fun getConsumables(): Result<List<SaloonConsumable>>
+    suspend fun getConsumablesAsUsed(): Result<List<SaloonUsedConsumable>>
 }

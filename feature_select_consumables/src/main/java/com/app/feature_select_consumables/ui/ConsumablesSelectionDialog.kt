@@ -9,10 +9,7 @@ import com.app.mscorebase.di.findComponentDependencies
 import com.app.mscorebase.ui.dialogs.choicedialog.MSChoiceDialogFragment
 import com.app.mscorebase.ui.dialogs.choicedialog.OnChoiceItemsSelectedListener
 import com.app.mscorebase.ui.dialogs.messagedialog.MessageDialogFragment
-import com.app.mscoremodels.saloon.ChoosableSaloonConsumable
-import com.app.mscoremodels.saloon.ChoosableSaloonService
-import com.app.mscoremodels.saloon.SaloonConsumable
-import com.app.mscoremodels.saloon.SaloonService
+import com.app.mscoremodels.saloon.*
 import javax.inject.Inject
 
 class ConsumablesSelectionDialog :
@@ -22,7 +19,7 @@ class ConsumablesSelectionDialog :
     lateinit var providerFactory: ViewModelProviderFactory
         protected set
 
-    val consumables = mutableListOf<SaloonConsumable>()
+    val usedConsumables = mutableListOf<SaloonUsedConsumable>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         DaggerSelectConsumablesFeatureComponent
@@ -43,8 +40,8 @@ class ConsumablesSelectionDialog :
         savedInstanceState: Bundle?
     ) {
         super.onViewModelCreated(viewModel, savedInstanceState)
-        viewModel.setConsumables(consumables)
-        viewModel.loadConsumables()
+        viewModel.setConsumables(usedConsumables)
+        viewModel.loadChoosableConsumables()
     }
 
     override fun onStartObservingViewModel(viewModel: ConsumablesSelectionDialogViewModel) {
@@ -59,7 +56,7 @@ class ConsumablesSelectionDialog :
 
     companion object {
         fun newInstance(
-            title: String, masterServices: List<SaloonConsumable>,
+            title: String, consumables: List<SaloonUsedConsumable>,
             resultListener: OnChoiceItemsSelectedListener<ChoosableSaloonConsumable, String?>
         ): ConsumablesSelectionDialog {
             val args = Bundle();
@@ -69,8 +66,8 @@ class ConsumablesSelectionDialog :
             args.putString(ARGUMENT_TITLE, title)
             args.putParcelable(ARGUMENT_RESULT_LISTENER, resultListener)
             fragment.arguments = args
-            fragment.consumables.clear()
-            fragment.consumables.addAll(masterServices)
+            fragment.usedConsumables.clear()
+            fragment.usedConsumables.addAll(consumables)
             return fragment;
         }
     }

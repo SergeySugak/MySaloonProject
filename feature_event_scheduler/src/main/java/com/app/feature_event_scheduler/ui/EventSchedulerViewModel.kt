@@ -36,6 +36,8 @@ class EventSchedulerViewModel @Inject constructor(
     val eventInfo: StatefulLiveData<SaloonEvent> = intEventInfo
     private val intEventInfoSaveState = StatefulMutableLiveData<ActionType>()
     val eventInfoSaveState: StatefulLiveData<ActionType> = intEventInfoSaveState
+    private val intUsedConsumables = StatefulMutableLiveData<List<SaloonUsedConsumable>>()
+    val usedConsumables = StatefulLiveData<List<SaloonUsedConsumable>>()
 
     var masterId: String = ""
         private set
@@ -47,7 +49,6 @@ class EventSchedulerViewModel @Inject constructor(
     private var state: SaloonEventState = SaloonEventState.esScheduled
     private var userDuration: Int = 0
     private var amount: Double = 0.0
-    private var usedConsumables = mutableListOf<SaloonConsumable>()
 
     fun setEventDate(year: Int, month: Int, day: Int) {
         intCalendar.value!!.set(year, month, day)
@@ -62,6 +63,10 @@ class EventSchedulerViewModel @Inject constructor(
 
     fun setServices(services: List<ChoosableSaloonService>) {
         intServices.value = saloonFactory.convertToSaloonServices(services)
+    }
+
+    fun setConsumables(consumables: List<ChoosableSaloonConsumable>) {
+        intUsedConsumables.value = saloonFactory.convertToSaloonConsumables(consumables)
     }
 
     fun setMaster(masters: List<ChoosableSaloonMaster>) {
@@ -102,11 +107,11 @@ class EventSchedulerViewModel @Inject constructor(
             intMaster.postValue(event.master)
             intServices.postValue(event.services)
             intCalendar.postValue(event.whenStart)
+            intUsedConsumables.postValue(event.usedConsumables)
             notes = event.notes
             description = event.description
             state = event.state
             userDuration = event.userDuration
-            usedConsumables = event.usedConsumables.toMutableList()
             amount = event.amount
         }
     }
@@ -188,7 +193,7 @@ class EventSchedulerViewModel @Inject constructor(
                 master.value!!, services.value!!, client,
                 whenStart, whenFinish, description,
                 eventColorizer.getRandomColor(appState.context),
-                notes, userDuration, usedConsumables, amount)
+                notes, userDuration, usedConsumables.value.orEmpty(), amount)
         } else {
             val evt = eventInfo.value!!
             evt.master = master.value!!
@@ -200,7 +205,7 @@ class EventSchedulerViewModel @Inject constructor(
             evt.notes = notes
             evt.state = state
             evt.userDuration = userDuration
-            evt.usedConsumables = usedConsumables
+            evt.usedConsumables = usedConsumables.value.orEmpty()
             evt.amount = amount
             evt
         }
@@ -222,9 +227,12 @@ class EventSchedulerViewModel @Inject constructor(
         return result
     }
 
-    fun getTotalServicesPlanAmount(services: List<SaloonService>?): Double {
+    fun getTotalPlanAmount(): Double {
         var result = 0.0
-        services?.forEach {
+        services.value.orEmpty().forEach {
+            result += it.price
+        }
+        usedConsumables.value.orEmpty().forEach {
             result += it.price
         }
         return result
@@ -235,8 +243,6 @@ class EventSchedulerViewModel @Inject constructor(
     }
 
     fun getUserDuration() = userDuration
-
-
 
     companion object {
         private const val DEF_HOUR_FRACTION = 15

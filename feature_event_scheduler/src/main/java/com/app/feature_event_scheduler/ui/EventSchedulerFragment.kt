@@ -4,7 +4,6 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.os.Parcel
 import android.view.View
-import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.widget.CheckedTextView
 import android.widget.EditText
@@ -79,11 +78,11 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
     private fun setupConsumables() {
         usedConsumables.setOnClickListener {
             appNavigator.navigateToSelectConsumables(this, getString(R.string.str_used_consumables),
-                emptyList(),
+                getViewModel()?.usedConsumables?.value.orEmpty(),
                 object: OnChoiceItemsSelectedListener<ChoosableSaloonConsumable, String?>{
                     override fun onChoiceItemsSelected(selections: List<ChoosableSaloonConsumable>,
                                                        payload: String?) {
-
+                        getViewModel()?.setConsumables(selections)
                     }
                     override fun onNoItemSelected(payload: String?) {}
                     override fun writeToParcel(dest: Parcel?, flags: Int){}
@@ -252,7 +251,15 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
                 services.setText(items.joinToString())
                 val minutes = viewModel.getTotalServicesPlanDuration(items)
                 planDuration.setText(formatDuration(minutes))
-                planAmount.setText(String.format("%.2f", viewModel.getTotalServicesPlanAmount(items)))
+                planAmount.setText(String.format("%.2f", viewModel.getTotalPlanAmount()))
+                viewModel.services.isHandled = true
+            }
+        })
+
+        viewModel.usedConsumables.observe(this, Observer { items ->
+            if (!viewModel.usedConsumables.isHandled) {
+                usedConsumables.setText(items.joinToString())
+                planAmount.setText(String.format("%.2f", viewModel.getTotalPlanAmount()))
                 viewModel.services.isHandled = true
             }
         })

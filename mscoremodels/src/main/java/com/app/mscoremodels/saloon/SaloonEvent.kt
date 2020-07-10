@@ -20,7 +20,7 @@ class SaloonEvent constructor() : SchedulerEvent, Parcelable {
     var userDuration: Int = 0
     lateinit var notes: String
     var description: String = ""
-    var usedConsumables: List<SaloonConsumable> = emptyList()
+    var usedConsumables: List<SaloonUsedConsumable> = emptyList()
     var amount: Double = 0.0
 
     @ColorInt
@@ -31,7 +31,7 @@ class SaloonEvent constructor() : SchedulerEvent, Parcelable {
         id: String, master: SaloonMaster, services: List<SaloonService>, client: SaloonClient,
         whenStart: Calendar, whenFinish: Calendar, description: String,
         @ColorInt color: Int, state: SaloonEventState, notes: String = "",
-        userDuration: Int, usedConsumables: List<SaloonConsumable> = emptyList(),
+        userDuration: Int, usedConsumables: List<SaloonUsedConsumable> = emptyList(),
         amount: Double = 0.0) : this() {
         this.id = id
         this.master = master
@@ -108,7 +108,7 @@ class SaloonEvent constructor() : SchedulerEvent, Parcelable {
         color = parcel.readInt()
         state = SaloonEventState.valueOf(parcel.readString()!!)
         notes = parcel.readString() ?: ""
-        usedConsumables = parcel.createTypedArrayList(SaloonConsumable)!!
+        usedConsumables = parcel.createTypedArrayList(SaloonUsedConsumable)!!
         amount = parcel.readDouble()
     }
 

@@ -161,7 +161,7 @@ class AppNavigatorImpl @Inject constructor() : AppNavigator {
     override fun navigateToSelectConsumables(
         targetFragment: Fragment,
         title: String,
-        selectedItems: List<SaloonConsumable>,
+        selectedItems: List<SaloonUsedConsumable>,
         listener: OnChoiceItemsSelectedListener<ChoosableSaloonConsumable, String?>
     ) {
         val fragment = ConsumablesSelectionDialog.newInstance(title, selectedItems, listener)

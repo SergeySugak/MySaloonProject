@@ -3,9 +3,9 @@ package com.app.msa_db_repo.repository.db
 import android.graphics.Color
 import androidx.annotation.ColorInt
 import com.app.mscoremodels.saloon.SaloonClient
-import com.app.mscoremodels.saloon.SaloonConsumable
 import com.app.mscoremodels.saloon.SaloonEvent
 import com.app.mscoremodels.saloon.SaloonEventState
+import com.app.mscoremodels.saloon.SaloonUsedConsumable
 import com.google.firebase.database.IgnoreExtraProperties
 
 @IgnoreExtraProperties
@@ -21,7 +21,7 @@ class RepositoryEvent constructor() {
     var color: Int = Color.WHITE
     var state: SaloonEventState = SaloonEventState.esScheduled
     var notes: String = ""
-    var usedConsumables: List<SaloonConsumable> = emptyList()
+    var usedConsumables: List<SaloonUsedConsumable> = emptyList()
     var amount: Double = 0.0
     var userDuration: Int = 0
 

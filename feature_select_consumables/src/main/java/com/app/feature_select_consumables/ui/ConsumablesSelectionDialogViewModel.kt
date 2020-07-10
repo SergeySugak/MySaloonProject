@@ -22,15 +22,15 @@ class ConsumablesSelectionDialogViewModel
     private val saloonFactory: SaloonFactory
 ) : MSChoiceDialogFragmentViewModel<ChoosableSaloonConsumable, String?>(appState, adapter) {
 
-    private var consumables = emptyList<SaloonConsumable>()
+    private var selectedConsumables = emptyList<SaloonUsedConsumable>()
 
-    fun loadConsumables() {
+    fun loadChoosableConsumables() {
         viewModelScope.launch(Dispatchers.IO) {
-            val allConsumablesResult = dbRepository.getConsumables()
+            val allConsumablesResult = dbRepository.getConsumablesAsUsed()
             if (allConsumablesResult is Result.Success) {
                 val choosable = saloonFactory.createChoosableConsumables(
                     allConsumablesResult.data,
-                    consumables
+                    selectedConsumables
                 )
                 withContext(Dispatchers.Main) { setChoices(choosable) }
             } else {
@@ -50,7 +50,7 @@ class ConsumablesSelectionDialogViewModel
         //read state
     }
 
-    fun setConsumables(consumables: MutableList<SaloonConsumable>) {
-        this.consumables = consumables
+    fun setConsumables(consumables: MutableList<SaloonUsedConsumable>) {
+        this.selectedConsumables = consumables
     }
 }

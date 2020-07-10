@@ -4,7 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import java.io.Serializable
 
-class SaloonConsumable constructor() : Parcelable, Serializable {
+open class SaloonConsumable constructor() : Parcelable, Serializable {
     var id: String = ""
     var name: String = ""
     var uom: String = ""
