@@ -33,4 +33,6 @@
     <string name="str_h_format">%d ч.</string>
 
     <string name="str_service_duration">Продолжительность услуги</string>
+    <string name="str_consumables">Расходники</string>
+    <string name="str_used_consumables">Использованные расходники</string>
 </resources>

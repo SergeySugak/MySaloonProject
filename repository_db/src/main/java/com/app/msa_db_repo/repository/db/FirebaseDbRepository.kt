@@ -246,6 +246,15 @@ class FirebaseDbRepository
         }
     }
 
+    override suspend fun getConsumables(): Result<List<SaloonConsumable>> {
+        return try {
+            firebaseDb.getReference(consumablesRoot).runSuspendGetListQuery()
+        }
+        catch (ex: java.lang.Exception){
+            Result.Error(ex)
+        }
+    }
+
     override fun startListenToConsumables(
         onInsert: (consumable: SaloonConsumable) -> Unit,
         onUpdate: (updatedConsumableId: String, consumable: SaloonConsumable) -> Unit,
@@ -600,7 +609,7 @@ class FirebaseDbRepository
     //endregion
 
     //region UOM
-    override fun getUoms(): Result<List<String>> {
+    override suspend fun getUoms(): Result<List<String>> {
         return try {
             Result.Success(listOf(*appState.context.resources.getStringArray(R.array.uoms)))
         }

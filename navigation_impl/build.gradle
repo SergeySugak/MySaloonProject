@@ -59,6 +59,7 @@ dependencies {
     implementation project(':feature_select_master')
     implementation project(':feature_select_event')
     implementation project(':feature_select_uom')
+    implementation project(':feature_select_consumables')
     implementation project(':feature_master')
     implementation project(':feature_event_scheduler')
 

@@ -20,6 +20,6 @@
     <item
             android:id="@+id/navigation_consumables"
             android:icon="@drawable/ic_consumables"
-            android:title="@string/str_consumables" />
+            android:title="@string/str_used_consumables" />
 
 </menu>

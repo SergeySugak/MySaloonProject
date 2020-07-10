@@ -11,6 +11,7 @@ import com.app.feature_consumable.ui.ConsumableFragment.Companion.ARG_EDIT_CONSU
 import com.app.feature_event_scheduler.ui.EventSchedulerFragment
 import com.app.feature_master.ui.MasterFragment
 import com.app.feature_master.ui.MasterFragment.Companion.ARG_EDIT_MASTER_ID
+import com.app.feature_select_consumables.ui.ConsumablesSelectionDialog
 import com.app.feature_select_event.ui.EventSelectionDialog
 import com.app.feature_select_master.ui.MasterSelectionDialog
 import com.app.feature_select_services.ui.ServicesSelectionDialog
@@ -97,7 +98,6 @@ class AppNavigatorImpl @Inject constructor() : AppNavigator {
         )
     }
 
-
     override fun navigateToNewEventFragment(
         targetFragment: Fragment,
         eventListener: AppNavigator.EventSchedulerListener?
@@ -155,6 +155,16 @@ class AppNavigatorImpl @Inject constructor() : AppNavigator {
                                      title: String, uom: String?,
                                      listener: OnChoiceItemsSelectedListener<ChoosableUom, String?>) {
         val fragment = UomSelectionDialog.newInstance(title, uom, listener)
+        showDialogFragment(targetFragment, fragment, "")
+    }
+
+    override fun navigateToSelectConsumables(
+        targetFragment: Fragment,
+        title: String,
+        selectedItems: List<SaloonConsumable>,
+        listener: OnChoiceItemsSelectedListener<ChoosableSaloonConsumable, String?>
+    ) {
+        val fragment = ConsumablesSelectionDialog.newInstance(title, selectedItems, listener)
         showDialogFragment(targetFragment, fragment, "")
     }
 }

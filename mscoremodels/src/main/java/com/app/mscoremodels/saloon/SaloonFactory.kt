@@ -95,10 +95,8 @@ class SaloonFactory @Inject constructor(val appState: AppStateManager) {
         return result
     }
 
-    fun createChoosableMasters(
-        allMastersList: List<SaloonMaster>,
-        selectedMastersList: List<SaloonMaster>
-    ): List<ChoosableSaloonMaster> {
+    fun createChoosableMasters(allMastersList: List<SaloonMaster>, selectedMastersList: List<SaloonMaster>):
+            List<ChoosableSaloonMaster> {
         val result = mutableListOf<ChoosableSaloonMaster>()
         allMastersList.mapTo(result) { saloonMaster ->
             ChoosableSaloonMaster(saloonMaster).apply {
@@ -140,6 +138,17 @@ class SaloonFactory @Inject constructor(val appState: AppStateManager) {
         list.mapTo(result) { uom ->
             ChoosableUom(uom).apply {
                 isSelected = selected.indexOf(uom) != -1
+            }
+        }
+        return result
+    }
+
+    fun createChoosableConsumables(list: List<SaloonConsumable>, selected: List<SaloonConsumable>):
+            List<ChoosableSaloonConsumable> {
+        val result = mutableListOf<ChoosableSaloonConsumable>()
+        list.mapTo(result) { consumable ->
+            ChoosableSaloonConsumable(consumable).apply {
+                isSelected = selected.indexOf(consumable) != -1
             }
         }
         return result

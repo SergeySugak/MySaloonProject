@@ -63,6 +63,11 @@ interface AppNavigator {
                             title: String, uom: String?,
                             listener: OnChoiceItemsSelectedListener<ChoosableUom, String?>)
 
+    fun navigateToSelectConsumables(targetFragment: Fragment,
+                                    title: String,
+                                    selectedItems: List<SaloonConsumable>,
+                                    listener: OnChoiceItemsSelectedListener<ChoosableSaloonConsumable, String?>)
+
     interface EventSchedulerListener : Parcelable {
         fun onAdded(event: SaloonEvent)
         fun onUpdated(event: SaloonEvent)
