@@ -13,8 +13,8 @@ import java.util.*
 open class SimpleChoiceAdapter<C : ChoiceItem<out Serializable>>(val choiceMode: ChoiceMode) :
     BaseAdapter() {
     private var choices: List<C> = ArrayList()
-    private val enabledTypedValue: TypedValue? = TypedValue()
-    private val disabledTypedValue: TypedValue? = TypedValue()
+    protected val enabledTypedValue: TypedValue? = TypedValue()
+    protected val disabledTypedValue: TypedValue? = TypedValue()
 
     fun setChoices(choiceItems: List<C>) {
         choices = choiceItems

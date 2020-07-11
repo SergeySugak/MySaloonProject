@@ -3,6 +3,7 @@ package com.app.mscorebase.ui.dialogs.choicedialog
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import com.app.mscorebase.R
@@ -58,6 +59,8 @@ abstract class MSChoiceDialogFragment<C : ChoiceItem<out Serializable>, VM : MSC
     }
 
     private fun onShow(dialog: AlertDialog) {
+        dialog.window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
         if (getViewModel()?.visibleItems?.size == 1 &&
             getViewModel()?.choiceMode == ChoiceMode.cmSingle
         ) {
