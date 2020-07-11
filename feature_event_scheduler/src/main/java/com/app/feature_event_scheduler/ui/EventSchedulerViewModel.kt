@@ -37,7 +37,7 @@ class EventSchedulerViewModel @Inject constructor(
     private val intEventInfoSaveState = StatefulMutableLiveData<ActionType>()
     val eventInfoSaveState: StatefulLiveData<ActionType> = intEventInfoSaveState
     private val intUsedConsumables = StatefulMutableLiveData<List<SaloonUsedConsumable>>()
-    val usedConsumables = StatefulLiveData<List<SaloonUsedConsumable>>()
+    val usedConsumables: StatefulLiveData<List<SaloonUsedConsumable>> = intUsedConsumables
 
     var masterId: String = ""
         private set

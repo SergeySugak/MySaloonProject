@@ -10,7 +10,7 @@ open class SaloonConsumable constructor() : Parcelable, Serializable {
     var uom: String = ""
     var price: Double = 0.0
 
-    constructor(id: String, name: String, price: Double, uom: String): this() {
+    constructor(id: String, name: String, price: Double, uom: String) : this() {
         this.id = id
         this.name = name
         this.price = price
@@ -57,6 +57,10 @@ open class SaloonConsumable constructor() : Parcelable, Serializable {
         return result
     }
 
+    override fun toString(): String {
+        return name
+    }
+
     companion object CREATOR : Parcelable.Creator<SaloonConsumable> {
         override fun createFromParcel(parcel: Parcel): SaloonConsumable {
             return SaloonConsumable(parcel)
@@ -66,6 +70,4 @@ open class SaloonConsumable constructor() : Parcelable, Serializable {
             return arrayOfNulls(size)
         }
     }
-
-
 }

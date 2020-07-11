@@ -47,7 +47,8 @@ abstract class MSChoiceDialogFragment<C : ChoiceItem<out Serializable>, VM : MSC
         dialog.listView.adapter = vm.adapter
         dialog.listView.setOnItemClickListener { _, view, position, _ ->
             vm.setSelected(position)
-            dialog.getButton(DialogInterface.BUTTON_POSITIVE).isEnabled = vm.selectedItems.size > 0
+            invalidateOkButtonState(vm)
+            //dialog.getButton(DialogInterface.BUTTON_POSITIVE).isEnabled = vm.selectedItems.size > 0
         }
         return dialog
     }

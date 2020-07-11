@@ -388,7 +388,6 @@
                     android:focusable="false"
                     android:focusableInTouchMode="false"
                     android:inputType="none"
-                    android:gravity="end"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/when_barrier"
                     app:layout_constraintTop_toBottomOf="@+id/plan_time" />

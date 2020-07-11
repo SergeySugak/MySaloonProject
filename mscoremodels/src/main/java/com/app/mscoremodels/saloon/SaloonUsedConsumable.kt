@@ -6,6 +6,8 @@ import android.os.Parcelable
 class SaloonUsedConsumable : SaloonConsumable {
     var qty: Float = 0.0f
 
+    constructor(): super()
+
     constructor(id: String, name: String, price: Double, uom: String, qty: Float): super(id, name, price, uom) {
         this.qty = qty
     }
