@@ -368,6 +368,15 @@
                     app:layout_constraintTop_toBottomOf="@+id/used_consumables" />
 
             <TextView
+                    android:id="@+id/service_price_currency"
+                    style="@style/TextAppearance.AppCompat.Medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/str_currency"
+                    app:layout_constraintStart_toEndOf="@+id/plan_amount"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/plan_amount"/>
+
+            <TextView
                     android:id="@+id/label_used_consumables"
                     style="@style/TextAppearance.AppCompat.Medium"
                     android:layout_width="wrap_content"

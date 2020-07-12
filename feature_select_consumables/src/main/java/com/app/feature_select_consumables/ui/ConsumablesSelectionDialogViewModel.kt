@@ -17,7 +17,7 @@ import javax.inject.Inject
 class ConsumablesSelectionDialogViewModel
 @Inject constructor(
     appState: AppStateManager,
-    adapter: ConsumablesAdapter,
+    override val adapter: ConsumablesAdapter,
     private val dbRepository: DbRepository,
     private val saloonFactory: SaloonFactory
 ) : MSChoiceDialogFragmentViewModel<ChoosableSaloonConsumable, String?>(appState, adapter) {
@@ -52,5 +52,18 @@ class ConsumablesSelectionDialogViewModel
 
     fun setConsumables(consumables: MutableList<SaloonUsedConsumable>) {
         this.selectedConsumables = consumables
+        adapter.onQtyChanged = {position: Int ->
+            setSelected(position)
+        }
+    }
+
+    override fun setSelected(position: Int) {
+        if (getChoices()[position].isSelected) {
+            if (selectedItems.indexOf(getChoices()[position]) == -1) {
+                selectedItems.add(getChoices()[position])
+            }
+        } else {
+            selectedItems.remove(getChoices()[position])
+        }
     }
 }

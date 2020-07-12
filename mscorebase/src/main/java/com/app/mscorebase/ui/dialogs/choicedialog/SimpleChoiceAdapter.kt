@@ -49,10 +49,8 @@ open class SimpleChoiceAdapter<C : ChoiceItem<out Serializable>>(val choiceMode:
             } else {
                 R.layout.item_generic_multi_choice
             }
-            convertView = LayoutInflater.from(parent.context)
-                .inflate(layoutResId, parent, false)
-            viewHolder.checkedTextView =
-                convertView.findViewById(R.id.choice_item)
+            convertView = LayoutInflater.from(parent.context).inflate(layoutResId, parent, false)
+            viewHolder.checkedTextView = convertView.findViewById(R.id.choice_item)
             convertView.tag = viewHolder
         } else {
             viewHolder = convertView.tag as ItemViewHolder

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="str_duration">Продолжительность</string>
-    <string name="str_cur_code">&#x20bd;</string>
     <string name="str_delete_service">Удалить услугу\n%s?</string>
     <string name="str_cant_delete_active_service">Нельзя удалять услугу пока есть связанные с ней события!</string>
 </resources>

@@ -55,13 +55,11 @@ class ConsumablesSelectionDialog :
     }
 
     companion object {
-        fun newInstance(
-            title: String, consumables: List<SaloonUsedConsumable>,
+        fun newInstance(title: String, consumables: List<SaloonUsedConsumable>,
             resultListener: OnChoiceItemsSelectedListener<ChoosableSaloonConsumable, String?>
         ): ConsumablesSelectionDialog {
-            val args = Bundle();
-            val fragment =
-                ConsumablesSelectionDialog()
+            val args = Bundle()
+            val fragment = ConsumablesSelectionDialog()
             fragment.retainInstance = true
             args.putString(ARGUMENT_TITLE, title)
             args.putParcelable(ARGUMENT_RESULT_LISTENER, resultListener)

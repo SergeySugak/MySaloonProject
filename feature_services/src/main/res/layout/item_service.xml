@@ -79,7 +79,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/card_item_margin"
-                android:text="@string/str_cur_code"
+                android:text="@string/str_currency"
                 app:layout_constraintBottom_toBottomOf="@+id/service_price"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:layout_editor_absoluteX="369dp" />

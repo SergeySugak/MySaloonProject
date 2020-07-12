@@ -10,7 +10,7 @@ import java.util.*
 
 open class MSChoiceDialogFragmentViewModel<C : ChoiceItem<out Serializable>, P>(
     private val appState: AppStateManager,
-    val adapter: SimpleChoiceAdapter<C>
+    open val adapter: SimpleChoiceAdapter<C>
 ) : MSFragmentViewModel(appState) {
     val choiceMode
         get() = adapter.choiceMode
@@ -34,6 +34,8 @@ open class MSChoiceDialogFragmentViewModel<C : ChoiceItem<out Serializable>, P>(
         return result
     }
 
+    fun getChoices() = choices
+
     fun setChoices(choiceItems: List<C>) {
         selectedItems.clear()
         choiceItems.forEach { item ->
@@ -53,7 +55,7 @@ open class MSChoiceDialogFragmentViewModel<C : ChoiceItem<out Serializable>, P>(
     val visibleItems: List<C>
         get() = choices
 
-    fun setSelected(position: Int) {
+    open fun setSelected(position: Int) {
         if (position in 0..choices.size) {
             if (choiceMode === ChoiceMode.cmSingle) {
                 if (selectedItems.size > 0) {

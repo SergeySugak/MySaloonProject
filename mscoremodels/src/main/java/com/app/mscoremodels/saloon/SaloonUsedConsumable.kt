@@ -4,21 +4,21 @@ import android.os.Parcel
 import android.os.Parcelable
 
 class SaloonUsedConsumable : SaloonConsumable {
-    var qty: Float = 0.0f
+    var qty: Int = 0
 
     constructor(): super()
 
-    constructor(id: String, name: String, price: Double, uom: String, qty: Float): super(id, name, price, uom) {
+    constructor(id: String, name: String, price: Double, uom: String, qty: Int): super(id, name, price, uom) {
         this.qty = qty
     }
 
     constructor(parcel: Parcel) : super(parcel) {
-        qty = parcel.readFloat()
+        qty = parcel.readInt()
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         super.writeToParcel(parcel, flags)
-        parcel.writeFloat(qty)
+        parcel.writeInt(qty)
     }
 
     override fun describeContents(): Int {

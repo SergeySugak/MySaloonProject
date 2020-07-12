@@ -193,7 +193,7 @@ class EventSchedulerViewModel @Inject constructor(
                 master.value!!, services.value!!, client,
                 whenStart, whenFinish, description,
                 eventColorizer.getRandomColor(appState.context),
-                notes, userDuration, usedConsumables.value.orEmpty(), amount)
+                notes, userDuration, intUsedConsumables.value.orEmpty(), amount)
         } else {
             val evt = eventInfo.value!!
             evt.master = master.value!!
@@ -205,7 +205,7 @@ class EventSchedulerViewModel @Inject constructor(
             evt.notes = notes
             evt.state = state
             evt.userDuration = userDuration
-            evt.usedConsumables = usedConsumables.value.orEmpty()
+            evt.usedConsumables = intUsedConsumables.value.orEmpty()
             evt.amount = amount
             evt
         }
@@ -233,7 +233,7 @@ class EventSchedulerViewModel @Inject constructor(
             result += it.price
         }
         usedConsumables.value.orEmpty().forEach {
-            result += it.price
+            result += it.price * it.qty
         }
         return result
     }

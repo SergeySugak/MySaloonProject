@@ -148,7 +148,11 @@ class SaloonFactory @Inject constructor(val appState: AppStateManager) {
         val result = mutableListOf<ChoosableSaloonConsumable>()
         list.mapTo(result) { consumable ->
             ChoosableSaloonConsumable(consumable).apply {
-                isSelected = selected.indexOf(consumable) != -1
+                val index = selected.indexOf(consumable)
+                isSelected = index != -1
+                if (isSelected){
+                    consumable.qty = selected[index].qty
+                }
             }
         }
         return result
