@@ -8,7 +8,7 @@ import java.io.Serializable
 open class ChoiceItem<T : Serializable?>(
     @get:JvmName("getChoiceId") override var id: T?,
     @get:JvmName("getChoiceName") override var name: String?
-) : IdNameEntity<T>, Parcelable {
+) : IdNameEntity<T>, Parcelable, Comparable<ChoiceItem<T>> {
 
     override val idName: String
         get() = id?.toString() + " - " + name
@@ -63,6 +63,8 @@ open class ChoiceItem<T : Serializable?>(
     override fun describeContents(): Int {
         return 0
     }
+
+    override fun compareTo(other: ChoiceItem<T>) = other.name?.compareTo(name ?: "") ?: 0
 
     companion object {
         @JvmField

@@ -5,7 +5,7 @@ import android.os.Parcelable
 import com.google.firebase.database.IgnoreExtraProperties
 
 @IgnoreExtraProperties
-class SaloonMaster constructor() : Parcelable {
+class SaloonMaster constructor() : Parcelable, Comparable<SaloonMaster> {
     var id: String = ""
     var name: String = ""
     var description: String = ""
@@ -30,6 +30,8 @@ class SaloonMaster constructor() : Parcelable {
         this.portfolioUrl = portfolioUrl
         this.imageUrl = imageUrl
     }
+
+    override fun compareTo(other: SaloonMaster) = name.compareTo(other.name)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

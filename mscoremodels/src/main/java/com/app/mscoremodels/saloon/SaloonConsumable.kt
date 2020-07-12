@@ -4,7 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import java.io.Serializable
 
-open class SaloonConsumable constructor() : Parcelable, Serializable {
+open class SaloonConsumable constructor() : Parcelable, Serializable, Comparable<SaloonConsumable> {
     var id: String = ""
     var name: String = ""
     var uom: String = ""
@@ -60,6 +60,8 @@ open class SaloonConsumable constructor() : Parcelable, Serializable {
     override fun toString(): String {
         return name
     }
+
+    override fun compareTo(other: SaloonConsumable) = name.compareTo(other.name)
 
     companion object CREATOR : Parcelable.Creator<SaloonConsumable> {
         override fun createFromParcel(parcel: Parcel): SaloonConsumable {

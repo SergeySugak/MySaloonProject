@@ -6,7 +6,7 @@ import com.google.firebase.database.IgnoreExtraProperties
 class ServiceDuration(
     val duration: Int?,
     val description: String?
-) {
+): Comparable<ServiceDuration> {
     constructor() : this(null, null)
 
     override fun equals(other: Any?): Boolean {
@@ -26,6 +26,8 @@ class ServiceDuration(
         result = 31 * result + (description?.hashCode() ?: 0)
         return result
     }
+
+    override fun compareTo(other: ServiceDuration) = duration?.compareTo(other.duration ?: 0) ?: 0
 
     override fun toString(): String {
         return description ?: "${ServiceDuration::class.java.simpleName} = $duration"

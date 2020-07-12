@@ -29,7 +29,7 @@ class ConsumablesSelectionDialogViewModel
             val allConsumablesResult = dbRepository.getConsumablesAsUsed()
             if (allConsumablesResult is Result.Success) {
                 val choosable = saloonFactory.createChoosableConsumables(
-                    allConsumablesResult.data,
+                    allConsumablesResult.data.sorted(),
                     selectedConsumables
                 )
                 withContext(Dispatchers.Main) { setChoices(choosable) }

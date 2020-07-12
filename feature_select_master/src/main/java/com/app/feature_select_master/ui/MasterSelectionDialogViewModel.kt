@@ -39,7 +39,7 @@ class MasterSelectionDialogViewModel
                     })
                 }
                 val choosable = saloonFactory.createChoosableMasters(
-                    allMastersResult.data,
+                    allMastersResult.data.sorted(),
                     selectedMasters
                 )
                 withContext(Dispatchers.Main) { setChoices(choosable) }

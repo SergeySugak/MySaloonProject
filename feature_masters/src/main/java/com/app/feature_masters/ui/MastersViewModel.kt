@@ -67,6 +67,7 @@ class MastersViewModel
             masters = mutableListOf()
         }
         masters.add(master)
+        masters.sort()
         _masters.value = masters
     }
 
@@ -84,6 +85,7 @@ class MastersViewModel
                 }
             }
         }
+        masters.sort()
         _masters.value = masters
     }
 

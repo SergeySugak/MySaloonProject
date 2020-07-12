@@ -69,6 +69,7 @@ class ServicesViewModel
             services = mutableListOf()
         }
         services.add(service)
+        services.sort()
         _services.value = services
     }
 
@@ -86,6 +87,7 @@ class ServicesViewModel
                 }
             }
         }
+        services.sort()
         _services.value = services
     }
 

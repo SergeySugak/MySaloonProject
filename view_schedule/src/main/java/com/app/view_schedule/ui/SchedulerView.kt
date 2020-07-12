@@ -521,9 +521,15 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
             eventStartHour =
                 event.getDateTimeStart().get(HOUR_OF_DAY) + event.getDateTimeStart()
                     .get(MINUTE) / 60f
-            eventFinishHour =
-                event.getDateTimeFinish().get(HOUR_OF_DAY) + event.getDateTimeFinish()
-                    .get(MINUTE) / 60f
+            val daysDiff = event.getDateTimeFinish().get(Calendar.DATE) - event.getDateTimeStart().get(Calendar.DATE)
+            if (daysDiff == 0) {
+                eventFinishHour =
+                    event.getDateTimeFinish().get(HOUR_OF_DAY) + event.getDateTimeFinish()
+                        .get(MINUTE) / 60f
+            }
+            else {
+                eventFinishHour = 24f
+            }
             eventRect.left = leftEdge + diffDays * cellWidth + eventMargin
             eventRect.top = contentTop + (eventStartHour - yScroll) * cellHeight
             eventRect.right = eventRect.left + cellWidth - 2 * eventMargin

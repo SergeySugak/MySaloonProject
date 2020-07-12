@@ -31,7 +31,7 @@ class ServicesSelectionDialogViewModel
             val allServicesResult = dbRepository.getServices()
             if (allServicesResult is Result.Success) {
                 val choosable = saloonFactory.createChoosableServices(
-                    allServicesResult.data,
+                    allServicesResult.data.sorted(),
                     masterServices
                 )
                 withContext(Dispatchers.Main) { setChoices(choosable) }

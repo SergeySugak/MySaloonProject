@@ -67,6 +67,7 @@ class ConsumablesViewModel
             consumables = mutableListOf()
         }
         consumables.add(consumable)
+        consumables.sort()
         _consumables.value = consumables
     }
 
@@ -84,6 +85,7 @@ class ConsumablesViewModel
                 }
             }
         }
+        consumables.sort()
         _consumables.value = consumables
     }
 

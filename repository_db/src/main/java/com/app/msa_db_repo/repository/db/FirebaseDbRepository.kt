@@ -80,7 +80,7 @@ class FirebaseDbRepository
                     result.add(duration)
                 }
             }
-            Result.Success(result)
+            Result.Success(result.sorted())
         } catch (ex: Exception) {
             Result.Error(ex)
         }
@@ -553,7 +553,7 @@ class FirebaseDbRepository
                 servicesQueryResult as Result.Success
                 servicesQueryResult.data.containsAll(requiredServices)
             }
-            result = Result.Success(masters)
+            result = Result.Success(masters.sorted())
         }
         return result
     }
@@ -604,6 +604,7 @@ class FirebaseDbRepository
                 return Result.Error(serviceResult.exception)
             }
         }
+        result.sort()
         return Result.Success(result)
     }
     //endregion
@@ -611,7 +612,9 @@ class FirebaseDbRepository
     //region UOM
     override suspend fun getUoms(): Result<List<String>> {
         return try {
-            Result.Success(listOf(*appState.context.resources.getStringArray(R.array.uoms)))
+            Result.Success(
+                mutableListOf(*appState.context.resources.getStringArray(R.array.uoms)).sorted()
+            )
         }
         catch (ex: java.lang.Exception){
             Result.Error(ex)

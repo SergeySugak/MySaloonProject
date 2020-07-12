@@ -5,7 +5,7 @@ import android.os.Parcelable
 import com.google.firebase.database.IgnoreExtraProperties
 
 @IgnoreExtraProperties
-class SaloonService constructor() : Parcelable {
+class SaloonService constructor() : Parcelable, Comparable<SaloonService> {
     var name: String = ""
     var id: String = ""
     var price: Double = 0.0
@@ -85,4 +85,6 @@ class SaloonService constructor() : Parcelable {
             return arrayOfNulls(size)
         }
     }
+
+    override fun compareTo(other: SaloonService) = name.compareTo(other.name)
 }
