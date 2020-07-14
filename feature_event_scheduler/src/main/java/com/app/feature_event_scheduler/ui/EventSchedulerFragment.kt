@@ -43,7 +43,9 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
     private val time: EditText by lazy { requireView().findViewById<EditText>(R.id.time) }
     private val services: EditText by lazy { requireView().findViewById<EditText>(R.id.services) }
     private val planDuration: EditText by lazy { requireView().findViewById<EditText>(R.id.plan_time) }
-    private val planAmount: EditText by lazy { requireView().findViewById<EditText>(R.id.plan_amount) }
+    private val planAmount: EditText by lazy { requireView().findViewById<EditText>(R.id.work_amount) }
+    private val consumablesAmount: EditText by lazy { requireView().findViewById<EditText>(R.id.consumables_amount) }
+    private val totalAmount: EditText by lazy { requireView().findViewById<EditText>(R.id.total_amount) }
     private val userDuration: EditText by lazy { requireView().findViewById<EditText>(R.id.fact_time) }
     private val usedConsumables: EditText by lazy { requireView().findViewById<EditText>(R.id.used_consumables) }
     private val master: EditText by lazy { requireView().findViewById<EditText>(R.id.master) }
@@ -251,7 +253,8 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
                 services.setText(items.joinToString())
                 val minutes = viewModel.getTotalServicesPlanDuration(items)
                 planDuration.setText(formatDuration(minutes))
-                planAmount.setText(String.format("%.2f", viewModel.getTotalPlanAmount()))
+                planAmount.setText(String.format("%.2f", viewModel.getTotalWorkAmount()))
+                totalAmount.setText(String.format("%.2f", viewModel.getTotalAmount()))
                 viewModel.services.isHandled = true
             }
         })
@@ -259,7 +262,8 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
         viewModel.usedConsumables.observe(this, Observer { items ->
             if (!viewModel.usedConsumables.isHandled) {
                 usedConsumables.setText(items.joinToString())
-                planAmount.setText(String.format("%.2f", viewModel.getTotalPlanAmount()))
+                consumablesAmount.setText(String.format("%.2f", viewModel.getTotalConsumablesAmount()))
+                totalAmount.setText(String.format("%.2f", viewModel.getTotalAmount()))
                 viewModel.services.isHandled = true
             }
         })

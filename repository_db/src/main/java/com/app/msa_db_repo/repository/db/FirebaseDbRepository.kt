@@ -335,10 +335,11 @@ class FirebaseDbRepository
         val usedConsumables = event?.usedConsumables.orEmpty()
         val userDuration = event?.userDuration ?: 0
         val amount = event?.amount ?: 0.0
+        val usedConsumablesAmount = event?.usedConsumablesAmount ?: 0.0
         return saloonFactory.createSaloonEvent(
             event?.id ?: "", master, services,
             client, whenStart, whenFinish, description, color, notes,
-            userDuration, usedConsumables, amount, state)
+            userDuration, usedConsumables, amount, usedConsumablesAmount, state)
     }
 
     private suspend fun repositoryEventToSaloonEventResult(event: RepositoryEvent?): Result<SaloonEvent?> {

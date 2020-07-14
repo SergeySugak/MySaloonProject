@@ -105,9 +105,23 @@ class ScheduleFragment : MSFragment<ScheduleViewModel>() {
         schedulerView.scrollTo(now)
     }
 
+    private fun scrollBack() {
+        val now = schedulerView.getFirstDrawableDateTime()
+        now.add(Calendar.DATE, -schedulerView.fitDays)
+        schedulerView.scrollTo(now)
+    }
+
+    private fun scrollFwd() {
+        val now = schedulerView.getLastDrawableDateTime(schedulerView.getFirstDrawableDateTime())
+        //now.add(Calendar.DATE, 1)
+        schedulerView.scrollTo(now)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_now -> scrollToNow()
+            R.id.action_page_back -> scrollBack()
+            R.id.action_page_fwd -> scrollFwd()
             R.id.action_filter -> optionsMenu?.findItem(R.id.action_search)?.collapseActionView()
             R.id.action_search -> optionsMenu?.findItem(R.id.action_filter)?.collapseActionView()
         }

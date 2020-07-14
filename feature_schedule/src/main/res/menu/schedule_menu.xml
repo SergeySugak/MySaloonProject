@@ -18,10 +18,24 @@
             app:showAsAction="ifRoom|collapseActionView" />
 
     <item
+            android:id="@+id/action_page_back"
+            android:icon="@drawable/ic_page_back"
+            android:orderInCategory="300"
+            android:title="@string/str_back"
+            app:showAsAction="ifRoom" />
+
+    <item
             android:id="@+id/action_now"
             android:icon="@drawable/ic_menu_today"
-            android:orderInCategory="300"
+            android:orderInCategory="400"
             android:title="@string/str_today"
+            app:showAsAction="ifRoom" />
+
+    <item
+            android:id="@+id/action_page_fwd"
+            android:icon="@drawable/ic_page_fwd"
+            android:orderInCategory="500"
+            android:title="@string/str_fwd"
             app:showAsAction="ifRoom" />
 
 </menu>

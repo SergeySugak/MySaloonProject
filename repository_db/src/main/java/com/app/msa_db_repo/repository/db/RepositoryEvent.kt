@@ -23,6 +23,7 @@ class RepositoryEvent constructor() {
     var notes: String = ""
     var usedConsumables: List<SaloonUsedConsumable> = emptyList()
     var amount: Double = 0.0
+    var usedConsumablesAmount: Double = 0.0
     var userDuration: Int = 0
 
     constructor(event: SaloonEvent) : this() {
@@ -39,6 +40,7 @@ class RepositoryEvent constructor() {
         this.usedConsumables = event.usedConsumables
         this.userDuration = event.userDuration
         this.amount = event.amount
+        this.usedConsumablesAmount = event.usedConsumablesAmount
     }
 
     override fun equals(other: Any?): Boolean {
@@ -64,6 +66,7 @@ class RepositoryEvent constructor() {
         result = 31 * result + usedConsumables.hashCode()
         result = 31 * result + userDuration.hashCode()
         result = 31 * result + amount.hashCode()
+        result = 31 * result + usedConsumablesAmount.hashCode()
         return result
     }
 }

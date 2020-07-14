@@ -49,6 +49,7 @@ class EventSchedulerViewModel @Inject constructor(
     private var state: SaloonEventState = SaloonEventState.esScheduled
     private var userDuration: Int = 0
     private var amount: Double = 0.0
+    private var usedConsumablesAmount: Double = 0.0
 
     fun setEventDate(year: Int, month: Int, day: Int) {
         intCalendar.value!!.set(year, month, day)
@@ -113,6 +114,7 @@ class EventSchedulerViewModel @Inject constructor(
             state = event.state
             userDuration = event.userDuration
             amount = event.amount
+            usedConsumablesAmount = event.usedConsumablesAmount
         }
     }
 
@@ -193,7 +195,8 @@ class EventSchedulerViewModel @Inject constructor(
                 master.value!!, services.value!!, client,
                 whenStart, whenFinish, description,
                 eventColorizer.getRandomColor(appState.context),
-                notes, userDuration, intUsedConsumables.value.orEmpty(), amount)
+                notes, userDuration, intUsedConsumables.value.orEmpty(),
+                amount, usedConsumablesAmount)
         } else {
             val evt = eventInfo.value!!
             evt.master = master.value!!
@@ -207,6 +210,7 @@ class EventSchedulerViewModel @Inject constructor(
             evt.userDuration = userDuration
             evt.usedConsumables = intUsedConsumables.value.orEmpty()
             evt.amount = amount
+            evt.usedConsumablesAmount = usedConsumablesAmount
             evt
         }
     }
@@ -227,16 +231,23 @@ class EventSchedulerViewModel @Inject constructor(
         return result
     }
 
-    fun getTotalPlanAmount(): Double {
+    fun getTotalWorkAmount(): Double {
         var result = 0.0
         services.value.orEmpty().forEach {
             result += it.price
         }
+        return result
+    }
+
+    fun getTotalConsumablesAmount(): Double {
+        var result = 0.0
         usedConsumables.value.orEmpty().forEach {
             result += it.price * it.qty
         }
         return result
     }
+
+    fun getTotalAmount() = getTotalWorkAmount() + getTotalConsumablesAmount()
 
     fun setUserDuration(duration: Int?) {
         userDuration = duration ?: 0

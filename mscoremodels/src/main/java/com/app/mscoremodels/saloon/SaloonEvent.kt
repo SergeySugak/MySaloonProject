@@ -22,6 +22,7 @@ class SaloonEvent constructor() : SchedulerEvent, Parcelable {
     var description: String = ""
     var usedConsumables: List<SaloonUsedConsumable> = emptyList()
     var amount: Double = 0.0
+    var usedConsumablesAmount: Double = 0.0
 
     @ColorInt
     var color: Int = Color.WHITE
@@ -32,7 +33,7 @@ class SaloonEvent constructor() : SchedulerEvent, Parcelable {
         whenStart: Calendar, whenFinish: Calendar, description: String,
         @ColorInt color: Int, state: SaloonEventState, notes: String = "",
         userDuration: Int, usedConsumables: List<SaloonUsedConsumable> = emptyList(),
-        amount: Double = 0.0) : this() {
+        amount: Double = 0.0, usedConsumablesAmount: Double = 0.0) : this() {
         this.id = id
         this.master = master
         this.services = services
@@ -47,6 +48,7 @@ class SaloonEvent constructor() : SchedulerEvent, Parcelable {
         this.notes = notes
         this.usedConsumables = usedConsumables
         this.amount = amount
+        this.usedConsumablesAmount = usedConsumablesAmount
     }
 
     override fun equals(other: Any?): Boolean {
@@ -71,6 +73,7 @@ class SaloonEvent constructor() : SchedulerEvent, Parcelable {
         result = 31 * result + notes.hashCode()
         result = 31 * result + usedConsumables.hashCode()
         result = 31 * result + amount.hashCode()
+        result = 31 * result + usedConsumablesAmount.hashCode()
         return result
     }
 
@@ -93,6 +96,7 @@ class SaloonEvent constructor() : SchedulerEvent, Parcelable {
         parcel.writeString(notes)
         parcel.writeTypedList(usedConsumables)
         parcel.writeDouble(amount)
+        parcel.writeDouble(usedConsumablesAmount)
     }
 
     constructor(parcel: Parcel) : this() {
@@ -110,6 +114,7 @@ class SaloonEvent constructor() : SchedulerEvent, Parcelable {
         notes = parcel.readString() ?: ""
         usedConsumables = parcel.createTypedArrayList(SaloonUsedConsumable)!!
         amount = parcel.readDouble()
+        usedConsumablesAmount = parcel.readDouble()
     }
 
     override fun describeContents(): Int {

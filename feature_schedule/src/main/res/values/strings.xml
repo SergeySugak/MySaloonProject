@@ -6,4 +6,6 @@
     <string name="str_found_events">Найденные события</string>
     <string name="str_filter_events">Что фильтровать</string>
     <string name="str_no_events_found">События не найдены</string>
+    <string name="str_fwd">Вперед</string>
+    <string name="str_back">Назад</string>
 </resources>

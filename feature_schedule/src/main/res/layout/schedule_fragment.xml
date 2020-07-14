@@ -12,7 +12,9 @@
             app:daySepWidth="1dp"
             app:daysHeaderHeight="40dp"
             app:daysHeaderTextSize="14sp"
-            app:fitDays="3"
+            app:fitDays="7"
+            app:minHour="8"
+            app:maxHour="22"
             app:hourSepWidth="1dp"
             app:hoursHeaderTextSize="12sp"
             app:hoursHeaderWidth="40dp" />

@@ -648,11 +648,11 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
     }
 
     fun normalizeYScroll(value: Float): Float {
-        if (value > 24f - fitHours)
-            return 24f - fitHours
+        if (value > maxHour - fitHours)
+            return maxHour - fitHours.toFloat()
         else {
-            if (value < 0)
-                return 0f
+            if (value < minHour)
+                return minHour.toFloat()
         }
         return value
     }
