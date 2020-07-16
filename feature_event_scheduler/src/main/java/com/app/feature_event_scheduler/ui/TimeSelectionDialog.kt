@@ -23,9 +23,6 @@ class TimeSelectionDialog : MSBottomSheetDialogFragment<DateAndTimeSelectionView
     lateinit var providerFactory: ViewModelProviderFactory
         protected set
 
-    private val timePicker: TimePicker by lazy { requireView().findViewById<TimePicker>(R.id.timePicker) }
-    private val toolBar: Toolbar by lazy { requireView().findViewById<Toolbar>(R.id.toolbar) }
-
     override val layoutId = R.layout.fragment_time_selection
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,6 +36,8 @@ class TimeSelectionDialog : MSBottomSheetDialogFragment<DateAndTimeSelectionView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val timePicker = view.findViewById<TimePicker>(R.id.timePicker)
+        val toolBar = view.findViewById<Toolbar>(R.id.toolbar)
         timePicker.setIs24HourView(true)
         getViewModel()?.let {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

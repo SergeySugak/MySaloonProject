@@ -39,17 +39,17 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
     lateinit var appNavigator: AppNavigator
         protected set
 
-    private val date: EditText by lazy { requireView().findViewById<EditText>(R.id.date) }
-    private val time: EditText by lazy { requireView().findViewById<EditText>(R.id.time) }
-    private val services: EditText by lazy { requireView().findViewById<EditText>(R.id.services) }
-    private val planDuration: EditText by lazy { requireView().findViewById<EditText>(R.id.plan_time) }
-    private val planAmount: EditText by lazy { requireView().findViewById<EditText>(R.id.work_amount) }
-    private val consumablesAmount: EditText by lazy { requireView().findViewById<EditText>(R.id.consumables_amount) }
-    private val totalAmount: EditText by lazy { requireView().findViewById<EditText>(R.id.total_amount) }
-    private val userDuration: EditText by lazy { requireView().findViewById<EditText>(R.id.fact_time) }
-    private val usedConsumables: EditText by lazy { requireView().findViewById<EditText>(R.id.used_consumables) }
-    private val master: EditText by lazy { requireView().findViewById<EditText>(R.id.master) }
-    private val toolBar: Toolbar by lazy { requireView().findViewById<Toolbar>(R.id.toolbar) }
+    private lateinit var date: EditText
+    private lateinit var time: EditText
+    private lateinit var services: EditText
+    private lateinit var planDuration: EditText
+    private lateinit var planAmount: EditText
+    private lateinit var consumablesAmount: EditText
+    private lateinit var totalAmount: EditText
+    private lateinit var userDuration: EditText
+    private lateinit var usedConsumables: EditText
+    private lateinit var master: EditText
+    private lateinit var toolBar: Toolbar
 
     override val layoutId = R.layout.fragment_event_scheduler
 
@@ -64,6 +64,7 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupFields(view)
         setupServices(services)
         setupMaster(master)
         setupDate(date)
@@ -75,6 +76,20 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
         if (savedInstanceState == null){
             hideKeyboard(view.findViewById(R.id.client_name))
         }
+    }
+
+    private fun setupFields(view: View){
+        date = view.findViewById(R.id.date)
+        time = view.findViewById(R.id.time)
+        services = view.findViewById(R.id.services)
+        planDuration = view.findViewById(R.id.plan_time)
+        planAmount = view.findViewById(R.id.work_amount)
+        consumablesAmount = view.findViewById(R.id.consumables_amount)
+        totalAmount = view.findViewById(R.id.total_amount)
+        userDuration = view.findViewById(R.id.fact_time)
+        usedConsumables = view.findViewById(R.id.used_consumables)
+        master = view.findViewById(R.id.master)
+        toolBar = view.findViewById(R.id.toolbar)
     }
 
     private fun setupConsumables() {
@@ -233,6 +248,10 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
         savedInstanceState: Bundle?
     ) {
         super.onViewModelCreated(viewModel, savedInstanceState)
+        val eventDateTime = requireArguments()[ARG_EDIT_EVENT_DATE_TIME] as Calendar?
+        if (eventDateTime != null) {
+            viewModel.setEventDateTime(eventDateTime)
+        }
         viewModel.setEvent(requireArguments()[ARG_EDIT_EVENT] as SaloonEvent?)
     }
 
@@ -372,6 +391,7 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
     }
 
     companion object {
+        const val ARG_EDIT_EVENT_DATE_TIME = "ARG_EDIT_EVENT_DATE_TIME"
         const val ARG_EDIT_EVENT = "ARG_EDIT_EVENT"
         const val ARG_EVENT_LISTENER = "ARG_EVENT_LISTENER"
         private const val REQ_SET_DATE = 10001
@@ -379,11 +399,25 @@ class EventSchedulerFragment : MSBottomSheetDialogFragment<EventSchedulerViewMod
         private const val REQ_DELETE_EVENT = 10002
 
         fun newInstance(
+            eventDateTime: Calendar?,
+            eventListener: AppNavigator.EventSchedulerListener?
+        ): EventSchedulerFragment {
+            val result = EventSchedulerFragment()
+            result.arguments = bundleOf(
+                Pair(ARG_EDIT_EVENT_DATE_TIME, eventDateTime),
+                Pair(ARG_EDIT_EVENT, null),
+                Pair(ARG_EVENT_LISTENER, eventListener)
+            )
+            return result
+        }
+
+        fun newInstance(
             event: SaloonEvent?,
             eventListener: AppNavigator.EventSchedulerListener?
         ): EventSchedulerFragment {
             val result = EventSchedulerFragment()
             result.arguments = bundleOf(
+                Pair(ARG_EDIT_EVENT_DATE_TIME, null),
                 Pair(ARG_EDIT_EVENT, event),
                 Pair(ARG_EVENT_LISTENER, eventListener)
             )

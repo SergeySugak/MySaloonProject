@@ -25,6 +25,7 @@ import com.app.view_schedule.api.SchedulerEvent
 import com.app.view_schedule.api.SchedulerEventClickListener
 import com.app.view_schedule.api.SchedulerViewListener
 import com.app.view_schedule.ui.SchedulerView
+import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
@@ -40,8 +41,8 @@ class ScheduleFragment : MSFragment<ScheduleViewModel>() {
     @get:MenuRes
     override val menu = R.menu.schedule_menu
 
-    private val loading: ProgressBar by lazy { requireView().findViewById<ProgressBar>(R.id.loading) }
-    private val schedulerView: SchedulerView by lazy { requireView().findViewById<SchedulerView>(R.id.schedule_view) }
+    private lateinit var loading: ProgressBar
+    private lateinit var schedulerView: SchedulerView
 
     val eventSchedulerListener = object : AppNavigator.EventSchedulerListener {
         override fun onAdded(event: SaloonEvent) {
@@ -74,6 +75,8 @@ class ScheduleFragment : MSFragment<ScheduleViewModel>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        loading = view.findViewById(R.id.loading)
+        schedulerView = view.findViewById(R.id.schedule_view)
         if (savedInstanceState == null) {
             schedulerView.scrollTo(Calendar.getInstance())
         }
@@ -82,9 +85,19 @@ class ScheduleFragment : MSFragment<ScheduleViewModel>() {
                 getViewModel()?.notifier?.onNext(Pair(from, to))
             }
         })
-        val fromDate = schedulerView.getFirstDrawableDateTime()
-        val toDate = schedulerView.getLastDrawableDateTime(fromDate)
-        getViewModel()?.loadData(fromDate, toDate)
+        schedulerView.setTimeCellSelectListener(object: SchedulerView.TimeCellSelectListener{
+            override fun onTimeCellSelected(time: Calendar) {
+                appNavigator.navigateToNewEventFragment(this@ScheduleFragment, eventSchedulerListener, time)
+            }
+        })
+        if (savedInstanceState == null) {
+            val fromDate = schedulerView.getFirstDrawableDateTime()
+            val toDate = schedulerView.getLastDrawableDateTime(fromDate)
+            getViewModel()?.loadData(fromDate, toDate)
+        }
+        else {
+            getViewModel()?.restoreData()
+        }
         schedulerView.setEventClickListener(object : SchedulerEventClickListener {
             override fun onSchedulerEventClickListener(event: SchedulerEvent) {
                 appNavigator.navigateToEditEventFragment(
@@ -113,7 +126,6 @@ class ScheduleFragment : MSFragment<ScheduleViewModel>() {
 
     private fun scrollFwd() {
         val now = schedulerView.getLastDrawableDateTime(schedulerView.getFirstDrawableDateTime())
-        //now.add(Calendar.DATE, 1)
         schedulerView.scrollTo(now)
     }
 

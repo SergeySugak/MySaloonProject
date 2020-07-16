@@ -25,6 +25,7 @@ import com.app.msa_nav_api.navigation.AppNavigator
 import com.app.mscorebase.ui.dialogs.choicedialog.OnChoiceItemsSelectedListener
 import com.app.mscorebase.ui.dialogs.messagedialog.DialogFragmentPresenterImpl.Companion.showDialogFragment
 import com.app.mscoremodels.saloon.*
+import java.util.*
 import javax.inject.Inject
 
 class AppNavigatorImpl @Inject constructor() : AppNavigator {
@@ -100,14 +101,22 @@ class AppNavigatorImpl @Inject constructor() : AppNavigator {
 
     override fun navigateToNewEventFragment(
         targetFragment: Fragment,
-        eventListener: AppNavigator.EventSchedulerListener?
+        eventListener: AppNavigator.EventSchedulerListener?,
+        eventDateTime: Calendar?
     ) {
-        navigateToEditEventFragment(targetFragment, null, eventListener)
+        val newServiceFragment = EventSchedulerFragment.newInstance(eventDateTime, eventListener).apply {
+            retainInstance = true
+        }
+        showDialogFragment(
+            targetFragment,
+            newServiceFragment,
+            newServiceFragment.javaClass.simpleName
+        )
     }
 
     override fun navigateToEditEventFragment(
-        targetFragment: Fragment, event: SaloonEvent?,
-        eventListener: AppNavigator.EventSchedulerListener?
+        targetFragment: Fragment,
+        event: SaloonEvent?, eventListener: AppNavigator.EventSchedulerListener?
     ) {
         val newServiceFragment = EventSchedulerFragment.newInstance(event, eventListener).apply {
             retainInstance = true

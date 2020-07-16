@@ -1,6 +1,5 @@
 package com.app.feature_schedule.ui
 
-import android.widget.SearchView
 import androidx.lifecycle.viewModelScope
 import com.app.msa_db_repo.repository.db.DbRepository
 import com.app.mscorebase.appstate.AppStateManager
@@ -20,7 +19,6 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import kotlin.math.abs
 import kotlin.math.ceil
 
 class ScheduleViewModel
@@ -97,6 +95,10 @@ class ScheduleViewModel
                 setInProgress(false)
             }
         }
+    }
+
+    fun restoreData(){
+        intNewEventsLoaded.value = eventsMap.values.flatten()
     }
 
     private fun filterEvents(

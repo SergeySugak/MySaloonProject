@@ -7,6 +7,7 @@ import android.os.Parcelable
 import android.text.TextPaint
 import android.text.TextUtils
 import android.util.AttributeSet
+import android.util.Log
 import android.view.GestureDetector
 import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
@@ -19,8 +20,6 @@ import com.app.view_schedule.api.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.Calendar.*
-import java.util.concurrent.TimeUnit
-import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.properties.ObservableProperty
@@ -141,6 +140,7 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
     private var viewListener: SchedulerViewListener? = null
 
     private var eventClickListener: SchedulerEventClickListener? = null
+    private var timeCellSelectListener: TimeCellSelectListener? = null
 
     constructor(context: Context) : this(context, null, 0)
 
@@ -221,6 +221,7 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
 
         yScroll = minHour.toFloat()
         attributes.recycle()
+        setWillNotDraw(false)
     }
 
     override fun onSaveInstanceState(): Parcelable? {
@@ -287,27 +288,16 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
 //  С onMeasure всё как-то очень странно.
 //  1. Студия перестает рисовать (вероятно не понимает кто parent view)
 //  2. Как быть, если заданы заведомо кривые размеры (см. п. 3)
-//  3. При перевороте перестает ресовать вообще. Видимо, иэто логисно, onMeasure случается,
+//  3. При перевороте перестает ресовать вообще. Видимо, и это логисно, onMeasure случается,
 //     когда размеры родительского view еще не известны. Но тогда на что ориентироваться,
 //     чтобы исправить заданные криво размеры?
 //  Итого: оставляем поведение View по умолчанию, т.к. оно вообще-то полностью устраивает.
-//    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-//        val suggestedW = getSuggestedMaxWidth()
-//        val suggestedH = getSuggestedMaxHeight()
-//        var w = getDefaultSize(suggestedW, widthMeasureSpec)
-//        var h = getDefaultSize(suggestedH, heightMeasureSpec)
-//        if (w > suggestedW) {
-//            w = suggestedW
-//        }
-//        if (h > suggestedH) {
-//            h = suggestedH
-//        }
-//        setMeasuredDimension(w, h)
-//    }
-//
-//    private fun getSuggestedMaxWidth() = (parent as View).width
-//
-//    private fun getSuggestedMaxHeight() = (parent as View).height
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val suggestedW = suggestedMinimumWidth + paddingLeft + paddingRight
+        val suggestedH = suggestedMinimumHeight + paddingTop + paddingBottom
+        setMeasuredDimension(resolveSize(suggestedW, widthMeasureSpec),
+            resolveSize(suggestedH, heightMeasureSpec))
+    }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
@@ -539,6 +529,22 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
         }
     }
 
+    private fun getCoordinatesCalendar(x: Float, y: Float): Calendar? {
+        var result: Calendar? = null
+        val firstDrawableDate = getFirstDrawableDateTime()
+        if (x > contentLeft && y > contentTop){
+            result = firstDrawableDate.clone() as Calendar
+            val addDays = (x - contentLeft) / cellWidth
+            val hour = yScroll + (y - contentTop) / cellHeight
+            result.add(Calendar.DATE, addDays.toInt())
+            result.set(Calendar.HOUR_OF_DAY, hour.toInt())
+            val timeSlotLength = 60 / hourFraction.value
+            val minutes = (floor(60 * (hour - floor(hour))).toInt() / timeSlotLength) * timeSlotLength
+            result.set(Calendar.MINUTE, minutes)
+        }
+        return result
+    }
+
     private fun drawContent(canvas: Canvas) {
         prepareEventRects()
         val checkpoint = canvas.save()
@@ -689,6 +695,13 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
                 if (result != null) {
                     listener.onSchedulerEventClickListener(result.event)
                 }
+                else {
+                    if (timeCellSelectListener != null){
+                        val time = getCoordinatesCalendar(e.x, e.y)
+                        if (time != null)
+                            timeCellSelectListener!!.onTimeCellSelected(time)
+                    }
+                }
                 return true
             }
             //путь, ведущий к onClick?
@@ -804,6 +817,9 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
         this.eventClickListener = eventClickListener
     }
 
+    fun setTimeCellSelectListener(timeCellSelectListener: TimeCellSelectListener){
+        this.timeCellSelectListener = timeCellSelectListener
+    }
 
     enum class HourFraction(val value: Int) {
         hf1(1), hf2(2), hf3(3), hf4(4), hf5(5), hf6(6), hf10(10), hf12(12), hf15(15), hf20(20), hf30(
@@ -1025,5 +1041,9 @@ class SchedulerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
         dashedPaint.color = hourSepColor
         dashedPaint.style = Paint.Style.STROKE
         dashedPaint.pathEffect = DashPathEffect(floatArrayOf(DEF_DASH_SIZE, DEF_DASH_SIZE), 0f)
+    }
+
+    interface TimeCellSelectListener {
+        fun onTimeCellSelected(time: Calendar)
     }
 }

@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import com.app.mscorebase.ui.dialogs.choicedialog.NoDataFoundListener
 import com.app.mscorebase.ui.dialogs.choicedialog.OnChoiceItemsSelectedListener
 import com.app.mscoremodels.saloon.*
+import java.util.*
 
 interface AppNavigator {
     fun navigateToAuthActivity(from: Context)
@@ -24,7 +25,8 @@ interface AppNavigator {
 
     fun navigateToNewEventFragment(
         targetFragment: Fragment,
-        eventListener: EventSchedulerListener?
+        eventListener: EventSchedulerListener?,
+        eventDateTime: Calendar? = null
     )
 
     fun navigateToEditEventFragment(

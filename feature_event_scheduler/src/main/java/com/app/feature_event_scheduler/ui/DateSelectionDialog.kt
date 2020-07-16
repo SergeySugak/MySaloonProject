@@ -20,9 +20,6 @@ class DateSelectionDialog : MSBottomSheetDialogFragment<DateAndTimeSelectionView
     lateinit var providerFactory: ViewModelProviderFactory
         protected set
 
-    private val calendarView: CalendarView by lazy { requireView().findViewById<CalendarView>(R.id.calendarView) }
-    private val toolBar: Toolbar by lazy { requireView().findViewById<Toolbar>(R.id.toolbar) }
-
     override val layoutId = R.layout.fragment_date_selection
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,6 +34,8 @@ class DateSelectionDialog : MSBottomSheetDialogFragment<DateAndTimeSelectionView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val calendarView = view.findViewById<CalendarView>(R.id.calendarView)
+        val toolBar = view.findViewById<Toolbar>(R.id.toolbar)
         getViewModel()?.let {
             calendarView.setDate(it.calendar.value!!.timeInMillis, true, true)
         }

@@ -62,6 +62,10 @@ class EventSchedulerViewModel @Inject constructor(
         intCalendar.forceSetValue(intCalendar.value)
     }
 
+    fun setEventDateTime(calendar: Calendar){
+        intCalendar.value = calendar
+    }
+
     fun setServices(services: List<ChoosableSaloonService>) {
         intServices.value = saloonFactory.convertToSaloonServices(services)
     }
